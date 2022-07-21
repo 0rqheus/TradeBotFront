@@ -16,7 +16,12 @@ ModuleRegistry.registerModules([
 
 export default class Table extends Component {
   state = {
-    rowData: null,
+    rowData: [
+      {
+        __typename: 'Account',
+        email: '123@gmail.com',
+      },
+    ],
     columnDefs: [
       {
         field: '__typename',
@@ -39,10 +44,10 @@ export default class Table extends Component {
   }
 
   async componentDidMount() {
-    const accounts = await apiService.getAccounts();
-    this.setState(() => {
-      return { rowData: accounts };
-    });
+    // const accounts = await apiService.getAccounts();
+    // this.setState(() => {
+    //   return { rowData: accounts };
+    // });
   }
 
   render() {
