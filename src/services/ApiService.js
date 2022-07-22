@@ -141,6 +141,50 @@ const SUBSCRIBE_ACCOUNTS = gql`
   }
 `;
 
+const UPDATE_ACCOUNT = gql`
+  mutation UpdateAccount(
+    $email: String
+    $backups: String
+    $gAuthSecret: String
+    $notes: String
+    $password: String
+    $platform: String
+    $profileId: String
+    $scheduler_config: String
+    $shouldRun: Boolean
+    $strategy_config: String
+  ) {
+    update_Account(
+      where: { email: { _eq: $email } }
+      _set: {
+        email: $email
+        backups: $backups
+        gAuthSecret: $gAuthSecret
+        notes: $notes
+        password: $password
+        platform: $platform
+        profileId: $profileId
+        scheduler_config: $scheduler_config
+        shouldRun: $shouldRun
+        strategy_config: $strategy_config
+      }
+    ) {
+      returning {
+        email
+        backups
+        gAuthSecret
+        notes
+        password
+        platform
+        profileId
+        scheduler_config
+        shouldRun
+        strategy_config
+      }
+    }
+  }
+`;
+
 class ApiService {
   client;
 
@@ -163,6 +207,30 @@ class ApiService {
     try {
       const result = await this.client.mutate({
         mutation: CREATE_ACCOUNT,
+        variables: {
+          email: data.email,
+          password: data.password,
+          gAuthSecret: data.gAuthSecret,
+          backups: data.backups,
+          notes: data.notes,
+          platform: data.platform,
+          profileId: data.profileId,
+          shouldRun: data.shouldRun,
+          scheduler_config: data.scheduler_config,
+          strategy_config: data.strategy_config,
+        },
+      });
+      console.log(result);
+      return result.data.Account;
+    } catch (err) {
+      console.log('ERROR:', err);
+    }
+  };
+
+  updateAccount = async (data) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: UPDATE_ACCOUNT,
         variables: {
           email: data.email,
           password: data.password,

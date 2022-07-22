@@ -52,6 +52,11 @@ export default class Table extends Component {
     });
   }
 
+  async onCellValueChanged(event) {
+    console.log('Data after change is', event.data);
+    await apiService.updateAccount(event.data);
+  }
+
   async componentDidMount() {
     const changeRowData = (data) => {
       this.setState(() => {
@@ -108,6 +113,7 @@ export default class Table extends Component {
             pivotPanelShow={'always'}
             suppressAggFuncInHeader={true}
             autoGroupColumnDef={this.state.autoGroupColumnDef}
+            onCellValueChanged={this.onCellValueChanged}
             animateRows={true}
           ></AgGridReact>
         </div>
