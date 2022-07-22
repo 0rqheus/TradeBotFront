@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import Table from './views/Table';
 
 export default class App extends Component {
