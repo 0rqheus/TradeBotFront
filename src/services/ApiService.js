@@ -185,6 +185,25 @@ const UPDATE_ACCOUNT = gql`
   }
 `;
 
+const DELETE_ACCOUNT = gql`
+  mutation DeleteAccount($email: String) {
+    delete_Account(where: { email: { _eq: $email } }) {
+      returning {
+        email
+        backups
+        gAuthSecret
+        notes
+        password
+        platform
+        profileId
+        scheduler_config
+        shouldRun
+        strategy_config
+      }
+    }
+  }
+`;
+
 class ApiService {
   client;
 
@@ -242,6 +261,21 @@ class ApiService {
           shouldRun: data.shouldRun,
           scheduler_config: data.scheduler_config,
           strategy_config: data.strategy_config,
+        },
+      });
+      console.log(result);
+      return result.data.Account;
+    } catch (err) {
+      console.log('ERROR:', err);
+    }
+  };
+
+  deleteAccount = async (email) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: DELETE_ACCOUNT,
+        variables: {
+          email,
         },
       });
       console.log(result);

@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import { apiService, client, SUBSCRIBE_ACCOUNTS } from '../services/ApiService';
 import Button from 'react-bootstrap/Button';
@@ -10,7 +10,10 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 export default class Table extends Component {
   state = {
+    selectedRow: false,
     modalShow: false,
+    gridRef: null,
+    gridApi: null,
     rowData: [],
     columnDefs: columnDefsAccounts,
     defaultColDef: {
@@ -32,6 +35,7 @@ export default class Table extends Component {
     super(props);
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
+    this.onSelectionChanged = this.onSelectionChanged.bind(this);
   }
 
   closeModal() {
@@ -52,9 +56,31 @@ export default class Table extends Component {
     });
   }
 
+  onLoadGrid = (params) => {
+    this.setState(() => {
+      return { gridRef: React.createRef({ ...params }) };
+    });
+  };
+
+  async deleteAccount() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    const emailDeleted = selectedRows[0].email;
+    console.log(emailDeleted);
+    await apiService.deleteAccount(emailDeleted);
+  }
+
   async onCellValueChanged(event) {
     console.log('Data after change is', event.data);
     await apiService.updateAccount(event.data);
+  }
+
+  async onSelectionChanged() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    if (selectedRows.length > 0) {
+      this.setState(() => {
+        return { selectedRow: true };
+      });
+    }
   }
 
   async componentDidMount() {
@@ -94,27 +120,32 @@ export default class Table extends Component {
             Добавить аккаунт
           </Button>
           <Button
+            disabled={!this.state.selectedRow}
             className="addButton"
             onClick={() => {
-              apiService.getAccounts();
+              this.deleteAccount();
             }}
-            variant="primary"
+            variant="danger"
           >
-            Добавить прокси
+            Удалить аккаунт
           </Button>
         </div>
         <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} />
         <div className="ag-theme-alpine" style={{ height: 800, width: '100%' }}>
           <AgGridReact
             rowData={this.state.rowData}
+            ref={this.state.gridRef}
             columnDefs={this.state.columnDefs}
             defaultColDef={this.state.defaultColDef}
             rowGroupPanelShow={'always'}
             pivotPanelShow={'always'}
             suppressAggFuncInHeader={true}
             autoGroupColumnDef={this.state.autoGroupColumnDef}
+            onGridReady={this.onLoadGrid}
             onCellValueChanged={this.onCellValueChanged}
+            onSelectionChanged={this.onSelectionChanged}
             animateRows={true}
+            rowSelection={'single'}
           ></AgGridReact>
         </div>
       </div>
