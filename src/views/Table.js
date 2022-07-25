@@ -69,6 +69,18 @@ export default class Table extends Component {
     await apiService.deleteAccount(emailDeleted);
   }
 
+  async startAccount() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    const emailDeleted = selectedRows[0].email;
+    await apiService.startAccount(emailDeleted);
+  }
+
+  async stopAccount() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    const emailDeleted = selectedRows[0].email;
+    await apiService.stopAccount(emailDeleted);
+  }
+
   async onCellValueChanged(event) {
     console.log('Data after change is', event.data);
     await apiService.updateAccount(event.data);
@@ -128,6 +140,26 @@ export default class Table extends Component {
             variant="danger"
           >
             Удалить аккаунт
+          </Button>
+          <Button
+            disabled={!this.state.selectedRow}
+            className="addButton"
+            onClick={() => {
+              this.startAccount();
+            }}
+            variant="success"
+          >
+            Start
+          </Button>
+          <Button
+            disabled={!this.state.selectedRow}
+            className="addButton"
+            onClick={() => {
+              this.stopAccount();
+            }}
+            variant="warning"
+          >
+            Stop
           </Button>
         </div>
         <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} />

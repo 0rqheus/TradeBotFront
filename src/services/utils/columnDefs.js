@@ -142,6 +142,12 @@ const columnDefsAccounts = [
     enableRowGroup: true,
   },
   {
+    field: 'activityStatus',
+    headerName: 'Status',
+    editable: true,
+    enableRowGroup: true,
+  },
+  {
     field: 'profileId',
     headerName: 'Profile ID',
     editable: true,

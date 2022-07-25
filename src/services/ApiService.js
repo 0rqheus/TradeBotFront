@@ -185,6 +185,29 @@ const UPDATE_ACCOUNT = gql`
   }
 `;
 
+const CHANGE_ACCOUNT_STATUS = gql`
+  mutation StartAccount($email: String, $activityStatus: String) {
+    update_Account(
+      where: { email: { _eq: $email } }
+      _set: { activityStatus: $activityStatus }
+    ) {
+      returning {
+        email
+        activityStatus
+        backups
+        gAuthSecret
+        notes
+        password
+        platform
+        profileId
+        scheduler_config
+        shouldRun
+        strategy_config
+      }
+    }
+  }
+`;
+
 const DELETE_ACCOUNT = gql`
   mutation DeleteAccount($email: String) {
     delete_Account(where: { email: { _eq: $email } }) {
@@ -261,6 +284,38 @@ class ApiService {
           shouldRun: data.shouldRun,
           scheduler_config: data.scheduler_config,
           strategy_config: data.strategy_config,
+        },
+      });
+      console.log(result);
+      return result.data.Account;
+    } catch (err) {
+      console.log('ERROR:', err);
+    }
+  };
+
+  startAccount = async (email) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: CHANGE_ACCOUNT_STATUS,
+        variables: {
+          email,
+          activityStatus: 'ON',
+        },
+      });
+      console.log(result);
+      return result.data.Account;
+    } catch (err) {
+      console.log('ERROR:', err);
+    }
+  };
+
+  stopAccount = async (email) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: CHANGE_ACCOUNT_STATUS,
+        variables: {
+          email,
+          activityStatus: 'OFF',
         },
       });
       console.log(result);
