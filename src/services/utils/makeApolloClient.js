@@ -8,21 +8,29 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import fetch from 'cross-fetch';
 import { WebSocketLink } from '@apollo/client/link/ws';
 
+function getToken() {
+  return localStorage.getItem('adminSecret');
+}
+
 function getHttpLink(httpURL) {
+  const token = getToken();
   return new HttpLink({
     uri: httpURL,
     fetch,
-    // headers: token ? { Authorization: token } : {},
+    headers: { 'x-hasura-admin-secret': token },
   });
 }
 
 function getWssLink(wsUrl) {
+  const token = getToken();
   return new WebSocketLink({
     uri: wsUrl,
     options: {
       reconnect: true,
       connectionParams: {
-        reconnect: true,
+        headers: {
+          'x-hasura-admin-secret': token,
+        },
       },
     },
   });
@@ -46,8 +54,13 @@ function getSplittedLink(httpLink, wsLink) {
 
 export default function makeApolloClient(httpURL, wsURL, token = '') {
   const httpLink = getHttpLink(httpURL, token);
-  const wssLink = getWssLink(wsURL);
-  const splitLink = getSplittedLink(httpLink, wssLink);
+  let splitLink = '';
+  if (wsURL == null) {
+    splitLink = httpLink;
+  } else {
+    const wssLink = getWssLink(wsURL);
+    splitLink = getSplittedLink(httpLink, wssLink);
+  }
   const client = new ApolloClient({
     link: splitLink,
     cache: new InMemoryCache(),

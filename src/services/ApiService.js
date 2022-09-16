@@ -1,4 +1,3 @@
-import { ApolloClient } from '@apollo/client/core';
 import makeApolloClient from './utils/makeApolloClient';
 import gql from 'graphql-tag';
 
@@ -293,29 +292,13 @@ class ApiService {
     }
   };
 
-  startAccount = async (email) => {
+  updateAccountStatus = async (email, status) => {
     try {
       const result = await this.client.mutate({
         mutation: CHANGE_ACCOUNT_STATUS,
         variables: {
           email,
-          activityStatus: 'ON',
-        },
-      });
-      console.log(result);
-      return result.data.Account;
-    } catch (err) {
-      console.log('ERROR:', err);
-    }
-  };
-
-  stopAccount = async (email) => {
-    try {
-      const result = await this.client.mutate({
-        mutation: CHANGE_ACCOUNT_STATUS,
-        variables: {
-          email,
-          activityStatus: 'OFF',
+          activityStatus: status,
         },
       });
       console.log(result);

@@ -7,6 +7,7 @@ import columnDefsAccounts from '../services/utils/columnDefs';
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import { apiServiceCustomResolvers } from '../services/ApiCustomResolvers';
 
 export default class Table extends Component {
   state = {
@@ -69,16 +70,42 @@ export default class Table extends Component {
     await apiService.deleteAccount(emailDeleted);
   }
 
+  async sendItToRabbit(email, status) {
+    const toSend = {
+      accountId: email,
+      email: email,
+      type: status,
+    };
+    console.log(toSend);
+    await apiServiceCustomResolvers.sendCommand(toSend);
+  }
+
   async startAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     const emailDeleted = selectedRows[0].email;
-    await apiService.startAccount(emailDeleted);
+    await apiService.updateAccountStatus(emailDeleted, 'START');
+    await this.sendItToRabbit(selectedRows[0].email, 'START');
   }
 
   async stopAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     const emailDeleted = selectedRows[0].email;
-    await apiService.stopAccount(emailDeleted);
+    await apiService.updateAccountStatus(emailDeleted, 'STOP');
+    await this.sendItToRabbit(selectedRows[0].email, 'STOP');
+  }
+
+  async pauseAccount() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    const emailDeleted = selectedRows[0].email;
+    await apiService.updateAccountStatus(emailDeleted, 'PAUSE');
+    await this.sendItToRabbit(selectedRows[0].email, 'PAUSE');
+  }
+
+  async unpauseAccount() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    const emailDeleted = selectedRows[0].email;
+    await apiService.updateAccountStatus(emailDeleted, 'UNPAUSE');
+    await this.sendItToRabbit(selectedRows[0].email, 'UNPAUSE');
   }
 
   async onCellValueChanged(event) {
@@ -96,6 +123,8 @@ export default class Table extends Component {
   }
 
   async componentDidMount() {
+    const adminSecret = localStorage.getItem('adminSecret');
+    if (!adminSecret) window.location.href = '/';
     const changeRowData = (data) => {
       this.setState(() => {
         return { rowData: data };
@@ -157,9 +186,29 @@ export default class Table extends Component {
             onClick={() => {
               this.stopAccount();
             }}
-            variant="warning"
+            variant="danger"
           >
             Stop
+          </Button>
+          <Button
+            disabled={!this.state.selectedRow}
+            className="addButton"
+            onClick={() => {
+              this.pauseAccount();
+            }}
+            variant="warning"
+          >
+            Pause
+          </Button>
+          <Button
+            disabled={!this.state.selectedRow}
+            className="addButton"
+            onClick={() => {
+              this.unpauseAccount();
+            }}
+            variant="warning"
+          >
+            Unpause
           </Button>
         </div>
         <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} />
