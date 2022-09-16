@@ -82,8 +82,7 @@ export default class Table extends Component {
 
   async startAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    const emailDeleted = selectedRows[0].email;
-    await apiService.updateAccountStatus(emailDeleted, 'START');
+    await apiService.updateAccountStatus(selectedRows[0].email, 'START');
     await this.sendItToRabbit(
       selectedRows[0].id,
       selectedRows[0].email,
@@ -93,8 +92,7 @@ export default class Table extends Component {
 
   async stopAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    const emailDeleted = selectedRows[0].email;
-    await apiService.updateAccountStatus(emailDeleted, 'STOP');
+    await apiService.updateAccountStatus(selectedRows[0].email, 'STOP');
     await this.sendItToRabbit(
       selectedRows[0].id,
       selectedRows[0].email,
@@ -104,8 +102,7 @@ export default class Table extends Component {
 
   async pauseAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    const emailDeleted = selectedRows[0].email;
-    await apiService.updateAccountStatus(emailDeleted, 'PAUSE');
+    await apiService.updateAccountStatus(selectedRows[0].email, 'PAUSE');
     await this.sendItToRabbit(
       selectedRows[0].id,
       selectedRows[0].email,
@@ -115,8 +112,7 @@ export default class Table extends Component {
 
   async unpauseAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    const emailDeleted = selectedRows[0].email;
-    await apiService.updateAccountStatus(emailDeleted, 'UNPAUSE');
+    await apiService.updateAccountStatus(selectedRows[0].email, 'UNPAUSE');
     await this.sendItToRabbit(
       selectedRows[0].id,
       selectedRows[0].email,
@@ -126,8 +122,7 @@ export default class Table extends Component {
 
   async blockAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    const emailDeleted = selectedRows[0].email;
-    await apiService.updateAccountStatus(emailDeleted, 'BLOCK');
+    await apiService.updateAccountStatus(selectedRows[0].email, 'BLOCK');
     await this.sendItToRabbit(
       selectedRows[0].id,
       selectedRows[0].email,
@@ -137,8 +132,7 @@ export default class Table extends Component {
 
   async resetAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    const emailDeleted = selectedRows[0].email;
-    await apiService.updateAccountStatus(emailDeleted, 'RESET');
+    await apiService.updateAccountStatus(selectedRows[0].email, 'RESET');
     await this.sendItToRabbit(
       selectedRows[0].id,
       selectedRows[0].email,
