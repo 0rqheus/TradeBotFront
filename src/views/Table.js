@@ -70,9 +70,9 @@ export default class Table extends Component {
     await apiService.deleteAccount(emailDeleted);
   }
 
-  async sendItToRabbit(email, status) {
+  async sendItToRabbit(id, email, status) {
     const toSend = {
-      accountId: email,
+      accountId: id,
       email: email,
       type: status,
     };
@@ -84,28 +84,44 @@ export default class Table extends Component {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     const emailDeleted = selectedRows[0].email;
     await apiService.updateAccountStatus(emailDeleted, 'START');
-    await this.sendItToRabbit(selectedRows[0].email, 'START');
+    await this.sendItToRabbit(
+      selectedRows[0].id,
+      selectedRows[0].email,
+      'START'
+    );
   }
 
   async stopAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     const emailDeleted = selectedRows[0].email;
     await apiService.updateAccountStatus(emailDeleted, 'STOP');
-    await this.sendItToRabbit(selectedRows[0].email, 'STOP');
+    await this.sendItToRabbit(
+      selectedRows[0].id,
+      selectedRows[0].email,
+      'STOP'
+    );
   }
 
   async pauseAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     const emailDeleted = selectedRows[0].email;
     await apiService.updateAccountStatus(emailDeleted, 'PAUSE');
-    await this.sendItToRabbit(selectedRows[0].email, 'PAUSE');
+    await this.sendItToRabbit(
+      selectedRows[0].id,
+      selectedRows[0].email,
+      'PAUSE'
+    );
   }
 
   async unpauseAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     const emailDeleted = selectedRows[0].email;
     await apiService.updateAccountStatus(emailDeleted, 'UNPAUSE');
-    await this.sendItToRabbit(selectedRows[0].email, 'UNPAUSE');
+    await this.sendItToRabbit(
+      selectedRows[0].id,
+      selectedRows[0].email,
+      'UNPAUSE'
+    );
   }
 
   async onCellValueChanged(event) {

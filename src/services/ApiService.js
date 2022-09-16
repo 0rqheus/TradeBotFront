@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 const GET_ACCOUNTS = gql`
   query GetAccounts {
     Account {
+      id
       email
       activityStatus
       activityStatusDescription
@@ -110,6 +111,7 @@ const CREATE_ACCOUNT = gql`
 const SUBSCRIBE_ACCOUNTS = gql`
   subscription SubscribeAccounts {
     Account {
+      id
       email
       Proxy {
         host
