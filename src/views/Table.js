@@ -124,6 +124,28 @@ export default class Table extends Component {
     );
   }
 
+  async blockAccount() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    const emailDeleted = selectedRows[0].email;
+    await apiService.updateAccountStatus(emailDeleted, 'BLOCK');
+    await this.sendItToRabbit(
+      selectedRows[0].id,
+      selectedRows[0].email,
+      'BLOCK'
+    );
+  }
+
+  async resetAccount() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    const emailDeleted = selectedRows[0].email;
+    await apiService.updateAccountStatus(emailDeleted, 'RESET');
+    await this.sendItToRabbit(
+      selectedRows[0].id,
+      selectedRows[0].email,
+      'RESET'
+    );
+  }
+
   async onCellValueChanged(event) {
     console.log('Data after change is', event.data);
     await apiService.updateAccount(event.data);
@@ -192,7 +214,7 @@ export default class Table extends Component {
             onClick={() => {
               this.startAccount();
             }}
-            variant="success"
+            variant="warning"
           >
             Start
           </Button>
@@ -202,7 +224,7 @@ export default class Table extends Component {
             onClick={() => {
               this.stopAccount();
             }}
-            variant="danger"
+            variant="warning"
           >
             Stop
           </Button>
@@ -225,6 +247,26 @@ export default class Table extends Component {
             variant="warning"
           >
             Unpause
+          </Button>
+          <Button
+            disabled={!this.state.selectedRow}
+            className="addButton"
+            onClick={() => {
+              this.blockAccount();
+            }}
+            variant="warning"
+          >
+            Block
+          </Button>
+          <Button
+            disabled={!this.state.selectedRow}
+            className="addButton"
+            onClick={() => {
+              this.resetAccount();
+            }}
+            variant="warning"
+          >
+            Reset
           </Button>
         </div>
         <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} />
