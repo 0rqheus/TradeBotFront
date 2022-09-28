@@ -72,7 +72,7 @@ export default class Table extends Component {
 
   async sendItToRabbit(id, email, status) {
     const toSend = {
-      accountId: id,
+      // accountId: id,
       email: email,
       type: status,
     };
