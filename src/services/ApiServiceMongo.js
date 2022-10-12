@@ -1,4 +1,4 @@
-import makeApolloClient from './utils/makeApolloClient';
+import makeApolloClient from './utils/makeApolloClientMongo';
 import gql from 'graphql-tag';
 
 const GET_ACCOUNTS = gql`
@@ -259,9 +259,6 @@ class ApiService {
   };
 }
 
-const client = makeApolloClient(
-  process.env.REACT_APP_API_URL,
-  process.env.REACT_APP_API_WS_URL
-);
+const client = makeApolloClient(process.env.REACT_APP_API_URL);
 const apiService = new ApiService(client);
 export { client, apiService };
