@@ -1,6 +1,10 @@
 import React, { Component, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import { apiService, client, SUBSCRIBE_ACCOUNTS } from '../services/ApiService';
+import {
+  apiService,
+  client,
+  SUBSCRIBE_ACCOUNTS,
+} from '../services/ApiServiceMongo';
 import Button from 'react-bootstrap/Button';
 import AddAccountModal from './modals/AddAccountModal';
 import columnDefsAccounts from '../services/utils/columnDefs';
@@ -82,9 +86,9 @@ export default class Table extends Component {
 
   async startAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    await apiService.updateAccountStatus(selectedRows[0].email, 'START');
+    await apiService.updateAccountStatus(selectedRows[0]._id, 'START');
     await this.sendItToRabbit(
-      selectedRows[0].id,
+      selectedRows[0]._id,
       selectedRows[0].email,
       'START'
     );
@@ -92,9 +96,9 @@ export default class Table extends Component {
 
   async stopAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    await apiService.updateAccountStatus(selectedRows[0].email, 'STOP');
+    await apiService.updateAccountStatus(selectedRows[0]._id, 'STOP');
     await this.sendItToRabbit(
-      selectedRows[0].id,
+      selectedRows[0]._id,
       selectedRows[0].email,
       'STOP'
     );
@@ -102,9 +106,9 @@ export default class Table extends Component {
 
   async pauseAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    await apiService.updateAccountStatus(selectedRows[0].email, 'PAUSE');
+    await apiService.updateAccountStatus(selectedRows[0]._id, 'PAUSE');
     await this.sendItToRabbit(
-      selectedRows[0].id,
+      selectedRows[0]._id,
       selectedRows[0].email,
       'PAUSE'
     );
@@ -112,9 +116,9 @@ export default class Table extends Component {
 
   async unpauseAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    await apiService.updateAccountStatus(selectedRows[0].email, 'UNPAUSE');
+    await apiService.updateAccountStatus(selectedRows[0]._id, 'UNPAUSE');
     await this.sendItToRabbit(
-      selectedRows[0].id,
+      selectedRows[0]._id,
       selectedRows[0].email,
       'UNPAUSE'
     );
@@ -122,9 +126,9 @@ export default class Table extends Component {
 
   async blockAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    await apiService.updateAccountStatus(selectedRows[0].email, 'BLOCK');
+    await apiService.updateAccountStatus(selectedRows[0]._id, 'BLOCK');
     await this.sendItToRabbit(
-      selectedRows[0].id,
+      selectedRows[0]._id,
       selectedRows[0].email,
       'BLOCK'
     );
@@ -132,9 +136,9 @@ export default class Table extends Component {
 
   async resetAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    await apiService.updateAccountStatus(selectedRows[0].email, 'RESET');
+    await apiService.updateAccountStatus(selectedRows[0]._id, 'RESET');
     await this.sendItToRabbit(
-      selectedRows[0].id,
+      selectedRows[0]._id,
       selectedRows[0].email,
       'RESET'
     );
@@ -163,17 +167,17 @@ export default class Table extends Component {
       });
     };
 
-    const observer = client.subscribe({
-      query: SUBSCRIBE_ACCOUNTS,
-    });
-    observer.subscribe({
-      next(data) {
-        changeRowData(data.data.Account);
-      },
-      error(err) {
-        console.log(err);
-      },
-    });
+    // const observer = client.subscribe({
+    //   query: SUBSCRIBE_ACCOUNTS,
+    // });
+    // observer.subscribe({
+    //   next(data) {
+    //     changeRowData(data.data.Account);
+    //   },
+    //   error(err) {
+    //     console.log(err);
+    //   },
+    // });
     const accounts = await apiService.getAccounts();
     console.log(accounts);
     this.changeRowData(accounts);

@@ -11,14 +11,6 @@ export default class App extends Component {
         <Routes>
           <Route path="/main" element={<Table />} />
           <Route path="/" element={<Auth />} />
-          {/* <Route
-            path="/main"
-            element={
-              <IsLoggedIn>
-                <Main />
-              </IsLoggedIn>
-            }
-          /> */}
         </Routes>
       </div>
     );

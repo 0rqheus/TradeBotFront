@@ -2,35 +2,12 @@ import makeApolloClient from './utils/makeApolloClient';
 import gql from 'graphql-tag';
 
 const GET_ACCOUNTS = gql`
-  query GetAccounts {
-    Account {
-      id
+  query AccountMany {
+    AccountMany {
       email
+      _id
       activityStatus
-      activityStatusDescription
-      backups
-      currentTask
-      gAuthSecret
-      notes
-      password
-      platform
-      profileId
-      scheduler_config
       shouldRun
-      strategy_config
-      Proxy {
-        host
-        id
-        password
-        port
-        username
-      }
-      Inventory {
-        balance
-        id
-        transfer_list_count
-        transfer_targets_count
-      }
     }
   }
 `;
@@ -108,40 +85,6 @@ const CREATE_ACCOUNT = gql`
   }
 `;
 
-const SUBSCRIBE_ACCOUNTS = gql`
-  subscription SubscribeAccounts {
-    Account {
-      id
-      email
-      Proxy {
-        host
-        id
-        password
-        port
-        username
-      }
-      Inventory {
-        balance
-        id
-        transfer_list_count
-        transfer_targets_count
-      }
-      activityStatus
-      activityStatusDescription
-      backups
-      currentTask
-      gAuthSecret
-      notes
-      password
-      platform
-      profileId
-      scheduler_config
-      shouldRun
-      strategy_config
-    }
-  }
-`;
-
 const UPDATE_ACCOUNT = gql`
   mutation UpdateAccount(
     $email: String
@@ -187,23 +130,11 @@ const UPDATE_ACCOUNT = gql`
 `;
 
 const CHANGE_ACCOUNT_STATUS = gql`
-  mutation UpdateAccountStatus($email: String, $activityStatus: String) {
-    update_Account(
-      where: { email: { _eq: $email } }
-      _set: { activityStatus: $activityStatus }
-    ) {
-      returning {
-        email
+  mutation AccountUpdateById($id: MongoID!, $record: UpdateByIdAccountInput!) {
+    AccountUpdatePartialById(_id: $id, record: $record) {
+      record {
+        _id
         activityStatus
-        backups
-        gAuthSecret
-        notes
-        password
-        platform
-        profileId
-        scheduler_config
-        shouldRun
-        strategy_config
       }
     }
   }
@@ -240,7 +171,7 @@ class ApiService {
       const result = await this.client.query({
         query: GET_ACCOUNTS,
       });
-      return result.data.Account;
+      return result.data.AccountMany;
     } catch (err) {
       console.log('ERROR:', err);
     }
@@ -294,17 +225,19 @@ class ApiService {
     }
   };
 
-  updateAccountStatus = async (email, status) => {
+  updateAccountStatus = async (id, status) => {
     try {
       const result = await this.client.mutate({
         mutation: CHANGE_ACCOUNT_STATUS,
         variables: {
-          email,
-          activityStatus: status,
+          record: {
+            activityStatus: status,
+          },
+          id,
         },
       });
       console.log(result);
-      return result.data.Account;
+      return result.data.AccountUpdatePartialById;
     } catch (err) {
       console.log('ERROR:', err);
     }
@@ -331,4 +264,4 @@ const client = makeApolloClient(
   process.env.REACT_APP_API_WS_URL
 );
 const apiService = new ApiService(client);
-export { client, apiService, SUBSCRIBE_ACCOUNTS };
+export { client, apiService };
