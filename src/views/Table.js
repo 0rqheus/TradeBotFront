@@ -179,7 +179,7 @@ export default class Table extends Component {
     //   },
     // });
     const accounts = await apiService.getAccounts();
-    console.log(accounts);
+    // console.log(accounts);
     this.changeRowData(accounts);
   }
 
