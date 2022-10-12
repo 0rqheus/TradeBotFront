@@ -6,7 +6,7 @@ import {
   SUBSCRIBE_ACCOUNTS,
 } from '../services/ApiServiceMongo';
 import Button from 'react-bootstrap/Button';
-import AddAccountModal from './modals/AddAccountModal';
+// import AddAccountModal from './modals/AddAccountModal';
 import columnDefsAccounts from '../services/utils/columnDefs';
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -267,7 +267,7 @@ export default class Table extends Component {
             Reset
           </Button>
         </div>
-        <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} />
+        {/* <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} /> */}
         <div className="ag-theme-alpine" style={{ height: 800, width: '100%' }}>
           <AgGridReact
             rowData={this.state.rowData}
