@@ -76,7 +76,7 @@ export default class Table extends Component {
 
   async sendItToRabbit(id, email, status) {
     const toSend = {
-      // accountId: id,
+      accountId: id,
       email: email,
       type: status,
     };
@@ -86,62 +86,50 @@ export default class Table extends Component {
 
   async startAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    await apiService.updateAccountStatus(selectedRows[0]._id, 'START');
-    await this.sendItToRabbit(
-      selectedRows[0]._id,
-      selectedRows[0].email,
-      'START'
-    );
+    selectedRows.forEach(async (row) => {
+      await apiService.updateAccountStatus(row._id, 'START');
+      await this.sendItToRabbit(row._id, row.email, 'START');
+    });
   }
 
   async stopAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    await apiService.updateAccountStatus(selectedRows[0]._id, 'STOP');
-    await this.sendItToRabbit(
-      selectedRows[0]._id,
-      selectedRows[0].email,
-      'STOP'
-    );
+    selectedRows.forEach(async (row) => {
+      await apiService.updateAccountStatus(row._id, 'STOP');
+      await this.sendItToRabbit(row._id, row.email, 'STOP');
+    });
   }
 
   async pauseAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    await apiService.updateAccountStatus(selectedRows[0]._id, 'PAUSE');
-    await this.sendItToRabbit(
-      selectedRows[0]._id,
-      selectedRows[0].email,
-      'PAUSE'
-    );
+    selectedRows.forEach(async (row) => {
+      await apiService.updateAccountStatus(row._id, 'PAUSE');
+      await this.sendItToRabbit(row._id, row.email, 'PAUSE');
+    });
   }
 
   async unpauseAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    await apiService.updateAccountStatus(selectedRows[0]._id, 'UNPAUSE');
-    await this.sendItToRabbit(
-      selectedRows[0]._id,
-      selectedRows[0].email,
-      'UNPAUSE'
-    );
+    selectedRows.forEach(async (row) => {
+      await apiService.updateAccountStatus(row._id, 'UNPAUSE');
+      await this.sendItToRabbit(row._id, row.email, 'UNPAUSE');
+    });
   }
 
   async blockAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    await apiService.updateAccountStatus(selectedRows[0]._id, 'BLOCK');
-    await this.sendItToRabbit(
-      selectedRows[0]._id,
-      selectedRows[0].email,
-      'BLOCK'
-    );
+    selectedRows.forEach(async (row) => {
+      await apiService.updateAccountStatus(row._id, 'BLOCK');
+      await this.sendItToRabbit(row._id, row.email, 'BLOCK');
+    });
   }
 
   async resetAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    await apiService.updateAccountStatus(selectedRows[0]._id, 'RESET');
-    await this.sendItToRabbit(
-      selectedRows[0]._id,
-      selectedRows[0].email,
-      'RESET'
-    );
+    selectedRows.forEach(async (row) => {
+      await apiService.updateAccountStatus(row._id, 'RESET');
+      await this.sendItToRabbit(row._id, row.email, 'RESET');
+    });
   }
 
   async onCellValueChanged(event) {
@@ -279,10 +267,10 @@ export default class Table extends Component {
             suppressAggFuncInHeader={true}
             autoGroupColumnDef={this.state.autoGroupColumnDef}
             onGridReady={this.onLoadGrid}
+            rowSelection={'multiple'}
             onCellValueChanged={this.onCellValueChanged}
             onSelectionChanged={this.onSelectionChanged}
             animateRows={true}
-            rowSelection={'single'}
           ></AgGridReact>
         </div>
       </div>
