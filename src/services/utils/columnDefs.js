@@ -175,6 +175,9 @@ const columnDefsAccounts = [
     headerName: 'Should run',
     editable: true,
     enableRowGroup: true,
+    cellRenderer: (params) => {
+      return params.value.toString();
+    },
   },
   // {
   //   field: 'strategy_config',

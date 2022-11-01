@@ -76,7 +76,7 @@ export default class Table extends Component {
 
   async sendItToRabbit(id, email, status) {
     const toSend = {
-      accountId: id,
+      id,
       email: email,
       type: status,
     };
@@ -87,7 +87,7 @@ export default class Table extends Component {
   async startAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     selectedRows.forEach(async (row) => {
-      await apiService.updateAccountStatus(row._id, 'START');
+      // await apiService.updateAccountStatus(row._id, 'START');
       await this.sendItToRabbit(row._id, row.email, 'START');
     });
   }
@@ -95,7 +95,7 @@ export default class Table extends Component {
   async stopAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     selectedRows.forEach(async (row) => {
-      await apiService.updateAccountStatus(row._id, 'STOP');
+      // await apiService.updateAccountStatus(row._id, 'STOP');
       await this.sendItToRabbit(row._id, row.email, 'STOP');
     });
   }
@@ -103,7 +103,7 @@ export default class Table extends Component {
   async pauseAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     selectedRows.forEach(async (row) => {
-      await apiService.updateAccountStatus(row._id, 'PAUSE');
+      // await apiService.updateAccountStatus(row._id, 'PAUSE');
       await this.sendItToRabbit(row._id, row.email, 'PAUSE');
     });
   }
@@ -111,7 +111,7 @@ export default class Table extends Component {
   async unpauseAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     selectedRows.forEach(async (row) => {
-      await apiService.updateAccountStatus(row._id, 'UNPAUSE');
+      // await apiService.updateAccountStatus(row._id, 'UNPAUSE');
       await this.sendItToRabbit(row._id, row.email, 'UNPAUSE');
     });
   }
@@ -119,7 +119,7 @@ export default class Table extends Component {
   async blockAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     selectedRows.forEach(async (row) => {
-      await apiService.updateAccountStatus(row._id, 'BLOCK');
+      // await apiService.updateAccountStatus(row._id, 'BLOCK');
       await this.sendItToRabbit(row._id, row.email, 'BLOCK');
     });
   }
@@ -127,7 +127,7 @@ export default class Table extends Component {
   async resetAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     selectedRows.forEach(async (row) => {
-      await apiService.updateAccountStatus(row._id, 'RESET');
+      // await apiService.updateAccountStatus(row._id, 'RESET');
       await this.sendItToRabbit(row._id, row.email, 'RESET');
     });
   }
