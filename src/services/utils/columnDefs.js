@@ -2,7 +2,7 @@ const columnDefsAccounts = [
   {
     field: '_id',
     headerName: 'ID',
-    editable: false,
+    editable: true,
     enableRowGroup: true,
   },
   {
