@@ -1,12 +1,8 @@
 import React, { Component, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import {
-  apiService,
-  client,
-  SUBSCRIBE_ACCOUNTS,
-} from '../services/ApiServiceMongo';
+import { apiService, client, SUBSCRIBE_ACCOUNTS } from '../services/ApiService';
 import Button from 'react-bootstrap/Button';
-// import AddAccountModal from './modals/AddAccountModal';
+import AddAccountModal from './modals/AddAccountModal';
 import columnDefsAccounts from '../services/utils/columnDefs';
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -69,9 +65,9 @@ export default class Table extends Component {
 
   async deleteAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    const emailDeleted = selectedRows[0].email;
-    console.log(emailDeleted);
-    await apiService.deleteAccount(emailDeleted);
+    const idDeleted = selectedRows[0].id;
+    console.log(idDeleted);
+    await apiService.deleteAccount(idDeleted);
   }
 
   async sendItToRabbit(id, email, status) {
@@ -155,18 +151,19 @@ export default class Table extends Component {
       });
     };
 
-    // const observer = client.subscribe({
-    //   query: SUBSCRIBE_ACCOUNTS,
-    // });
-    // observer.subscribe({
-    //   next(data) {
-    //     changeRowData(data.data.Account);
-    //   },
-    //   error(err) {
-    //     console.log(err);
-    //   },
-    // });
+    const observer = client.subscribe({
+      query: SUBSCRIBE_ACCOUNTS,
+    });
+    observer.subscribe({
+      next(data) {
+        changeRowData(data.data.accounts);
+      },
+      error(err) {
+        console.log(err);
+      },
+    });
     const accounts = await apiService.getAccounts();
+    console.log(accounts);
     // console.log(accounts);
     this.changeRowData(accounts);
   }
@@ -255,7 +252,7 @@ export default class Table extends Component {
             Reset
           </Button>
         </div>
-        {/* <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} /> */}
+        <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} />
         <div className="ag-theme-alpine" style={{ height: 800, width: '100%' }}>
           <AgGridReact
             rowData={this.state.rowData}

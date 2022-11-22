@@ -3,106 +3,89 @@ import gql from 'graphql-tag';
 
 const GET_ACCOUNTS = gql`
   query GetAccounts {
-    Account {
+    accounts {
       id
       email
-      activityStatus
-      activityStatusDescription
-      backups
-      currentTask
-      gAuthSecret
-      notes
-      password
-      platform
-      profileId
-      scheduler_config
-      shouldRun
-      strategy_config
-      Proxy {
+      activity_status
+      balance
+      gauth
+      should_run
+      proxy {
         host
-        id
-        password
         port
-        username
-      }
-      Inventory {
-        balance
-        id
-        transfer_list_count
-        transfer_targets_count
       }
     }
   }
 `;
 
-const CREATE_ACCOUNT = gql`
+const CONNECT_ACCOUNT_TO_PROXY = gql`
   mutation CreateAccount(
     $email: String
-    $backups: String
-    $gAuthSecret: String
-    $notes: String
     $password: String
-    $platform: String
-    $profileId: String
-    $scheduler_config: String
-    $shouldRun: Boolean
-    $strategy_config: String
+    $gauth: String
+    $proxyId: Int
   ) {
-    insert_Account(
+    insert_accounts(
       objects: {
         email: $email
-        backups: $backups
-        gAuthSecret: $gAuthSecret
-        notes: $notes
         password: $password
-        platform: $platform
-        profileId: $profileId
-        scheduler_config: $scheduler_config
-        shouldRun: $shouldRun
-        strategy_config: $strategy_config
-        # Proxy: {
-        #   data: {
-        #     id: 1
-        #     host: "123"
-        #     password: "123"
-        #     port: "123"
-        #     username: "ivan"
-        #   }
-        # }
-        # Inventory: {
-        #   data: {
-        #     id: 1
-        #     balance: 0
-        #     transfer_list_count: 1
-        #     transfer_targets_count: 2
-        #   }
-        # }
+        gauth: $gauth
+        proxy_id: $proxyId
       }
     ) {
       returning {
         email
-        backups
-        gAuthSecret
-        notes
+        gauth
         password
-        platform
-        profileId
-        scheduler_config
-        shouldRun
-        strategy_config
-        # Proxy {
-        #   host
-        #   id
-        #   password
-        #   port
-        #   username
-        # }
-        # Inventory {
-        #   balance
-        #   id
-        #   transfer_list_count
-        #   transfer_targets_count
-        # }
+      }
+    }
+  }
+`;
+
+const GET_PROXIES_BY_HOST_PORT = gql`
+  query GetProxiesByHostPort($host: String, $port: String) {
+    proxies(where: { _and: { host: { _eq: $host }, port: { _eq: $port } } }) {
+      id
+    }
+  }
+`;
+
+const CREATE_ACCOUNT_WITH_PROXY = gql`
+  mutation CreateAccount(
+    $email: String
+    $password: String
+    $gauth: String
+    $proxyIp: String
+    $proxyPort: String
+    $proxyLogin: String
+    $proxyPass: String
+  ) {
+    insert_accounts(
+      objects: {
+        email: $email
+        password: $password
+        gauth: $gAuthSecret
+        proxy: {
+          data: {
+            host: $proxyIp
+            port: $proxyPort
+            username: $proxyLogin
+            password: $proxyPass
+          }
+        }
+      }
+    ) {
+      returning {
+        email
+        gauth
+        password
+        proxy {
+          id
+          host
+          port
+          username
+          password
+        }
       }
     }
   }
@@ -110,34 +93,17 @@ const CREATE_ACCOUNT = gql`
 
 const SUBSCRIBE_ACCOUNTS = gql`
   subscription SubscribeAccounts {
-    Account {
+    accounts {
       id
       email
-      Proxy {
+      activity_status
+      balance
+      gauth
+      should_run
+      proxy {
         host
-        id
-        password
         port
-        username
       }
-      Inventory {
-        balance
-        id
-        transfer_list_count
-        transfer_targets_count
-      }
-      activityStatus
-      activityStatusDescription
-      backups
-      currentTask
-      gAuthSecret
-      notes
-      password
-      platform
-      profileId
-      scheduler_config
-      shouldRun
-      strategy_config
     }
   }
 `;
@@ -210,20 +176,9 @@ const CHANGE_ACCOUNT_STATUS = gql`
 `;
 
 const DELETE_ACCOUNT = gql`
-  mutation DeleteAccount($email: String) {
-    delete_Account(where: { email: { _eq: $email } }) {
-      returning {
-        email
-        backups
-        gAuthSecret
-        notes
-        password
-        platform
-        profileId
-        scheduler_config
-        shouldRun
-        strategy_config
-      }
+  mutation DeleteAccountByPk($id: Int!) {
+    delete_accounts_by_pk(id: $id) {
+      id
     }
   }
 `;
@@ -240,7 +195,22 @@ class ApiService {
       const result = await this.client.query({
         query: GET_ACCOUNTS,
       });
-      return result.data.Account;
+      return result.data.accounts;
+    } catch (err) {
+      console.log('ERROR:', err);
+    }
+  };
+
+  getProxiesByHostPort = async (host, port) => {
+    try {
+      const result = await this.client.query({
+        query: GET_PROXIES_BY_HOST_PORT,
+        variables: {
+          host,
+          port,
+        },
+      });
+      return result.data.proxies;
     } catch (err) {
       console.log('ERROR:', err);
     }
@@ -248,23 +218,40 @@ class ApiService {
 
   createAccount = async (data) => {
     try {
-      const result = await this.client.mutate({
-        mutation: CREATE_ACCOUNT,
-        variables: {
-          email: data.email,
-          password: data.password,
-          gAuthSecret: data.gAuthSecret,
-          backups: data.backups,
-          notes: data.notes,
-          platform: data.platform,
-          profileId: data.profileId,
-          shouldRun: data.shouldRun,
-          scheduler_config: data.scheduler_config,
-          strategy_config: data.strategy_config,
-        },
-      });
-      console.log(result);
-      return result.data.Account;
+      const proxies = await this.getProxiesByHostPort(
+        data.proxyIp,
+        data.proxyPort
+      );
+      console.log(proxies);
+      console.log(data);
+      if (proxies.length > 0) {
+        const result = await this.client.mutate({
+          mutation: CONNECT_ACCOUNT_TO_PROXY,
+          variables: {
+            email: data.email,
+            password: data.password,
+            gauth: data.gAuthSecret,
+            proxyId: proxies[0].id,
+          },
+        });
+        console.log(result);
+        return result.data.insert_accounts;
+      } else {
+        const result = await this.client.mutate({
+          mutation: CREATE_ACCOUNT_WITH_PROXY,
+          variables: {
+            email: data.email,
+            password: data.password,
+            gauth: data.gAuthSecret,
+            proxyIp: data.proxyIp,
+            proxyPort: data.proxyPort,
+            proxyLogin: data.proxyLogin,
+            proxyPass: data.proxyPass,
+          },
+        });
+        console.log(result);
+        return result.data.insert_accounts;
+      }
     } catch (err) {
       console.log('ERROR:', err);
     }
@@ -310,12 +297,12 @@ class ApiService {
     }
   };
 
-  deleteAccount = async (email) => {
+  deleteAccount = async (id) => {
     try {
       const result = await this.client.mutate({
         mutation: DELETE_ACCOUNT,
         variables: {
-          email,
+          id,
         },
       });
       console.log(result);

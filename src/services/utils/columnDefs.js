@@ -1,6 +1,6 @@
 const columnDefsAccounts = [
   {
-    field: '_id',
+    field: 'id',
     headerName: 'ID',
     editable: true,
     enableRowGroup: true,
@@ -23,18 +23,18 @@ const columnDefsAccounts = [
     },
   },
   {
-    field: 'activityStatus',
+    field: 'activity_status',
     headerName: 'Status',
     editable: true,
     enableRowGroup: true,
     valueGetter: (params) => {
-      return params.data.activityStatus;
+      return params.data.activity_status;
     },
     valueSetter: (params) => {
       var newVal = params.newValue;
-      var valueChanged = params.data.activityStatus !== newVal;
+      var valueChanged = params.data.activity_status !== newVal;
       if (valueChanged) {
-        params.data.activityStatus = newVal;
+        params.data.activity_status = newVal;
       }
       return valueChanged;
     },
@@ -171,13 +171,25 @@ const columnDefsAccounts = [
   //   enableRowGroup: true,
   // },
   {
-    field: 'shouldRun',
+    field: 'should_run',
     headerName: 'Should run',
     editable: true,
     enableRowGroup: true,
     cellRenderer: (params) => {
       return params.value.toString();
     },
+  },
+  {
+    field: 'proxy.host',
+    headerName: 'Proxy ip',
+    editable: true,
+    enableRowGroup: true,
+  },
+  {
+    field: 'proxy.port',
+    headerName: 'Proxy port',
+    editable: true,
+    enableRowGroup: true,
   },
   // {
   //   field: 'strategy_config',
