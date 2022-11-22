@@ -4,6 +4,7 @@ const columnDefsAccounts = [
     headerName: 'ID',
     editable: true,
     enableRowGroup: true,
+    checkboxSelection: true,
   },
   {
     field: 'email',
