@@ -64,7 +64,7 @@ const CREATE_ACCOUNT_WITH_PROXY = gql`
       objects: {
         email: $email
         password: $password
-        gauth: $gAuthSecret
+        gauth: $gauth
         proxy: {
           data: {
             host: $proxyIp
@@ -230,7 +230,7 @@ class ApiService {
           variables: {
             email: data.email,
             password: data.password,
-            gauth: data.gAuthSecret,
+            gauth: data.gauth,
             proxyId: proxies[0].id,
           },
         });
@@ -242,7 +242,7 @@ class ApiService {
           variables: {
             email: data.email,
             password: data.password,
-            gauth: data.gAuthSecret,
+            gauth: data.gauth,
             proxyIp: data.proxyIp,
             proxyPort: data.proxyPort,
             proxyLogin: data.proxyLogin,

@@ -59,7 +59,7 @@ export default function AddAccountModal(props) {
     const data = {
       email,
       password: pass,
-      gAuthSecret: gauth,
+      gauth,
       proxyIp,
       proxyPort,
       proxyLogin,

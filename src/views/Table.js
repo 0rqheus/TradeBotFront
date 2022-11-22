@@ -8,6 +8,7 @@ import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import { apiServiceCustomResolvers } from '../services/ApiCustomResolvers';
+const reader = new FileReader();
 
 export default class Table extends Component {
   state = {
@@ -65,9 +66,11 @@ export default class Table extends Component {
 
   async deleteAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    const idDeleted = selectedRows[0].id;
-    console.log(idDeleted);
-    await apiService.deleteAccount(idDeleted);
+    for (let i = 0; i < selectedRows.length; i++) {
+      let idDeleted = selectedRows[i].id;
+      console.log(idDeleted);
+      await apiService.deleteAccount(idDeleted);
+    }
   }
 
   async sendItToRabbit(id, email, status) {
@@ -126,6 +129,36 @@ export default class Table extends Component {
       // await apiService.updateAccountStatus(row._id, 'RESET');
       await this.sendItToRabbit(row._id, row.email, 'RESET');
     });
+  }
+
+  async downloadCSV(input) {
+    console.log(input);
+    const csv = input.target.files[0];
+    reader.readAsText(csv);
+    reader.onload = async (e) => {
+      let lines = e.target.result.split('\n');
+      let headers = lines[0].split(',');
+      for (let i = 1; i < lines.length; i++) {
+        let obj = {};
+        let currentline = lines[i].split(',');
+        for (let j = 0; j < headers.length; j++) {
+          headers[j] = headers[j].trim();
+          obj[headers[j]] = currentline[j]
+            .replace(/\"/g, '')
+            .replace(/\r/g, '');
+        }
+        let newObject = {
+          email: obj['Email'],
+          password: obj['Password'],
+          gauth: obj['Gauth'],
+          proxyIp: obj['ProxyHost'],
+          proxyPort: obj['ProxyPort'],
+          proxyLogin: obj['ProxyLogin'],
+          proxyPass: obj['ProxyPass'],
+        };
+        await apiService.createAccount(newObject);
+      }
+    };
   }
 
   async onCellValueChanged(event) {
@@ -251,6 +284,7 @@ export default class Table extends Component {
           >
             Reset
           </Button>
+          <input type="file" onChange={this.downloadCSV} />
         </div>
         <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} />
         <div className="ag-theme-alpine" style={{ height: 800, width: '100%' }}>
