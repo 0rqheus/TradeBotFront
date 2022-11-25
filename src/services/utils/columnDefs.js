@@ -181,6 +181,12 @@ const columnDefsAccounts = [
     },
   },
   {
+    field: 'balance',
+    headerName: 'Balance',
+    editable: true,
+    enableRowGroup: true,
+  },
+  {
     field: 'proxy.host',
     headerName: 'Proxy ip',
     editable: true,
