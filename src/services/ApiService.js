@@ -10,6 +10,7 @@ const GET_ACCOUNTS = gql`
       balance
       gauth
       should_run
+      platform
       proxy {
         host
         port
@@ -100,6 +101,7 @@ const SUBSCRIBE_ACCOUNTS = gql`
       balance
       gauth
       should_run
+      platform
       proxy {
         host
         port

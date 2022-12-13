@@ -198,6 +198,12 @@ const columnDefsAccounts = [
     editable: true,
     enableRowGroup: true,
   },
+  {
+    field: 'platform',
+    headerName: 'Platform',
+    editable: true,
+    enableRowGroup: true,
+  },
   // {
   //   field: 'strategy_config',
   //   headerName: 'Strategy',
