@@ -4,6 +4,9 @@ import { apiService, client, SUBSCRIBE_ACCOUNTS } from '../services/ApiService';
 import Button from 'react-bootstrap/Button';
 import AddAccountModal from './modals/AddAccountModal';
 import columnDefsAccounts from '../services/utils/columnDefs';
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogTitle from '@mui/material/DialogTitle';
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
@@ -12,6 +15,7 @@ const reader = new FileReader();
 
 export default class Table extends Component {
   state = {
+    openModal: false,
     selectedRow: false,
     modalShow: false,
     gridRef: null,
@@ -175,6 +179,25 @@ export default class Table extends Component {
     }
   }
 
+  handleClickOpen = () => {
+    this.setState(() => {
+      return { openModal: true };
+    });
+  };
+
+  handleClose = () => {
+    this.setState(() => {
+      return { openModal: false };
+    });
+  };
+
+  handleCloseAndDelete = async () => {
+    await this.deleteAccount()
+    this.setState(() => {
+      return { openModal: false };
+    });
+  };
+
   async componentDidMount() {
     const adminSecret = localStorage.getItem('adminSecret');
     if (!adminSecret) window.location.href = '/';
@@ -218,7 +241,8 @@ export default class Table extends Component {
             disabled={!this.state.selectedRow}
             className="addButton"
             onClick={() => {
-              this.deleteAccount();
+              // this.deleteAccount();
+              this.handleClickOpen()
             }}
             variant="danger"
           >
@@ -284,6 +308,22 @@ export default class Table extends Component {
           >
             Reset
           </Button>
+          <Dialog
+            open={this.state.openModal}
+            onClose={this.handleClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              {"Are you sure you want to delete these accounts?"}
+            </DialogTitle>
+            <DialogActions>
+              <Button variant="primary" onClick={this.handleClose}>Cancel</Button>
+              <Button variant="danger" onClick={this.handleCloseAndDelete}>
+                Delete
+              </Button>
+            </DialogActions>
+          </Dialog>
           <input type="file" onChange={this.downloadCSV} />
         </div>
         <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} />
