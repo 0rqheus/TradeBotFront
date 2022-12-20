@@ -95,6 +95,16 @@ export default class Table extends Component {
     });
   }
 
+  async startAccountWithPause() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    for(let i = 0; i < selectedRows.length; i++) {
+      if(i % 5 == 0 && i > 0) {
+        await new Promise(r => setTimeout(r, 10000));
+      }
+      await this.sendItToRabbit(selectedRows[i].id, selectedRows[i].email, 'START');
+    }
+  }
+
   async stopAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     selectedRows.forEach(async (row) => {
@@ -258,6 +268,16 @@ export default class Table extends Component {
             variant="warning"
           >
             Start
+          </Button>
+          <Button
+            disabled={!this.state.selectedRow}
+            className="addButton"
+            onClick={() => {
+              this.startAccountWithPause();
+            }}
+            variant="warning"
+          >
+            Start with pause
           </Button>
           <Button
             disabled={!this.state.selectedRow}
