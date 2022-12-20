@@ -8,6 +8,7 @@ export default function AddAccountModal(props) {
   const [email = '', setEmail] = useState();
   const [pass = '', setPass] = useState();
   const [gauth = '', setGauth] = useState();
+  const [proxyId = '', setProxyId] = useState();
   const [proxyIp = '', setProxyIp] = useState();
   const [proxyPort = '', setProxyPort] = useState();
   const [proxyLogin = '', setProxyLogin] = useState();
@@ -24,6 +25,10 @@ export default function AddAccountModal(props) {
 
   const handleInputGauth = (event) => {
     setGauth(event.target.value);
+  };
+
+  const handleInputProxyId = (event) => {
+    setProxyId(event.target.value);
   };
 
   const handleInputProxyIp = (event) => {
@@ -60,6 +65,7 @@ export default function AddAccountModal(props) {
       email,
       password: pass,
       gauth,
+      proxyId,
       proxyIp,
       proxyPort,
       proxyLogin,
@@ -105,6 +111,14 @@ export default function AddAccountModal(props) {
               value={gauth}
               onChange={handleInputGauth}
               placeholder="GAUTH"
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Control
+              type="text"
+              value={proxyId}
+              onChange={handleInputProxyId}
+              placeholder="Proxy id"
             />
           </Form.Group>
           <Form.Group className="mb-3">
