@@ -51,6 +51,14 @@ const GET_PROXIES_BY_HOST_PORT = gql`
   }
 `;
 
+const GET_PROXY_BY_PK = gql`
+  query ProxyByPk($id: Int!) {
+    proxies_by_pk(id: $id) {
+      id
+    }
+  }
+`
+
 const CREATE_ACCOUNT_WITH_PROXY = gql`
   mutation CreateAccount(
     $email: String
@@ -218,26 +226,43 @@ class ApiService {
     }
   };
 
+  getProxyByPk = async (id) => {
+    try {
+      const result = await this.client.query({
+        query: GET_PROXY_BY_PK,
+        variables: {
+          id
+        },
+      });
+      return result.data.proxies_by_pk;
+    } catch (err) {
+      console.log('ERROR:', err);
+    }
+  };
+
   createAccount = async (data) => {
     try {
-      const proxies = await this.getProxiesByHostPort(
-        data.proxyIp,
-        data.proxyPort
-      );
-      console.log(proxies);
-      console.log(data);
-      if (proxies.length > 0) {
-        const result = await this.client.mutate({
-          mutation: CONNECT_ACCOUNT_TO_PROXY,
-          variables: {
-            email: data.email,
-            password: data.password,
-            gauth: data.gauth,
-            proxyId: proxies[0].id,
-          },
-        });
-        console.log(result);
-        return result.data.insert_accounts;
+      // let proxies = await this.getProxiesByHostPort(
+      //   data.proxyIp,
+      //   data.proxyPort
+      // );
+      if(data.proxyId) {
+        let proxy = await this.getProxyByPk(data.proxyId)
+        if(proxy) {
+          const result = await this.client.mutate({
+            mutation: CONNECT_ACCOUNT_TO_PROXY,
+            variables: {
+              email: data.email,
+              password: data.password,
+              gauth: data.gauth,
+              proxyId: data.proxyId
+            },
+          });
+          console.log(result);
+          return result.data.insert_accounts;
+        } else {
+          throw new Error('no such proxy id')
+        }
       } else {
         const result = await this.client.mutate({
           mutation: CREATE_ACCOUNT_WITH_PROXY,
@@ -254,6 +279,36 @@ class ApiService {
         console.log(result);
         return result.data.insert_accounts;
       }
+      // console.log(proxies);
+      // console.log(data);
+      // if (proxies.length > 0) {
+      //   const result = await this.client.mutate({
+      //     mutation: CONNECT_ACCOUNT_TO_PROXY,
+      //     variables: {
+      //       email: data.email,
+      //       password: data.password,
+      //       gauth: data.gauth,
+      //       proxyId: proxies[0].id,
+      //     },
+      //   });
+      //   console.log(result);
+      //   return result.data.insert_accounts;
+      // } else {
+      //   const result = await this.client.mutate({
+      //     mutation: CREATE_ACCOUNT_WITH_PROXY,
+      //     variables: {
+      //       email: data.email,
+      //       password: data.password,
+      //       gauth: data.gauth,
+      //       proxyIp: data.proxyIp,
+      //       proxyPort: data.proxyPort,
+      //       proxyLogin: data.proxyLogin,
+      //       proxyPass: data.proxyPass,
+      //     },
+      //   });
+      //   console.log(result);
+      //   return result.data.insert_accounts;
+      // }
     } catch (err) {
       console.log('ERROR:', err);
     }

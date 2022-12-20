@@ -155,6 +155,7 @@ export default class Table extends Component {
           email: obj['Email'],
           password: obj['Password'],
           gauth: obj['Gauth'],
+          proxyId: obj['ProxyId'],
           proxyIp: obj['ProxyHost'],
           proxyPort: obj['ProxyPort'],
           proxyLogin: obj['ProxyLogin'],
