@@ -212,23 +212,23 @@ export default class Table extends Component {
   async componentDidMount() {
     const adminSecret = localStorage.getItem('adminSecret');
     if (!adminSecret) window.location.href = '/';
-    const changeRowData = (data) => {
-      this.setState(() => {
-        return { rowData: data };
-      });
-    };
+    // const changeRowData = (data) => {
+    //   this.setState(() => {
+    //     return { rowData: data };
+    //   });
+    // };
 
-    const observer = client.subscribe({
-      query: SUBSCRIBE_ACCOUNTS,
-    });
-    observer.subscribe({
-      next(data) {
-        changeRowData(data.data.accounts);
-      },
-      error(err) {
-        console.log(err);
-      },
-    });
+    // const observer = client.subscribe({
+    //   query: SUBSCRIBE_ACCOUNTS,
+    // });
+    // observer.subscribe({
+    //   next(data) {
+    //     changeRowData(data.data.accounts);
+    //   },
+    //   error(err) {
+    //     console.log(err);
+    //   },
+    // });
     const accounts = await apiService.getAccounts();
     console.log(accounts);
     // console.log(accounts);
