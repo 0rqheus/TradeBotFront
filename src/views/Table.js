@@ -99,7 +99,7 @@ export default class Table extends Component {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     for(let i = 0; i < selectedRows.length; i++) {
       if(i % 5 == 0 && i > 0) {
-        await new Promise(r => setTimeout(r, 10000));
+        await new Promise(r => setTimeout(r, 20000));
       }
       await this.sendItToRabbit(selectedRows[i].id, selectedRows[i].email, 'START');
     }
