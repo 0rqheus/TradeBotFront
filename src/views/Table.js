@@ -97,14 +97,6 @@ export default class Table extends Component {
     await apiServiceCustomResolvers.sendCommand(toSend);
   }
 
-  async startAccount() {
-    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    selectedRows.forEach(async (row) => {
-      // await apiService.updateAccountStatus(row._id, 'START');
-      await this.sendItToRabbit(row.id, row.email, 'START');
-    });
-  }
-
   async startAccountWithPause() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     for (let i = 0; i < selectedRows.length; i++) {
@@ -285,16 +277,6 @@ export default class Table extends Component {
                 variant="danger"
               >
                 Delete
-              </Button>
-              <Button
-                disabled={!this.state.selectedRow}
-                className="addButton"
-                onClick={() => {
-                  this.startAccount();
-                }}
-                variant="warning"
-              >
-                Start
               </Button>
               <Button
                 disabled={!this.state.selectedRow}
