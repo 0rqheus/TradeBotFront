@@ -14,6 +14,8 @@ import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import { apiServiceCustomResolvers } from '../services/ApiCustomResolvers';
+import apiServiceArchive from '../services/ApiServiceArchive';
+import accountToBanned from '../services/utils/accountToBanned';
 const reader = new FileReader();
 
 export default class Table extends Component {
@@ -74,11 +76,16 @@ export default class Table extends Component {
 
   async deleteAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    const idsToDelete = [];
+    const bannedAccsToCreate = [];
     for (let i = 0; i < selectedRows.length; i++) {
       let idDeleted = selectedRows[i].id;
-      console.log(idDeleted);
-      await apiService.deleteAccount(idDeleted);
+      idsToDelete.push(idDeleted);
+      bannedAccsToCreate.push(accountToBanned(selectedRows[i]));
+      // await apiService.deleteAccount(idDeleted);
     }
+    await apiServiceArchive.createBannedAccounts(bannedAccsToCreate);
+    await apiService.deleteAccounts(idsToDelete);
   }
 
   async sendItToRabbit(id, email, status) {

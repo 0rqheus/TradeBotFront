@@ -9,6 +9,7 @@ export default class Auth extends Component {
     id: '',
     userId: '',
     secret: '',
+    archiveSecret: '',
     rabbitUrl: '',
   };
 
@@ -16,12 +17,19 @@ export default class Auth extends Component {
     super(props);
     this.login = this.login.bind(this);
     this.handleInputSecret = this.handleInputSecret.bind(this);
+    this.handleInputArchiveSecret = this.handleInputArchiveSecret.bind(this);
     this.handleInputRabbit = this.handleInputRabbit.bind(this);
   }
 
   async handleInputSecret(event) {
     this.setState(() => {
       return { secret: event.target.value };
+    });
+  }
+
+  async handleInputArchiveSecret(event) {
+    this.setState(() => {
+      return { archiveSecret: event.target.value };
     });
   }
 
@@ -34,6 +42,7 @@ export default class Auth extends Component {
   async login(event) {
     event.preventDefault();
     localStorage.setItem('adminSecret', this.state.secret);
+    localStorage.setItem('adminArchiveSecret', this.state.archiveSecret);
     localStorage.setItem('rabbitUrl', this.state.rabbitUrl);
     window.location.href = '/main';
   }
@@ -58,6 +67,14 @@ export default class Auth extends Component {
             />
           </Form.Group>
           <Form.Group className="mb-3">
+            <Form.Label>Enter archive secret</Form.Label>
+            <Form.Control
+              type="text"
+              onChange={this.handleInputArchiveSecret}
+              value={this.state.archiveSecret}
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
             <Form.Label>Enter rabbit URL</Form.Label>
             <Form.Control
               type="text"
@@ -65,6 +82,7 @@ export default class Auth extends Component {
               value={this.state.rabbitUrl}
             />
           </Form.Group>
+
           <div className="d-grid gap-2">
             <Button className="modalButton" variant="primary" type="submit">
               Login

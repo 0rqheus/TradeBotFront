@@ -8,12 +8,16 @@ import { getMainDefinition } from '@apollo/client/utilities';
 import fetch from 'cross-fetch';
 import { WebSocketLink } from '@apollo/client/link/ws';
 
-function getToken() {
+function getMainToken() {
   return localStorage.getItem('adminSecret');
 }
 
-function getHttpLink(httpURL) {
-  const token = getToken();
+function getArchiveToken() {
+  return localStorage.getItem('adminArchiveSecret');
+}
+
+function getHttpLink(httpURL, service) {
+  const token = service == 'MAIN' ? getMainToken() : getArchiveToken();
   return new HttpLink({
     uri: httpURL,
     fetch,
@@ -21,8 +25,8 @@ function getHttpLink(httpURL) {
   });
 }
 
-function getWssLink(wsUrl) {
-  const token = getToken();
+function getWssLink(wsUrl, service) {
+  const token = service == 'MAIN' ? getMainToken() : getArchiveToken();
   return new WebSocketLink({
     uri: wsUrl,
     options: {
@@ -52,13 +56,13 @@ function getSplittedLink(httpLink, wsLink) {
   return splitLink;
 }
 
-export default function makeApolloClient(httpURL, wsURL, token = '') {
-  const httpLink = getHttpLink(httpURL, token);
+export default function makeApolloClient(httpURL, wsURL, service) {
+  const httpLink = getHttpLink(httpURL, service);
   let splitLink = '';
   if (wsURL == null) {
     splitLink = httpLink;
   } else {
-    const wssLink = getWssLink(wsURL);
+    const wssLink = getWssLink(wsURL, service);
     splitLink = getSplittedLink(httpLink, wssLink);
   }
   const client = new ApolloClient({
