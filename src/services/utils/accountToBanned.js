@@ -1,5 +1,4 @@
 export default function accountToBanned(account) {
-  console.log(account);
   const newBannedAccount = {
     id: account.id,
     email: account.email,
@@ -14,6 +13,5 @@ export default function accountToBanned(account) {
     platform: account.platform,
     proxy: account.proxy.host + ':' + account.proxy.port,
   };
-  console.log(newBannedAccount);
   return newBannedAccount;
 }
