@@ -3,6 +3,9 @@ import { AgGridReact } from 'ag-grid-react';
 import { apiService, client, SUBSCRIBE_ACCOUNTS } from '../services/ApiService';
 import Button from 'react-bootstrap/Button';
 import AddAccountModal from './modals/AddAccountModal';
+import Form from 'react-bootstrap/Form';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 import columnDefsAccounts from '../services/utils/columnDefs';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -15,6 +18,7 @@ const reader = new FileReader();
 
 export default class Table extends Component {
   state = {
+    secondsWaitTillStartAccs: 0,
     openModal: false,
     selectedRow: false,
     modalShow: false,
@@ -83,7 +87,6 @@ export default class Table extends Component {
       email: email,
       type: status,
     };
-    console.log(toSend);
     await apiServiceCustomResolvers.sendCommand(toSend);
   }
 
@@ -97,11 +100,17 @@ export default class Table extends Component {
 
   async startAccountWithPause() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    for(let i = 0; i < selectedRows.length; i++) {
-      if(i % 5 == 0 && i > 0) {
-        await new Promise(r => setTimeout(r, 20000));
+    for (let i = 0; i < selectedRows.length; i++) {
+      if (i % 5 == 0 && i > 0) {
+        await new Promise((r) =>
+          setTimeout(r, this.state.secondsWaitTillStartAccs * 1000)
+        );
       }
-      await this.sendItToRabbit(selectedRows[i].id, selectedRows[i].email, 'START');
+      await this.sendItToRabbit(
+        selectedRows[i].id,
+        selectedRows[i].email,
+        'START'
+      );
     }
   }
 
@@ -146,7 +155,6 @@ export default class Table extends Component {
   }
 
   async downloadCSV(input) {
-    console.log(input);
     const csv = input.target.files[0];
     reader.readAsText(csv);
     reader.onload = async (e) => {
@@ -203,15 +211,25 @@ export default class Table extends Component {
   };
 
   handleCloseAndDelete = async () => {
-    await this.deleteAccount()
+    await this.deleteAccount();
     this.setState(() => {
       return { openModal: false };
     });
   };
 
+  changeSecondsBetweenAccsStart = async (seconds) => {
+    this.setState(() => {
+      return { secondsWaitTillStartAccs: seconds };
+    });
+    localStorage.setItem('secondsBetweenAccsStart', seconds);
+  };
+
   async componentDidMount() {
     const adminSecret = localStorage.getItem('adminSecret');
     if (!adminSecret) window.location.href = '/';
+    this.changeSecondsBetweenAccsStart(
+      localStorage.getItem('secondsBetweenAccsStart') || 10
+    );
     // const changeRowData = (data) => {
     //   this.setState(() => {
     //     return { rowData: data };
@@ -239,113 +257,132 @@ export default class Table extends Component {
     return (
       <div>
         <div className="buttons">
-          <Button
-            className="addButton"
-            onClick={() => {
-              this.openModal();
-            }}
-            variant="primary"
-          >
-            Добавить аккаунт
-          </Button>
-          <Button
-            disabled={!this.state.selectedRow}
-            className="addButton"
-            onClick={() => {
-              // this.deleteAccount();
-              this.handleClickOpen()
-            }}
-            variant="danger"
-          >
-            Удалить аккаунт
-          </Button>
-          <Button
-            disabled={!this.state.selectedRow}
-            className="addButton"
-            onClick={() => {
-              this.startAccount();
-            }}
-            variant="warning"
-          >
-            Start
-          </Button>
-          <Button
-            disabled={!this.state.selectedRow}
-            className="addButton"
-            onClick={() => {
-              this.startAccountWithPause();
-            }}
-            variant="warning"
-          >
-            Start with pause
-          </Button>
-          <Button
-            disabled={!this.state.selectedRow}
-            className="addButton"
-            onClick={() => {
-              this.stopAccount();
-            }}
-            variant="warning"
-          >
-            Stop
-          </Button>
-          <Button
-            disabled={!this.state.selectedRow}
-            className="addButton"
-            onClick={() => {
-              this.pauseAccount();
-            }}
-            variant="warning"
-          >
-            Pause
-          </Button>
-          <Button
-            disabled={!this.state.selectedRow}
-            className="addButton"
-            onClick={() => {
-              this.unpauseAccount();
-            }}
-            variant="warning"
-          >
-            Unpause
-          </Button>
-          <Button
-            disabled={!this.state.selectedRow}
-            className="addButton"
-            onClick={() => {
-              this.blockAccount();
-            }}
-            variant="warning"
-          >
-            Block
-          </Button>
-          <Button
-            disabled={!this.state.selectedRow}
-            className="addButton"
-            onClick={() => {
-              this.resetAccount();
-            }}
-            variant="warning"
-          >
-            Reset
-          </Button>
-          <Dialog
-            open={this.state.openModal}
-            onClose={this.handleClose}
-            aria-labelledby="alert-dialog-title"
-            aria-describedby="alert-dialog-description"
-          >
-            <DialogTitle id="alert-dialog-title">
-              {"Are you sure you want to delete these accounts?"}
-            </DialogTitle>
-            <DialogActions>
-              <Button variant="primary" onClick={this.handleClose}>Cancel</Button>
-              <Button variant="danger" onClick={this.handleCloseAndDelete}>
+          <Row>
+            <Col xs={7}>
+              <Button
+                className="addButton"
+                onClick={() => {
+                  this.openModal();
+                }}
+                variant="primary"
+              >
+                Create
+              </Button>
+              <Button
+                disabled={!this.state.selectedRow}
+                className="addButton"
+                onClick={() => {
+                  // this.deleteAccount();
+                  this.handleClickOpen();
+                }}
+                variant="danger"
+              >
                 Delete
               </Button>
-            </DialogActions>
-          </Dialog>
-          <input type="file" onChange={this.downloadCSV} />
+              <Button
+                disabled={!this.state.selectedRow}
+                className="addButton"
+                onClick={() => {
+                  this.startAccount();
+                }}
+                variant="warning"
+              >
+                Start
+              </Button>
+              <Button
+                disabled={!this.state.selectedRow}
+                className="addButton"
+                onClick={() => {
+                  this.startAccountWithPause();
+                }}
+                variant="warning"
+              >
+                Start with pause
+              </Button>
+              <Button
+                disabled={!this.state.selectedRow}
+                className="addButton"
+                onClick={() => {
+                  this.stopAccount();
+                }}
+                variant="warning"
+              >
+                Stop
+              </Button>
+              <Button
+                disabled={!this.state.selectedRow}
+                className="addButton"
+                onClick={() => {
+                  this.pauseAccount();
+                }}
+                variant="warning"
+              >
+                Pause
+              </Button>
+              <Button
+                disabled={!this.state.selectedRow}
+                className="addButton"
+                onClick={() => {
+                  this.unpauseAccount();
+                }}
+                variant="warning"
+              >
+                Unpause
+              </Button>
+              <Button
+                disabled={!this.state.selectedRow}
+                className="addButton"
+                onClick={() => {
+                  this.blockAccount();
+                }}
+                variant="warning"
+              >
+                Block
+              </Button>
+              <Button
+                disabled={!this.state.selectedRow}
+                className="addButton"
+                onClick={() => {
+                  this.resetAccount();
+                }}
+                variant="warning"
+              >
+                Reset
+              </Button>
+            </Col>
+            <Col xs={3}>
+              <input
+                className="input"
+                type="number"
+                placeholder="Seconds before accs start"
+                value={this.state.secondsWaitTillStartAccs}
+                onChange={(event) => {
+                  this.changeSecondsBetweenAccsStart(event.target.value);
+                }}
+              />
+            </Col>
+            <Col>
+              <Dialog
+                open={this.state.openModal}
+                onClose={this.handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  {'Are you sure you want to delete these accounts?'}
+                </DialogTitle>
+                <DialogActions>
+                  <Button variant="primary" onClick={this.handleClose}>
+                    Cancel
+                  </Button>
+                  <Button variant="danger" onClick={this.handleCloseAndDelete}>
+                    Delete
+                  </Button>
+                </DialogActions>
+              </Dialog>
+              <input type="file" onChange={this.downloadCSV} />
+            </Col>
+          </Row>
         </div>
         <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} />
         <div className="ag-theme-alpine" style={{ height: 800, width: '100%' }}>
