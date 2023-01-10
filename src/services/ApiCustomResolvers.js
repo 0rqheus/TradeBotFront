@@ -2,8 +2,14 @@ import makeApolloClient from './utils/makeApolloClient';
 import gql from 'graphql-tag';
 
 const SEND_COMMAND = gql`
-  mutation SendCommant($payload: RabbitPayload!) {
+  mutation SendCommand($payload: RabbitPayload!) {
     sendCommand(payload: $payload)
+  }
+`;
+
+const SEND_HTTP_COMMAND = gql`
+  mutation SendCommandHttp($payload: RabbitPayload!) {
+    sendCommandHttp(payload: $payload)
   }
 `;
 
@@ -18,6 +24,21 @@ class ApiServiceCustomerResolvers {
     try {
       const result = await this.client.mutate({
         mutation: SEND_COMMAND,
+        variables: {
+          payload,
+        },
+      });
+      console.log(result);
+      return result.data;
+    } catch (err) {
+      console.log('ERROR:', err);
+    }
+  };
+
+  sendHttpCommand = async (payload) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: SEND_HTTP_COMMAND,
         variables: {
           payload,
         },

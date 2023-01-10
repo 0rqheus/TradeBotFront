@@ -94,7 +94,7 @@ export default class Table extends Component {
       email: email,
       type: status,
     };
-    await apiServiceCustomResolvers.sendCommand(toSend);
+    await apiServiceCustomResolvers.sendHttpCommand(toSend);
   }
 
   async startAccountWithPause() {
