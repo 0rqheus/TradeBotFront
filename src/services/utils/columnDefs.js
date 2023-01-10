@@ -196,7 +196,7 @@ const columnDefsAccounts = [
     field: 'proxy.port',
     headerName: 'Proxy port',
     editable: true,
-    enableRowGroup: true,
+    enableRowGroup: false,
   },
   {
     field: 'platform',
