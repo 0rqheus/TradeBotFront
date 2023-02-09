@@ -105,11 +105,12 @@ export default class Table extends Component {
           setTimeout(r, this.state.secondsWaitTillStartAccs * 1000)
         );
       }
-      await this.sendItToRabbit(
-        selectedRows[i].id,
-        selectedRows[i].email,
-        'START'
-      );
+      console.log(selectedRows[i].id)
+      // await this.sendItToRabbit(
+      //   selectedRows[i].id,
+      //   selectedRows[i].email,
+      //   'START'
+      // );
     }
   }
 
@@ -229,27 +230,30 @@ export default class Table extends Component {
     this.changeSecondsBetweenAccsStart(
       localStorage.getItem('secondsBetweenAccsStart') || 10
     );
-    // const changeRowData = (data) => {
-    //   this.setState(() => {
-    //     return { rowData: data };
-    //   });
-    // };
+    const changeRowData = (data) => {
+      this.setState(() => {
+        return { rowData: data };
+      });
+    };
 
-    // const observer = client.subscribe({
-    //   query: SUBSCRIBE_ACCOUNTS,
-    // });
-    // observer.subscribe({
-    //   next(data) {
-    //     changeRowData(data.data.accounts);
-    //   },
-    //   error(err) {
-    //     console.log(err);
-    //   },
-    // });
+    const observer = client.subscribe({
+      query: SUBSCRIBE_ACCOUNTS,
+    });
+    observer.subscribe({
+      next(data) {
+        changeRowData(data.data.accounts);
+      },
+      error(err) {
+        console.log(err);
+      },
+    });
     const accounts = await apiService.getAccounts();
     console.log(accounts);
-    // console.log(accounts);
     this.changeRowData(accounts);
+  }
+
+  getRowId(params) {
+    return params.data.id;
   }
 
   render() {
@@ -378,6 +382,8 @@ export default class Table extends Component {
           <AgGridReact
             rowData={this.state.rowData}
             ref={this.state.gridRef}
+            immutableData={true}
+            getRowId={this.getRowId}
             columnDefs={this.state.columnDefs}
             defaultColDef={this.state.defaultColDef}
             rowGroupPanelShow={'always'}
