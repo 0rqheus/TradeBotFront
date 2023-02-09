@@ -105,12 +105,12 @@ export default class Table extends Component {
           setTimeout(r, this.state.secondsWaitTillStartAccs * 1000)
         );
       }
-      console.log(selectedRows[i].id)
-      // await this.sendItToRabbit(
-      //   selectedRows[i].id,
-      //   selectedRows[i].email,
-      //   'START'
-      // );
+      // console.log(selectedRows[i].id)
+      await this.sendItToRabbit(
+        selectedRows[i].id,
+        selectedRows[i].email,
+        'START'
+      );
     }
   }
 
