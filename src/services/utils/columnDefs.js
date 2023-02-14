@@ -181,8 +181,8 @@ const columnDefsAccounts = [
     },
   },
   {
-    field: 'balance',
-    headerName: 'Balance',
+    field: 'available_balance',
+    headerName: 'Available Balance',
     editable: true,
     enableRowGroup: true,
   },

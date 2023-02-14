@@ -7,7 +7,7 @@ const GET_ACCOUNTS = gql`
       id
       email
       activity_status
-      balance
+      available_balance
       gauth
       should_run
       platform
@@ -107,7 +107,7 @@ const SUBSCRIBE_ACCOUNTS = gql`
       id
       email
       activity_status
-      balance
+      available_balance
       gauth
       should_run
       platform
