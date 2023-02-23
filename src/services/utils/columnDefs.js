@@ -181,8 +181,22 @@ const columnDefsAccounts = [
     },
   },
   {
+    field: 'freezed_balance',
+    headerName: 'Freezed Balance',
+    editable: true,
+    enableRowGroup: true,
+  },
+  {
     field: 'available_balance',
     headerName: 'Available Balance',
+    editable: true,
+    enableRowGroup: true,
+  },
+  {
+    headerName: 'Total balance',
+    valueGetter: function sumField(params) {
+      return params.data.freezed_balance + params.data.available_balance
+    },
     editable: true,
     enableRowGroup: true,
   },

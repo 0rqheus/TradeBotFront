@@ -35,6 +35,10 @@ export default class Table extends Component {
       filter: true,
     },
 
+    total_freezed_balance: 0,
+    total_available_balance: 0,
+    total_balance: 0,
+
     autoGroupColumnDef: {
       width: 250,
     },
@@ -224,13 +228,36 @@ export default class Table extends Component {
     localStorage.setItem('secondsBetweenAccsStart', seconds);
   };
 
+  changeBalances = async (accounts) => {
+    let total_freezed_balance = 0
+    let total_available_balance = 0
+    
+    accounts.forEach(account => {
+      total_freezed_balance += account.freezed_balance
+      total_available_balance += account.available_balance
+    });
+
+    const total_balance = total_freezed_balance + total_available_balance
+
+    this.setState(() => {
+      return { total_freezed_balance };
+    });
+    this.setState(() => {
+      return { total_available_balance };
+    });
+    this.setState(() => {
+      return { total_balance };
+    });
+  }
+
   async componentDidMount() {
     const adminSecret = localStorage.getItem('adminSecret');
     if (!adminSecret) window.location.href = '/';
     this.changeSecondsBetweenAccsStart(
       localStorage.getItem('secondsBetweenAccsStart') || 10
     );
-    const changeRowData = (data) => {
+    const changeRowData = async (data) => {
+      await this.changeBalances(data)
       this.setState(() => {
         return { rowData: data };
       });
@@ -261,7 +288,7 @@ export default class Table extends Component {
       <div>
         <div className="buttons">
           <Row>
-            <Col xs={7}>
+            <Col xs={6}>
               <Button
                 className="addButton"
                 onClick={() => {
@@ -343,7 +370,7 @@ export default class Table extends Component {
                 Reset
               </Button>
             </Col>
-            <Col xs={3}>
+            <Col xs={2}>
               <input
                 className="input"
                 type="number"
@@ -353,6 +380,11 @@ export default class Table extends Component {
                   this.changeSecondsBetweenAccsStart(event.target.value);
                 }}
               />
+            </Col>
+            <Col xs={2}>
+              <div>Available: {this.state.total_available_balance}</div>
+              <div>Freezed: {this.state.total_freezed_balance}</div>
+              <div>Total: {this.state.total_balance}</div>
             </Col>
             <Col>
               <Dialog
