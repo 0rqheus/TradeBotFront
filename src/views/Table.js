@@ -382,9 +382,9 @@ export default class Table extends Component {
               />
             </Col>
             <Col xs={2}>
-              <div>Available: {this.state.total_available_balance}</div>
-              <div>Freezed: {this.state.total_freezed_balance}</div>
-              <div>Total: {this.state.total_balance}</div>
+              <div><b>Available:</b> {this.state.total_available_balance}</div>
+              <div><b>Freezed:</b> {this.state.total_freezed_balance}</div>
+              <div><b>Total:</b> {this.state.total_balance}</div>
             </Col>
             <Col>
               <Dialog
