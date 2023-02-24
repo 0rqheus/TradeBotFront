@@ -78,6 +78,10 @@ export default class Table extends Component {
     });
   };
 
+  onFilterChanged = () => {
+    this.changeBalances()
+  }
+
   async deleteAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     const idsToDelete = [];
@@ -228,11 +232,14 @@ export default class Table extends Component {
     localStorage.setItem('secondsBetweenAccsStart', seconds);
   };
 
-  changeBalances = async (accounts) => {
+  changeBalances = async () => {
+    const accountsAfterFilter = []
+    this.state.gridRef.current.api.forEachNodeAfterFilter(node => accountsAfterFilter.push(node.data))
+
     let total_freezed_balance = 0
     let total_available_balance = 0
     
-    accounts.forEach(account => {
+    accountsAfterFilter.forEach(account => {
       total_freezed_balance += account.freezed_balance
       total_available_balance += account.available_balance
     });
@@ -257,10 +264,10 @@ export default class Table extends Component {
       localStorage.getItem('secondsBetweenAccsStart') || 10
     );
     const changeRowData = async (data) => {
-      await this.changeBalances(data)
       this.setState(() => {
         return { rowData: data };
       });
+      await this.changeBalances()
     };
 
     const observer = client.subscribe({
@@ -427,6 +434,7 @@ export default class Table extends Component {
             onCellValueChanged={this.onCellValueChanged}
             onSelectionChanged={this.onSelectionChanged}
             animateRows={true}
+            onFilterChanged={this.onFilterChanged}
           ></AgGridReact>
         </div>
       </div>
