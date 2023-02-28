@@ -13,6 +13,8 @@ const GET_ACCOUNTS = gql`
       should_run
       platform
       password
+      searchable
+      fightable
       proxy {
         host
         port
@@ -20,6 +22,14 @@ const GET_ACCOUNTS = gql`
     }
   }
 `;
+
+const UPDATE_ACCOUNT = gql`
+  mutation MyMutation7($id: Int!, $_set: accounts_set_input!) {
+    update_accounts_by_pk(pk_columns: {id: $id}, _set: $_set) {
+      id
+    }
+  }
+`
 
 const CONNECT_ACCOUNT_TO_PROXY = gql`
   mutation CreateAccount(
@@ -114,6 +124,8 @@ const SUBSCRIBE_ACCOUNTS = gql`
       should_run
       platform
       password
+      searchable
+      fightable
       proxy {
         host
         port
@@ -224,6 +236,23 @@ class ApiService {
       console.log('ERROR createAccount:', err);
     }
   };
+
+  updateAccount = async (account) => {
+    try {
+      delete account.__typename
+      delete account.proxy
+      const result = await this.client.mutate({
+        mutation: UPDATE_ACCOUNT,
+        variables: {
+          id: account.id,
+          _set: account
+        },
+      });
+      console.log(result);
+    } catch (err) {
+      console.log('ERROR updateAccount:', err);
+    }
+  }
 
   deleteAccount = async (id) => {
     try {

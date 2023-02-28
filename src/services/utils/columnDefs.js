@@ -218,12 +218,21 @@ const columnDefsAccounts = [
     editable: true,
     enableRowGroup: true,
   },
-  // {
-  //   field: 'strategy_config',
-  //   headerName: 'Strategy',
-  //   editable: true,
-  //   enableRowGroup: true,
-  // },
+  {
+    field: 'searchable',
+    headerName: 'Search',
+    editable: true,
+    enableRowGroup: true,
+  },
+  {
+    field: 'fightable',
+    headerName: 'Fight',
+    editable: true,
+    enableRowGroup: true,
+    cellRenderer: (params) => {
+      return params.value.toString();
+    },
+  },
 ];
 
 export default columnDefsAccounts;
