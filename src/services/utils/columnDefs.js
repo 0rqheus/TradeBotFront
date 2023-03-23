@@ -9,6 +9,7 @@ const columnDefsAccounts = [
   {
     field: 'email',
     headerName: 'Email',
+    filter: 'agTextColumnFilter',
     editable: true,
     enableRowGroup: true,
     valueGetter: (params) => {
@@ -26,6 +27,7 @@ const columnDefsAccounts = [
   {
     field: 'activity_status',
     headerName: 'Status',
+    filter: 'agTextColumnFilter',
     editable: true,
     enableRowGroup: true,
     valueGetter: (params) => {
@@ -183,12 +185,14 @@ const columnDefsAccounts = [
   {
     field: 'freezed_balance',
     headerName: 'Freezed Balance',
+    filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
   },
   {
     field: 'available_balance',
     headerName: 'Available Balance',
+    filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
   },
@@ -197,18 +201,21 @@ const columnDefsAccounts = [
     valueGetter: function sumField(params) {
       return params.data.freezed_balance + params.data.available_balance
     },
+    filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
   },
   {
     field: 'proxy.host',
     headerName: 'Proxy ip',
+    filter: 'agTextColumnFilter',
     editable: true,
     enableRowGroup: true,
   },
   {
     field: 'proxy.port',
     headerName: 'Proxy port',
+    filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: false,
   },
