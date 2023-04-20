@@ -13,8 +13,6 @@ const GET_ACCOUNTS = gql`
       should_run
       platform
       password
-      searchable
-      fightable
       proxy {
         host
         port
@@ -124,8 +122,6 @@ const SUBSCRIBE_ACCOUNTS = gql`
       should_run
       platform
       password
-      searchable
-      fightable
       proxy {
         host
         port
