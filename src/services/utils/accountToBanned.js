@@ -11,6 +11,7 @@ export default function accountToBanned(account) {
     transfer_list_count: account.transfer_list_count,
     has_urgent_task: account.has_urgent_task,
     platform: account.platform,
+    strategy_name: account.strategy_name,
     proxy: account.proxy.host + ':' + account.proxy.port,
   };
   return newBannedAccount;

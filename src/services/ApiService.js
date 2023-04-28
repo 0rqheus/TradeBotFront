@@ -13,6 +13,7 @@ const GET_ACCOUNTS = gql`
       should_run
       platform
       password
+      strategy_name
       proxy {
         host
         port
@@ -121,6 +122,7 @@ const SUBSCRIBE_ACCOUNTS = gql`
       gauth
       should_run
       platform
+      strategy_name
       password
       proxy {
         host

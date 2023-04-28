@@ -220,8 +220,8 @@ const columnDefsAccounts = [
     enableRowGroup: false,
   },
   {
-    field: 'platform',
-    headerName: 'Platform',
+    field: 'strategy_name',
+    headerName: 'Strategy',
     editable: true,
     enableRowGroup: true,
   }
