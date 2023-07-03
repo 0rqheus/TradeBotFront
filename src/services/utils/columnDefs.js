@@ -1,3 +1,5 @@
+const LOCALE_VALUE = "en";
+
 const columnDefsAccounts = [
   {
     field: 'id',
@@ -5,6 +7,8 @@ const columnDefsAccounts = [
     editable: true,
     enableRowGroup: true,
     checkboxSelection: true,
+    headerCheckboxSelection: true,
+    headerCheckboxSelectionFilteredOnly: true,
   },
   {
     field: 'email',
@@ -188,6 +192,7 @@ const columnDefsAccounts = [
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
+    valueFormatter: (param) => param.data.freezed_balance.toLocaleString(LOCALE_VALUE),
   },
   {
     field: 'available_balance',
@@ -195,6 +200,7 @@ const columnDefsAccounts = [
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
+    valueFormatter: (param) => param.data.available_balance.toLocaleString(LOCALE_VALUE),
   },
   {
     headerName: 'Total balance',
@@ -204,6 +210,7 @@ const columnDefsAccounts = [
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
+    valueFormatter: (param) => (param.data.freezed_balance + param.data.available_balance).toLocaleString(LOCALE_VALUE),
   },
   {
     field: 'proxy.host',

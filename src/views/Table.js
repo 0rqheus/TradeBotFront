@@ -72,8 +72,14 @@ export default class Table extends Component {
   }
 
   changeRowData(data) {
+    const rowData = data.map((d) => ({
+      ...d,
+      freezed_balance: d.freezed_balance.toLocaleString(this.state.localeValue),
+      available_balance: d.available_balance.toLocaleString(this.state.localeValue)
+    }));
+
     this.setState(() => {
-      return { rowData: data };
+      return { rowData };
     });
   }
 
