@@ -18,6 +18,8 @@ import apiServiceArchive from '../services/ApiServiceArchive';
 import accountToBanned from '../services/utils/accountToBanned';
 const reader = new FileReader();
 
+const LOCALE_VALUE = "en";
+
 export default class Table extends Component {
   state = {
     secondsWaitTillStartAccs: 0,
@@ -38,6 +40,7 @@ export default class Table extends Component {
     total_freezed_balance: 0,
     total_available_balance: 0,
     total_balance: 0,
+    selectedRowsCount: 0,
 
     autoGroupColumnDef: {
       width: 250,
@@ -45,6 +48,8 @@ export default class Table extends Component {
 
     containerStyle: { width: '100%', height: '900px' },
     gridStyle: { height: '100%', width: '100%' },
+
+    localeValue: "en"
   };
 
   constructor(props) {
@@ -199,11 +204,12 @@ export default class Table extends Component {
 
   async onSelectionChanged() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    if (selectedRows.length > 0) {
-      this.setState(() => {
-        return { selectedRow: true };
-      });
-    }
+    this.setState(() => {
+      return {
+        selectedRow: selectedRows.length > 0,
+        selectedRowsCount: selectedRows.length
+      };
+    });
   }
 
   handleClickOpen = () => {
@@ -238,7 +244,7 @@ export default class Table extends Component {
 
     let total_freezed_balance = 0
     let total_available_balance = 0
-    
+
     accountsAfterFilter.forEach(account => {
       total_freezed_balance += account.freezed_balance
       total_available_balance += account.available_balance
@@ -389,9 +395,10 @@ export default class Table extends Component {
               />
             </Col>
             <Col xs={2}>
-              <div><b>Available:</b> {this.state.total_available_balance}</div>
-              <div><b>Freezed:</b> {this.state.total_freezed_balance}</div>
-              <div><b>Total:</b> {this.state.total_balance}</div>
+              <div><b>Selected:</b> {this.state.selectedRowsCount}</div>
+              <div><b>Available balance:</b> {this.state.total_available_balance.toLocaleString(this.state.localeValue)}</div>
+              {/* <div><b>Freezed:</b> {this.state.total_freezed_balance}</div> */}
+              <div><b>Total balance:</b> {this.state.total_balance.toLocaleString(this.state.localeValue)}</div>
             </Col>
             <Col>
               <Dialog
