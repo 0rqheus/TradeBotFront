@@ -22,6 +22,7 @@ const LOCALE_VALUE = "en";
 
 export default class Table extends Component {
   state = {
+    accsToStartInOneStep: 0,
     secondsWaitTillStartAccs: 0,
     openModal: false,
     selectedRow: false,
@@ -119,7 +120,7 @@ export default class Table extends Component {
   async startAccountWithPause() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     for (let i = 0; i < selectedRows.length; i++) {
-      if (i % 5 == 0 && i > 0) {
+      if (i % this.state.accsToStartInOneStep == 0 && i > 0) {
         await new Promise((r) =>
           setTimeout(r, this.state.secondsWaitTillStartAccs * 1000)
         );
@@ -244,6 +245,13 @@ export default class Table extends Component {
     localStorage.setItem('secondsBetweenAccsStart', seconds);
   };
 
+  changeAccsCountToStartInOneStep = async (seconds) => {
+    this.setState(() => {
+      return { accsToStartInOneStep: seconds };
+    });
+    localStorage.setItem('accsToStartInOneStep', seconds);
+  };
+
   changeBalances = async () => {
     const accountsAfterFilter = []
     this.state.gridRef.current.api.forEachNodeAfterFilter(node => accountsAfterFilter.push(node.data))
@@ -275,6 +283,9 @@ export default class Table extends Component {
     this.changeSecondsBetweenAccsStart(
       localStorage.getItem('secondsBetweenAccsStart') || 10
     );
+    this.changeAccsCountToStartInOneStep(
+      localStorage.getItem('accsToStartInOneStep') || 5
+    )
     const changeRowData = async (data) => {
       this.setState(() => {
         return { rowData: data };
@@ -399,6 +410,17 @@ export default class Table extends Component {
                   this.changeSecondsBetweenAccsStart(event.target.value);
                 }}
               />
+            </Col>
+            <Col xs={2}>
+              <input
+                  className="input"
+                  type="number"
+                  placeholder="Accounts to start in one step"
+                  value={this.state.accsToStartInOneStep}
+                  onChange={(event) => {
+                    this.changeAccsToStartInOneStep(event.target.value);
+                  }}
+                />
             </Col>
             <Col xs={2}>
               <div><b>Selected:</b> {this.state.selectedRowsCount}</div>
