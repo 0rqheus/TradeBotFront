@@ -16,9 +16,8 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import { apiServiceCustomResolvers } from '../services/ApiCustomResolvers';
 import apiServiceArchive from '../services/ApiServiceArchive';
 import accountToBanned from '../services/utils/accountToBanned';
-const reader = new FileReader();
 
-const LOCALE_VALUE = "en";
+const reader = new FileReader();
 
 export default class Table extends Component {
   state = {
@@ -205,7 +204,7 @@ export default class Table extends Component {
   }
 
   async onCellValueChanged(event) {
-    console.log('Data after change is', event.data);
+    // console.log('Data after change is', event.data);
     await apiService.updateAccount(event.data);
   }
 
@@ -301,7 +300,7 @@ export default class Table extends Component {
         changeRowData(data.data.accounts);
       },
       error(err) {
-        console.log(err);
+        console.error(err);
       },
     });
     const accounts = await apiService.getAccounts();
@@ -418,7 +417,7 @@ export default class Table extends Component {
                   placeholder="Accounts to start in one step"
                   value={this.state.accsToStartInOneStep}
                   onChange={(event) => {
-                    this.changeAccsToStartInOneStep(event.target.value);
+                    this.changeAccsCountToStartInOneStep(event.target.value);
                   }}
                 />
             </Col>

@@ -162,7 +162,7 @@ class ApiService {
       });
       return result.data.accounts;
     } catch (err) {
-      console.log('ERROR getAccounts:', err);
+      console.error('ERROR getAccounts:', err);
     }
   };
 
@@ -177,7 +177,7 @@ class ApiService {
       });
       return result.data.proxies;
     } catch (err) {
-      console.log('ERROR getProxiesByHostPort:', err);
+      console.error('ERROR getProxiesByHostPort:', err);
     }
   };
 
@@ -191,7 +191,7 @@ class ApiService {
       });
       return result.data.proxies_by_pk;
     } catch (err) {
-      console.log('ERROR getProxyByPk:', err);
+      console.error('ERROR getProxyByPk:', err);
     }
   };
 
@@ -231,7 +231,7 @@ class ApiService {
         return result.data.insert_accounts;
       }
     } catch (err) {
-      console.log('ERROR createAccount:', err);
+      console.error('ERROR createAccount:', err);
     }
   };
 
@@ -248,7 +248,7 @@ class ApiService {
       });
       console.log(result);
     } catch (err) {
-      console.log('ERROR updateAccount:', err);
+      console.error('ERROR updateAccount:', err);
     }
   }
 
@@ -262,7 +262,7 @@ class ApiService {
       });
       console.log(result);
     } catch (err) {
-      console.log('ERROR deleteAccount:', err);
+      console.error('ERROR deleteAccount:', err);
     }
   };
 
@@ -276,7 +276,7 @@ class ApiService {
       });
       console.log(result);
     } catch (err) {
-      console.log('ERROR deleteAccounts:', err);
+      console.error('ERROR deleteAccounts:', err);
     }
   };
 }
