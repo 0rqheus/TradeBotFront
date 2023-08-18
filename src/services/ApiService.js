@@ -215,23 +215,48 @@ class ApiService {
           throw new Error('no such proxy id');
         }
       } else {
-        const result = await this.client.mutate({
-          mutation: CREATE_ACCOUNT_WITH_PROXY,
-          variables: {
-            email: data.email,
-            password: data.password,
-            gauth: data.gauth,
-            proxyIp: data.proxyIp,
-            proxyPort: data.proxyPort,
-            proxyLogin: data.proxyLogin,
-            proxyPass: data.proxyPass,
-          },
-        });
+        const proxies_ids = (await this.getProxiesByHostPort(data.proxyLogin, data.proxyPass))?.data?.proxies?.map(({id}) => id);
+        let result;
+        if (proxies_ids && proxies_ids.length > 0) {
+          result = await this.client.mutate({
+            mutation: CREATE_ACCOUNT_WITH_PROXY,
+            variables: {
+              email: data.email,
+              password: data.password,
+              gauth: data.gauth,
+              proxyId: proxies_ids[0]
+            },
+          });
+        } else {
+          result = await this.client.mutate({
+            mutation: CREATE_ACCOUNT_WITH_PROXY,
+            variables: {
+              email: data.email,
+              password: data.password,
+              gauth: data.gauth,
+              proxyIp: data.proxyIp,
+              proxyPort: data.proxyPort,
+              proxyLogin: data.proxyLogin,
+              proxyPass: data.proxyPass,
+            },
+          });
+        }
+
+        
         console.log(result);
         return result.data.insert_accounts;
       }
     } catch (err) {
       console.error('ERROR createAccount:', err);
+      console.error({
+        email: data.email,
+        password: data.password,
+        gauth: data.gauth,
+        proxyIp: data.proxyIp,
+        proxyPort: data.proxyPort,
+        proxyLogin: data.proxyLogin,
+        proxyPass: data.proxyPass,
+      })
     }
   };
 
