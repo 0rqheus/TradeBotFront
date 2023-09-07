@@ -18,7 +18,7 @@ import apiServiceArchive from '../services/ApiServiceArchive';
 import accountToBanned from '../services/utils/accountToBanned';
 const reader = new FileReader();
 
-const LOCALE_VALUE = "en";
+const LOCALE_VALUE = 'en';
 
 export default class Table extends Component {
   state = {
@@ -49,7 +49,7 @@ export default class Table extends Component {
     containerStyle: { width: '100%', height: '900px' },
     gridStyle: { height: '100%', width: '100%' },
 
-    localeValue: "en"
+    localeValue: 'en',
   };
 
   constructor(props) {
@@ -75,7 +75,9 @@ export default class Table extends Component {
     const rowData = data.map((d) => ({
       ...d,
       freezed_balance: d.freezed_balance.toLocaleString(this.state.localeValue),
-      available_balance: d.available_balance.toLocaleString(this.state.localeValue)
+      available_balance: d.available_balance.toLocaleString(
+        this.state.localeValue
+      ),
     }));
 
     this.setState(() => {
@@ -90,8 +92,8 @@ export default class Table extends Component {
   };
 
   onFilterChanged = () => {
-    this.changeBalances()
-  }
+    this.changeBalances();
+  };
 
   async deleteAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
@@ -112,6 +114,7 @@ export default class Table extends Component {
       id,
       email: email,
       type: status,
+      rabbitUrl: localStorage.get('rabbitUrl'),
     };
     await apiServiceCustomResolvers.sendHttpCommand(toSend);
   }
@@ -213,7 +216,7 @@ export default class Table extends Component {
     this.setState(() => {
       return {
         selectedRow: selectedRows.length > 0,
-        selectedRowsCount: selectedRows.length
+        selectedRowsCount: selectedRows.length,
       };
     });
   }
@@ -245,18 +248,20 @@ export default class Table extends Component {
   };
 
   changeBalances = async () => {
-    const accountsAfterFilter = []
-    this.state.gridRef.current.api.forEachNodeAfterFilter(node => accountsAfterFilter.push(node.data))
+    const accountsAfterFilter = [];
+    this.state.gridRef.current.api.forEachNodeAfterFilter((node) =>
+      accountsAfterFilter.push(node.data)
+    );
 
-    let total_freezed_balance = 0
-    let total_available_balance = 0
+    let total_freezed_balance = 0;
+    let total_available_balance = 0;
 
-    accountsAfterFilter.forEach(account => {
-      total_freezed_balance += account.freezed_balance
-      total_available_balance += account.available_balance
+    accountsAfterFilter.forEach((account) => {
+      total_freezed_balance += account.freezed_balance;
+      total_available_balance += account.available_balance;
     });
 
-    const total_balance = total_freezed_balance + total_available_balance
+    const total_balance = total_freezed_balance + total_available_balance;
 
     this.setState(() => {
       return { total_freezed_balance };
@@ -267,7 +272,7 @@ export default class Table extends Component {
     this.setState(() => {
       return { total_balance };
     });
-  }
+  };
 
   async componentDidMount() {
     const adminSecret = localStorage.getItem('adminSecret');
@@ -279,7 +284,7 @@ export default class Table extends Component {
       this.setState(() => {
         return { rowData: data };
       });
-      await this.changeBalances()
+      await this.changeBalances();
     };
 
     const observer = client.subscribe({
@@ -401,10 +406,22 @@ export default class Table extends Component {
               />
             </Col>
             <Col xs={2}>
-              <div><b>Selected:</b> {this.state.selectedRowsCount}</div>
-              <div><b>Available balance:</b> {this.state.total_available_balance.toLocaleString(this.state.localeValue)}</div>
+              <div>
+                <b>Selected:</b> {this.state.selectedRowsCount}
+              </div>
+              <div>
+                <b>Available balance:</b>{' '}
+                {this.state.total_available_balance.toLocaleString(
+                  this.state.localeValue
+                )}
+              </div>
               {/* <div><b>Freezed:</b> {this.state.total_freezed_balance}</div> */}
-              <div><b>Total balance:</b> {this.state.total_balance.toLocaleString(this.state.localeValue)}</div>
+              <div>
+                <b>Total balance:</b>{' '}
+                {this.state.total_balance.toLocaleString(
+                  this.state.localeValue
+                )}
+              </div>
             </Col>
             <Col>
               <Dialog
