@@ -114,7 +114,7 @@ export default class Table extends Component {
       id,
       email: email,
       type: status,
-      rabbitUrl: localStorage.get('rabbitUrl'),
+      rabbitUrl: localStorage.getItem('rabbitUrl'),
     };
     await apiServiceCustomResolvers.sendHttpCommand(toSend);
   }
