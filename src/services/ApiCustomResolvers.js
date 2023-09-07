@@ -28,10 +28,10 @@ class ApiServiceCustomerResolvers {
           payload,
         },
       });
-      console.log(result);
+      // console.log(result);
       return result.data;
     } catch (err) {
-      console.log('ERROR:', err);
+      console.erorr('ERROR:', err);
     }
   };
 
@@ -43,10 +43,10 @@ class ApiServiceCustomerResolvers {
           payload,
         },
       });
-      console.log(result);
+      // console.log(result);
       return result.data;
     } catch (err) {
-      console.log('ERROR:', err);
+      console.error('ERROR:', err);
     }
   };
 }

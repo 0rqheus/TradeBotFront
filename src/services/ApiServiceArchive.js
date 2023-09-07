@@ -26,7 +26,7 @@ class ApiServiceArchive {
       });
       console.log(result);
     } catch (err) {
-      console.log('ERROR createAccount:', err);
+      console.error('ERROR createAccount:', err);
     }
   };
 }

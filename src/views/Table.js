@@ -16,12 +16,12 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import { apiServiceCustomResolvers } from '../services/ApiCustomResolvers';
 import apiServiceArchive from '../services/ApiServiceArchive';
 import accountToBanned from '../services/utils/accountToBanned';
-const reader = new FileReader();
 
-const LOCALE_VALUE = 'en';
+const reader = new FileReader();
 
 export default class Table extends Component {
   state = {
+    accsToStartInOneStep: 0,
     secondsWaitTillStartAccs: 0,
     openModal: false,
     selectedRow: false,
@@ -122,7 +122,7 @@ export default class Table extends Component {
   async startAccountWithPause() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     for (let i = 0; i < selectedRows.length; i++) {
-      if (i % 5 == 0 && i > 0) {
+      if (i % this.state.accsToStartInOneStep == 0 && i > 0) {
         await new Promise((r) =>
           setTimeout(r, this.state.secondsWaitTillStartAccs * 1000)
         );
@@ -207,7 +207,7 @@ export default class Table extends Component {
   }
 
   async onCellValueChanged(event) {
-    console.log('Data after change is', event.data);
+    // console.log('Data after change is', event.data);
     await apiService.updateAccount(event.data);
   }
 
@@ -247,6 +247,13 @@ export default class Table extends Component {
     localStorage.setItem('secondsBetweenAccsStart', seconds);
   };
 
+  changeAccsCountToStartInOneStep = async (seconds) => {
+    this.setState(() => {
+      return { accsToStartInOneStep: seconds };
+    });
+    localStorage.setItem('accsToStartInOneStep', seconds);
+  };
+
   changeBalances = async () => {
     const accountsAfterFilter = [];
     this.state.gridRef.current.api.forEachNodeAfterFilter((node) =>
@@ -280,6 +287,9 @@ export default class Table extends Component {
     this.changeSecondsBetweenAccsStart(
       localStorage.getItem('secondsBetweenAccsStart') || 10
     );
+    this.changeAccsCountToStartInOneStep(
+      localStorage.getItem('accsToStartInOneStep') || 5
+    );
     const changeRowData = async (data) => {
       this.setState(() => {
         return { rowData: data };
@@ -295,7 +305,7 @@ export default class Table extends Component {
         changeRowData(data.data.accounts);
       },
       error(err) {
-        console.log(err);
+        console.error(err);
       },
     });
     const accounts = await apiService.getAccounts();
@@ -402,6 +412,17 @@ export default class Table extends Component {
                 value={this.state.secondsWaitTillStartAccs}
                 onChange={(event) => {
                   this.changeSecondsBetweenAccsStart(event.target.value);
+                }}
+              />
+            </Col>
+            <Col xs={2}>
+              <input
+                className="input"
+                type="number"
+                placeholder="Accounts to start in one step"
+                value={this.state.accsToStartInOneStep}
+                onChange={(event) => {
+                  this.changeAccsCountToStartInOneStep(event.target.value);
                 }}
               />
             </Col>
