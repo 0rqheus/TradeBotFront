@@ -176,6 +176,16 @@ export default class Table extends Component {
     });
   }
 
+  async solveSBC() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    const accountsToSolveSbc = []
+    selectedRows.forEach(async (row) => {
+      // await apiService.updateAccountStatus(row._id, 'RESET');
+      accountsToSolveSbc.push(row.id)
+    });
+    await apiServiceCustomResolvers.sendSolveSbcCommand({account_ids: accountsToSolveSbc})
+  }
+
   async downloadCSV(input) {
     const csv = input.target.files[0];
     reader.readAsText(csv);
@@ -402,6 +412,16 @@ export default class Table extends Component {
                 variant="warning"
               >
                 Reset
+              </Button>
+              <Button
+                disabled={!this.state.selectedRow}
+                className="addButton"
+                onClick={() => {
+                  this.solveSBC();
+                }}
+                variant="warning"
+              >
+                Solve SBC
               </Button>
             </Col>
             <Col xs={2}>

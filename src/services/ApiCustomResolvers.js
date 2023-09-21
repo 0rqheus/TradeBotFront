@@ -13,6 +13,12 @@ const SEND_HTTP_COMMAND = gql`
   }
 `;
 
+const SOLVE_SBC = gql`
+  mutation SolveSbcHttp($payload: SBCPayload!) {
+    solveSbcHttp(payload: $payload)
+  }
+`
+
 class ApiServiceCustomerResolvers {
   client;
 
@@ -39,6 +45,21 @@ class ApiServiceCustomerResolvers {
     try {
       const result = await this.client.mutate({
         mutation: SEND_HTTP_COMMAND,
+        variables: {
+          payload,
+        },
+      });
+      // console.log(result);
+      return result.data;
+    } catch (err) {
+      console.error('ERROR:', err);
+    }
+  };
+
+  sendSolveSbcCommand = async (payload) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: SOLVE_SBC,
         variables: {
           payload,
         },

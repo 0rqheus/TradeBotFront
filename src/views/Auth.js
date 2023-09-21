@@ -50,8 +50,6 @@ export default class Auth extends Component {
   async toMain() {}
 
   async componentDidMount() {
-    const userId = localStorage.getItem('userId');
-    if (userId) window.location.href = '/main';
   }
 
   render() {
