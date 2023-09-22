@@ -136,6 +136,23 @@ export default class Table extends Component {
     }
   }
 
+  async kickStartAccount() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    for (let i = 0; i < selectedRows.length; i++) {
+      if (i % this.state.accsToStartInOneStep == 0 && i > 0) {
+        await new Promise((r) =>
+          setTimeout(r, this.state.secondsWaitTillStartAccs * 1000)
+        );
+      }
+      // console.log(selectedRows[i].id)
+      await this.sendItToRabbit(
+        selectedRows[i].id,
+        selectedRows[i].email,
+        'KICKSTART'
+      );
+    }
+  }
+
   async stopAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     selectedRows.forEach(async (row) => {
@@ -412,6 +429,16 @@ export default class Table extends Component {
                 variant="warning"
               >
                 Reset
+              </Button>
+              <Button
+                disabled={!this.state.selectedRow}
+                className="addButton"
+                onClick={() => {
+                  this.kickStartAccount();
+                }}
+                variant="warning"
+              >
+                Kickstart accounts
               </Button>
               <Button
                 disabled={!this.state.selectedRow}
