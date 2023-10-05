@@ -231,6 +231,12 @@ const columnDefsAccounts = [
     headerName: 'Strategy',
     editable: true,
     enableRowGroup: true,
+  },
+  {
+    field: 'group',
+    headerName: 'Group',
+    editable: true,
+    enableRowGroup: true,
   }
 ];
 

@@ -14,6 +14,7 @@ const GET_ACCOUNTS = gql`
       platform
       password
       strategy_name
+      group
       proxy {
         host
         port
@@ -124,6 +125,7 @@ const SUBSCRIBE_ACCOUNTS = gql`
       platform
       strategy_name
       password
+      group
       proxy {
         host
         port
