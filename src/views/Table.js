@@ -349,7 +349,7 @@ export default class Table extends Component {
       <div>
         <div className="buttons">
           <Row>
-            <Col xs={6}>
+            <Col xs={5}>
               <Button
                 className="addButton"
                 onClick={() => {
@@ -451,7 +451,7 @@ export default class Table extends Component {
                 Solve SBC
               </Button>
             </Col>
-            <Col xs={2}>
+            <Col xs={1}>
               <input
                 className="input"
                 type="number"
@@ -533,6 +533,7 @@ export default class Table extends Component {
             onSelectionChanged={this.onSelectionChanged}
             animateRows={true}
             onFilterChanged={this.onFilterChanged}
+            sideBar={'columns'}
           ></AgGridReact>
         </div>
       </div>

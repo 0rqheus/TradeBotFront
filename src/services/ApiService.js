@@ -19,6 +19,10 @@ const GET_ACCOUNTS = gql`
         host
         port
       }
+      objectives_progress {
+        buy_now
+        list
+      }
     }
   }
 `;
@@ -129,6 +133,10 @@ const SUBSCRIBE_ACCOUNTS = gql`
       proxy {
         host
         port
+      }
+      objectives_progress {
+        buy_now
+        list
       }
     }
   }
