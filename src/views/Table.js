@@ -234,8 +234,10 @@ export default class Table extends Component {
   }
 
   async onCellValueChanged(event) {
-    // console.log('Data after change is', event.data);
-    await apiService.updateAccount(event.data);
+    const dataToUpdate = {...event.data}
+    delete dataToUpdate.objectives_progress
+    delete dataToUpdate.proxy
+    await apiService.updateAccount(dataToUpdate);
   }
 
   async onSelectionChanged() {
