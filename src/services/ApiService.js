@@ -23,17 +23,22 @@ const GET_ACCOUNTS = gql`
         buy_now
         list
       }
+      accounts_challenges {
+        sbc_name
+        challenge_index
+        solved_at
+      }
     }
   }
 `;
 
 const UPDATE_ACCOUNT = gql`
   mutation MyMutation7($id: Int!, $_set: accounts_set_input!) {
-    update_accounts_by_pk(pk_columns: {id: $id}, _set: $_set) {
+    update_accounts_by_pk(pk_columns: { id: $id }, _set: $_set) {
       id
     }
   }
-`
+`;
 
 const CONNECT_ACCOUNT_TO_PROXY = gql`
   mutation CreateAccount(
@@ -138,6 +143,11 @@ const SUBSCRIBE_ACCOUNTS = gql`
         buy_now
         list
       }
+      accounts_challenges {
+        sbc_name
+        challenge_index
+        solved_at
+      }
     }
   }
 `;
@@ -225,7 +235,9 @@ class ApiService {
           throw new Error('no such proxy id');
         }
       } else {
-        const proxies_ids = (await this.getProxiesByHostPort(data.proxyLogin, data.proxyPass))?.data?.proxies?.map(({id}) => id);
+        const proxies_ids = (
+          await this.getProxiesByHostPort(data.proxyLogin, data.proxyPass)
+        )?.data?.proxies?.map(({ id }) => id);
         let result;
         if (proxies_ids && proxies_ids.length > 0) {
           result = await this.client.mutate({
@@ -234,7 +246,7 @@ class ApiService {
               email: data.email,
               password: data.password,
               gauth: data.gauth,
-              proxyId: proxies_ids[0]
+              proxyId: proxies_ids[0],
             },
           });
         } else {
@@ -252,7 +264,6 @@ class ApiService {
           });
         }
 
-        
         console.log(result);
         return result.data.insert_accounts;
       }
@@ -266,26 +277,26 @@ class ApiService {
         proxyPort: data.proxyPort,
         proxyLogin: data.proxyLogin,
         proxyPass: data.proxyPass,
-      })
+      });
     }
   };
 
   updateAccount = async (account) => {
     try {
-      delete account.__typename
-      delete account.proxy
+      delete account.__typename;
+      delete account.proxy;
       const result = await this.client.mutate({
         mutation: UPDATE_ACCOUNT,
         variables: {
           id: account.id,
-          _set: account
+          _set: account,
         },
       });
       console.log(result);
     } catch (err) {
       console.error('ERROR updateAccount:', err);
     }
-  }
+  };
 
   deleteAccount = async (id) => {
     try {

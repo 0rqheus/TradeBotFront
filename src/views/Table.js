@@ -4,6 +4,7 @@ import { apiService, client, SUBSCRIBE_ACCOUNTS } from '../services/ApiService';
 import Button from 'react-bootstrap/Button';
 import AddAccountModal from './modals/AddAccountModal';
 import Form from 'react-bootstrap/Form';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import columnDefsAccounts from '../services/utils/columnDefs';
@@ -42,9 +43,9 @@ export default class Table extends Component {
     total_balance: 0,
     selectedRowsCount: 0,
 
-    autoGroupColumnDef: {
-      width: 250,
-    },
+    // autoGroupColumnDef: {
+    //   width: 250,
+    // },
 
     containerStyle: { width: '100%', height: '900px' },
     gridStyle: { height: '100%', width: '100%' },
@@ -195,12 +196,22 @@ export default class Table extends Component {
 
   async solveSBC() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    const accountsToSolveSbc = []
+    const accountsToSolveSbc = [];
     selectedRows.forEach(async (row) => {
       // await apiService.updateAccountStatus(row._id, 'RESET');
-      accountsToSolveSbc.push(row.id)
+      accountsToSolveSbc.push(row.id);
     });
-    await apiServiceCustomResolvers.sendSolveSbcCommand({account_ids: accountsToSolveSbc})
+    await apiServiceCustomResolvers.sendSolveSbcCommand({
+      account_ids: accountsToSolveSbc,
+    });
+  }
+
+  async solveConcreteSBC(sbcName) {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    await apiServiceCustomResolvers.sendSolveSbcCommand({
+      account_ids: selectedRows.map((row) => row.id),
+      to_solve: sbcName,
+    });
   }
 
   async downloadCSV(input) {
@@ -234,9 +245,9 @@ export default class Table extends Component {
   }
 
   async onCellValueChanged(event) {
-    const dataToUpdate = {...event.data}
-    delete dataToUpdate.objectives_progress
-    delete dataToUpdate.proxy
+    const dataToUpdate = { ...event.data };
+    delete dataToUpdate.objectives_progress;
+    delete dataToUpdate.proxy;
     await apiService.updateAccount(dataToUpdate);
   }
 
@@ -442,16 +453,6 @@ export default class Table extends Component {
               >
                 Kickstart accounts
               </Button>
-              <Button
-                disabled={!this.state.selectedRow}
-                className="addButton"
-                onClick={() => {
-                  this.solveSBC();
-                }}
-                variant="warning"
-              >
-                Solve SBC
-              </Button>
             </Col>
             <Col xs={1}>
               <input
@@ -493,7 +494,7 @@ export default class Table extends Component {
                 )}
               </div>
             </Col>
-            <Col>
+            <Col xs={1}>
               <Dialog
                 open={this.state.openModal}
                 onClose={this.handleClose}
@@ -514,6 +515,28 @@ export default class Table extends Component {
               </Dialog>
               <input type="file" onChange={this.downloadCSV} />
             </Col>
+          </Row>
+          <Row>
+            <ButtonGroup aria-label="Basic example">
+              <Button onClick={(e) => this.solveConcreteSBC('FOUNDATIONS')}>
+                Foundations
+              </Button>
+              <Button onClick={(e) => this.solveConcreteSBC('MARQUEE_1')}>
+                Marquee 1
+              </Button>
+              <Button onClick={(e) => this.solveConcreteSBC('MARQUEE_2')}>
+                Marquee 2
+              </Button>
+              <Button onClick={(e) => this.solveConcreteSBC('MARQUEE_3')}>
+                Marquee 3
+              </Button>
+              <Button onClick={(e) => this.solveConcreteSBC('MARQUEE_4')}>
+                Marquee 4
+              </Button>
+              <Button onClick={(e) => this.solveConcreteSBC('MARQUEE')}>
+                All Marquee
+              </Button>
+            </ButtonGroup>
           </Row>
         </div>
         <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} />

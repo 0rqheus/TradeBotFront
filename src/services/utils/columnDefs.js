@@ -1,4 +1,5 @@
 const LOCALE_VALUE = 'en';
+import operateSolvedChallenges from './operateSolvedChalenges';
 
 const columnDefsAccounts = [
   {
@@ -9,6 +10,8 @@ const columnDefsAccounts = [
     checkboxSelection: true,
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
+    width: 100,
+    maxWidth: 100,
   },
   {
     field: 'email',
@@ -45,6 +48,8 @@ const columnDefsAccounts = [
       }
       return valueChanged;
     },
+    width: 90,
+    maxWidth: 90,
   },
   {
     field: 'should_run',
@@ -54,27 +59,33 @@ const columnDefsAccounts = [
     cellRenderer: (params) => {
       return params.value.toString();
     },
+    width: 90,
+    maxWidth: 90,
   },
   {
     field: 'freezed_balance',
-    headerName: 'Freezed Balance',
+    headerName: 'Freezed',
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
     valueFormatter: (param) =>
       param.data.freezed_balance.toLocaleString(LOCALE_VALUE),
+    width: 110,
+    maxWidth: 110,
   },
   {
     field: 'available_balance',
-    headerName: 'Available Balance',
+    headerName: 'Available',
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
     valueFormatter: (param) =>
       param.data.available_balance.toLocaleString(LOCALE_VALUE),
+    width: 110,
+    maxWidth: 110,
   },
   {
-    headerName: 'Total balance',
+    headerName: 'Total',
     valueGetter: function sumField(params) {
       return params.data.freezed_balance + params.data.available_balance;
     },
@@ -85,6 +96,8 @@ const columnDefsAccounts = [
       (
         param.data.freezed_balance + param.data.available_balance
       ).toLocaleString(LOCALE_VALUE),
+    width: 100,
+    maxWidth: 100,
   },
   {
     field: 'proxy.host',
@@ -95,10 +108,12 @@ const columnDefsAccounts = [
   },
   {
     field: 'proxy.port',
-    headerName: 'Proxy port',
+    headerName: 'Port',
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: false,
+    width: 90,
+    maxWidth: 90,
   },
   {
     field: 'strategy_name',
@@ -118,11 +133,13 @@ const columnDefsAccounts = [
         ? params.data.objectives_progress.list
         : 0;
     },
-    headerName: 'Progress list',
+    headerName: 'List',
     filter: 'agNumberColumnFilter',
     suppressToolPanel: true,
     editable: true,
     enableRowGroup: true,
+    width: 80,
+    maxWidth: 80,
   },
   {
     valueGetter: function sumField(params) {
@@ -130,10 +147,21 @@ const columnDefsAccounts = [
         ? params.data.objectives_progress.buy_now
         : 0;
     },
-    headerName: 'Progress buy now',
+    headerName: 'Buy now',
     filter: 'agNumberColumnFilter',
     suppressToolPanel: true,
     editable: true,
+    enableRowGroup: true,
+    width: 110,
+    maxWidth: 110,
+  },
+  {
+    valueGetter: function sumField(params) {
+      return operateSolvedChallenges(params.data.accounts_challenges);
+    },
+    headerName: 'Challenges',
+    filter: 'agTextColumnFilter',
+    suppressToolPanel: true,
     enableRowGroup: true,
   },
 ];

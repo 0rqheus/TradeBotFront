@@ -17,7 +17,7 @@ const SOLVE_SBC = gql`
   mutation SolveSbcHttp($payload: SBCPayload!) {
     solveSbcHttp(payload: $payload)
   }
-`
+`;
 
 class ApiServiceCustomerResolvers {
   client;
