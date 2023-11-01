@@ -248,6 +248,7 @@ export default class Table extends Component {
     const dataToUpdate = { ...event.data };
     delete dataToUpdate.objectives_progress;
     delete dataToUpdate.proxy;
+    delete dataToUpdate.accounts_workshift;
     await apiService.updateAccount(dataToUpdate);
   }
 
