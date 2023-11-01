@@ -157,6 +157,16 @@ const columnDefsAccounts = [
   },
   {
     valueGetter: function sumField(params) {
+      return params.data.accounts_workshift
+        ? params.data.accounts_workshift.workshift_id
+        : '';
+    },
+    headerName: 'Workshift',
+    suppressToolPanel: true,
+    enableRowGroup: true,
+  },
+  {
+    valueGetter: function sumField(params) {
       return operateSolvedChallenges(params.data.accounts_challenges);
     },
     headerName: 'Challenges',

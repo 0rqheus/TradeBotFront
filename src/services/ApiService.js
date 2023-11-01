@@ -28,6 +28,9 @@ const GET_ACCOUNTS = gql`
         challenge_index
         solved_at
       }
+      accounts_workshift {
+        workshift_id
+      }
     }
   }
 `;
@@ -147,6 +150,9 @@ const SUBSCRIBE_ACCOUNTS = gql`
         sbc_name
         challenge_index
         solved_at
+      }
+      accounts_workshift {
+        workshift_id
       }
     }
   }
