@@ -18,7 +18,7 @@ function getLastMarqueeReleaseDate(nowDate) {
     .set({ hours: 18, minutes: 0, seconds: 0 });
 
   if (
-    (nowDate.dayOfWeek > 0 && nowDate.dayOfWeek < 4) ||
+    (nowDate.dayOfWeek >= 0 && nowDate.dayOfWeek < 4) ||
     (nowDate.dayOfWeek == 4 && nowDate.hourOfDay < 18)
   ) {
     lastMarqueeMatchupsUpdateDate.subtract(7, 'days');
