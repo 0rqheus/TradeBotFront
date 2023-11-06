@@ -363,7 +363,7 @@ export default class Table extends Component {
     return (
       <div>
         <div className="buttons">
-          <Row>
+          <Row style={{ width: '100%' }}>
             <Col xs={5}>
               <Button
                 className="addButton"
@@ -518,7 +518,7 @@ export default class Table extends Component {
               <input type="file" onChange={this.downloadCSV} />
             </Col>
           </Row>
-          <Row>
+          <Row style={{ width: '100%' }}>
             <ButtonGroup aria-label="Basic example">
               <Button onClick={(e) => this.solveConcreteSBC('FOUNDATIONS')}>
                 Foundations
@@ -542,7 +542,7 @@ export default class Table extends Component {
           </Row>
         </div>
         <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} />
-        <div className="ag-theme-alpine" style={{ height: 800, width: '100%' }}>
+        <div className="ag-theme-alpine" style={{ height: 780, width: '100%' }}>
           <AgGridReact
             rowData={this.state.rowData}
             ref={this.state.gridRef}
