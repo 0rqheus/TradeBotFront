@@ -28,9 +28,7 @@ const GET_ACCOUNTS = gql`
         challenge_index
         solved_at
       }
-      accounts_workshift {
-        workshift_id
-      }
+      workshift_id
     }
   }
 `;
@@ -151,9 +149,7 @@ const SUBSCRIBE_ACCOUNTS = gql`
         challenge_index
         solved_at
       }
-      accounts_workshift {
-        workshift_id
-      }
+      workshift_id
     }
   }
 `;
@@ -336,7 +332,7 @@ class ApiService {
 const client = makeApolloClient(
   process.env.REACT_APP_API_URL,
   process.env.REACT_APP_API_WS_URL,
-  'MAIN'
+  localStorage.getItem('adminSecret')
 );
 const apiService = new ApiService(client);
 export { client, apiService, SUBSCRIBE_ACCOUNTS };

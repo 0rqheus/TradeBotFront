@@ -10,6 +10,7 @@ export default class Auth extends Component {
     userId: '',
     secret: '',
     archiveSecret: '',
+    serversSecret: '',
     rabbitUrl: '',
   };
 
@@ -18,6 +19,7 @@ export default class Auth extends Component {
     this.login = this.login.bind(this);
     this.handleInputSecret = this.handleInputSecret.bind(this);
     this.handleInputArchiveSecret = this.handleInputArchiveSecret.bind(this);
+    this.handleInputServersSecret = this.handleInputServersSecret.bind(this);
     this.handleInputRabbit = this.handleInputRabbit.bind(this);
   }
 
@@ -33,6 +35,12 @@ export default class Auth extends Component {
     });
   }
 
+  async handleInputServersSecret(event) {
+    this.setState(() => {
+      return { serversSecret: event.target.value };
+    });
+  }
+
   async handleInputRabbit(event) {
     this.setState(() => {
       return { rabbitUrl: event.target.value };
@@ -43,14 +51,14 @@ export default class Auth extends Component {
     event.preventDefault();
     localStorage.setItem('adminSecret', this.state.secret);
     localStorage.setItem('adminArchiveSecret', this.state.archiveSecret);
+    // localStorage.setItem('adminServersSecret', this.state.serversSecret);
     localStorage.setItem('rabbitUrl', this.state.rabbitUrl);
     window.location.href = '/main';
   }
 
   async toMain() {}
 
-  async componentDidMount() {
-  }
+  async componentDidMount() {}
 
   render() {
     return (
@@ -72,6 +80,14 @@ export default class Auth extends Component {
               value={this.state.archiveSecret}
             />
           </Form.Group>
+          {/* <Form.Group className="mb-3">
+            <Form.Label>Enter servers secret</Form.Label>
+            <Form.Control
+              type="text"
+              onChange={this.handleInputServersSecret}
+              value={this.state.serversSecret}
+            />
+          </Form.Group> */}
           <Form.Group className="mb-3">
             <Form.Label>Enter rabbit URL</Form.Label>
             <Form.Control

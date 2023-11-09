@@ -34,7 +34,7 @@ class ApiServiceArchive {
 const client = makeApolloClient(
   process.env.REACT_APP_API_ARCHIVE_URL,
   process.env.REACT_APP_API_ARCHIVE_WS_URL,
-  'ARCHIVE'
+  localStorage.getItem('adminArchiveSecret')
 );
 const apiServiceArchive = new ApiServiceArchive(client);
 export default apiServiceArchive;

@@ -156,11 +156,7 @@ const columnDefsAccounts = [
     maxWidth: 110,
   },
   {
-    valueGetter: function sumField(params) {
-      return params.data.accounts_workshift
-        ? params.data.accounts_workshift.workshift_id
-        : '';
-    },
+    field: 'workshift_id',
     headerName: 'Workshift',
     suppressToolPanel: true,
     enableRowGroup: true,

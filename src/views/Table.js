@@ -17,6 +17,7 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import { apiServiceCustomResolvers } from '../services/ApiCustomResolvers';
 import apiServiceArchive from '../services/ApiServiceArchive';
 import accountToBanned from '../services/utils/accountToBanned';
+// import apiServiceServers from '../services/ApiServiceServers';
 
 const reader = new FileReader();
 
@@ -323,6 +324,19 @@ export default class Table extends Component {
     });
   };
 
+  setAccountServerId(accounts, profileInfos) {
+    const accsWithServer = [];
+    accounts.forEach((account) => {
+      const newAcc = { ...account };
+      const profileInfo = profileInfos.find(
+        (profileInfo) => profileInfo.id == newAcc.email
+      );
+      newAcc.serverId = profileInfo.server.id;
+      accsWithServer.push(newAcc);
+    });
+    return accsWithServer;
+  }
+
   async componentDidMount() {
     const adminSecret = localStorage.getItem('adminSecret');
     if (!adminSecret) window.location.href = '/';
@@ -350,7 +364,9 @@ export default class Table extends Component {
         console.error(err);
       },
     });
+    // const servers = await apiServiceServers.getAccountServers();
     const accounts = await apiService.getAccounts();
+    // const accountsWithServers = this.setAccountServerId(accounts, servers);
     console.log(accounts);
     this.changeRowData(accounts);
   }

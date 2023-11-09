@@ -16,8 +16,11 @@ function getArchiveToken() {
   return localStorage.getItem('adminArchiveSecret');
 }
 
-function getHttpLink(httpURL, service) {
-  const token = service == 'MAIN' ? getMainToken() : getArchiveToken();
+function getServersToken() {
+  return localStorage.getItem('adminServersSecret');
+}
+
+function getHttpLink(httpURL, token) {
   return new HttpLink({
     uri: httpURL,
     fetch,
@@ -25,8 +28,7 @@ function getHttpLink(httpURL, service) {
   });
 }
 
-function getWssLink(wsUrl, service) {
-  const token = service == 'MAIN' ? getMainToken() : getArchiveToken();
+function getWssLink(wsUrl, token) {
   return new WebSocketLink({
     uri: wsUrl,
     options: {
@@ -56,13 +58,14 @@ function getSplittedLink(httpLink, wsLink) {
   return splitLink;
 }
 
-export default function makeApolloClient(httpURL, wsURL, service) {
-  const httpLink = getHttpLink(httpURL, service);
+export default function makeApolloClient(httpURL, wsURL, token) {
+  console.log(httpURL + ' : ' + token);
+  const httpLink = getHttpLink(httpURL, token);
   let splitLink = '';
   if (wsURL == null) {
     splitLink = httpLink;
   } else {
-    const wssLink = getWssLink(wsURL, service);
+    const wssLink = getWssLink(wsURL, token);
     splitLink = getSplittedLink(httpLink, wssLink);
   }
   const client = new ApolloClient({
