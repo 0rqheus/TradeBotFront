@@ -299,34 +299,35 @@ export default class Table extends Component {
 
   changeBalances = async () => {
     const accountsAfterFilter = [];
-    if (this.state.gridRef.current) {
-      this.state.gridRef.current.api.forEachNodeAfterFilter((node) =>
-        accountsAfterFilter.push(node.data)
-      );
+    // if (this.state.gridRef.current) {
+    this.state.gridRef.current.api.forEachNodeAfterFilter((node) =>
+      accountsAfterFilter.push(node.data)
+    );
 
-      let total_freezed_balance = 0;
-      let total_available_balance = 0;
+    let total_freezed_balance = 0;
+    let total_available_balance = 0;
 
-      accountsAfterFilter.forEach((account) => {
-        total_freezed_balance += account.freezed_balance;
-        total_available_balance += account.available_balance;
-      });
+    accountsAfterFilter.forEach((account) => {
+      total_freezed_balance += account.freezed_balance;
+      total_available_balance += account.available_balance;
+    });
 
-      const total_balance = total_freezed_balance + total_available_balance;
+    const total_balance = total_freezed_balance + total_available_balance;
 
-      this.setState(() => {
-        return { total_freezed_balance };
-      });
-      this.setState(() => {
-        return { total_available_balance };
-      });
-      this.setState(() => {
-        return { total_balance };
-      });
-    }
+    this.setState(() => {
+      return { total_freezed_balance };
+    });
+    this.setState(() => {
+      return { total_available_balance };
+    });
+    this.setState(() => {
+      return { total_balance };
+    });
+    // }
   };
 
-  setAccountServerId(accounts, profileInfos) {
+  async setAccountServerId(accounts) {
+    const profileInfos = await apiServiceServers.getAccountServers();
     const accsWithServer = [];
     accounts.forEach((account) => {
       const newAcc = { ...account };
@@ -349,7 +350,7 @@ export default class Table extends Component {
       localStorage.getItem('accsToStartInOneStep') || 5
     );
     const changeRowData = async (data) => {
-      const newData = this.setAccountServerId(data);
+      const newData = await this.setAccountServerId(data);
       this.setState(() => {
         return { rowData: newData };
       });
@@ -367,9 +368,8 @@ export default class Table extends Component {
         console.error(err);
       },
     });
-    const servers = await apiServiceServers.getAccountServers();
     const accounts = await apiService.getAccounts();
-    const accountsWithServers = this.setAccountServerId(accounts, servers);
+    const accountsWithServers = await this.setAccountServerId(accounts);
     console.log(accountsWithServers);
     this.changeRowData(accountsWithServers);
   }
