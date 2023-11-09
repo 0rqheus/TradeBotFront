@@ -51,7 +51,7 @@ export default class Auth extends Component {
     event.preventDefault();
     localStorage.setItem('adminSecret', this.state.secret);
     localStorage.setItem('adminArchiveSecret', this.state.archiveSecret);
-    // localStorage.setItem('adminServersSecret', this.state.serversSecret);
+    localStorage.setItem('adminServersSecret', this.state.serversSecret);
     localStorage.setItem('rabbitUrl', this.state.rabbitUrl);
     window.location.href = '/main';
   }
@@ -80,14 +80,14 @@ export default class Auth extends Component {
               value={this.state.archiveSecret}
             />
           </Form.Group>
-          {/* <Form.Group className="mb-3">
+          <Form.Group className="mb-3">
             <Form.Label>Enter servers secret</Form.Label>
             <Form.Control
               type="text"
               onChange={this.handleInputServersSecret}
               value={this.state.serversSecret}
             />
-          </Form.Group> */}
+          </Form.Group>
           <Form.Group className="mb-3">
             <Form.Label>Enter rabbit URL</Form.Label>
             <Form.Control

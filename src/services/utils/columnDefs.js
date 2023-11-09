@@ -162,6 +162,12 @@ const columnDefsAccounts = [
     enableRowGroup: true,
   },
   {
+    field: 'serverId',
+    headerName: 'Server Id',
+    suppressToolPanel: true,
+    enableRowGroup: true,
+  },
+  {
     valueGetter: function sumField(params) {
       return operateSolvedChallenges(params.data.accounts_challenges);
     },

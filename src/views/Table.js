@@ -17,7 +17,7 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import { apiServiceCustomResolvers } from '../services/ApiCustomResolvers';
 import apiServiceArchive from '../services/ApiServiceArchive';
 import accountToBanned from '../services/utils/accountToBanned';
-// import apiServiceServers from '../services/ApiServiceServers';
+import apiServiceServers from '../services/ApiServiceServers';
 
 const reader = new FileReader();
 
@@ -299,29 +299,31 @@ export default class Table extends Component {
 
   changeBalances = async () => {
     const accountsAfterFilter = [];
-    this.state.gridRef.current.api.forEachNodeAfterFilter((node) =>
-      accountsAfterFilter.push(node.data)
-    );
+    if (this.state.gridRef.current) {
+      this.state.gridRef.current.api.forEachNodeAfterFilter((node) =>
+        accountsAfterFilter.push(node.data)
+      );
 
-    let total_freezed_balance = 0;
-    let total_available_balance = 0;
+      let total_freezed_balance = 0;
+      let total_available_balance = 0;
 
-    accountsAfterFilter.forEach((account) => {
-      total_freezed_balance += account.freezed_balance;
-      total_available_balance += account.available_balance;
-    });
+      accountsAfterFilter.forEach((account) => {
+        total_freezed_balance += account.freezed_balance;
+        total_available_balance += account.available_balance;
+      });
 
-    const total_balance = total_freezed_balance + total_available_balance;
+      const total_balance = total_freezed_balance + total_available_balance;
 
-    this.setState(() => {
-      return { total_freezed_balance };
-    });
-    this.setState(() => {
-      return { total_available_balance };
-    });
-    this.setState(() => {
-      return { total_balance };
-    });
+      this.setState(() => {
+        return { total_freezed_balance };
+      });
+      this.setState(() => {
+        return { total_available_balance };
+      });
+      this.setState(() => {
+        return { total_balance };
+      });
+    }
   };
 
   setAccountServerId(accounts, profileInfos) {
@@ -331,7 +333,7 @@ export default class Table extends Component {
       const profileInfo = profileInfos.find(
         (profileInfo) => profileInfo.id == newAcc.email
       );
-      newAcc.serverId = profileInfo.server.id;
+      if (profileInfo) newAcc['serverId'] = profileInfo.server.id;
       accsWithServer.push(newAcc);
     });
     return accsWithServer;
@@ -347,8 +349,9 @@ export default class Table extends Component {
       localStorage.getItem('accsToStartInOneStep') || 5
     );
     const changeRowData = async (data) => {
+      const newData = this.setAccountServerId(data);
       this.setState(() => {
-        return { rowData: data };
+        return { rowData: newData };
       });
       await this.changeBalances();
     };
@@ -364,11 +367,11 @@ export default class Table extends Component {
         console.error(err);
       },
     });
-    // const servers = await apiServiceServers.getAccountServers();
+    const servers = await apiServiceServers.getAccountServers();
     const accounts = await apiService.getAccounts();
-    // const accountsWithServers = this.setAccountServerId(accounts, servers);
-    console.log(accounts);
-    this.changeRowData(accounts);
+    const accountsWithServers = this.setAccountServerId(accounts, servers);
+    console.log(accountsWithServers);
+    this.changeRowData(accountsWithServers);
   }
 
   getRowId(params) {
