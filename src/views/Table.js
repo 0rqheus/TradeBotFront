@@ -43,6 +43,7 @@ export default class Table extends Component {
     total_available_balance: 0,
     total_balance: 0,
     selectedRowsCount: 0,
+    enableSbc: false,
 
     // autoGroupColumnDef: {
     //   width: 250,
@@ -95,6 +96,12 @@ export default class Table extends Component {
 
   onFilterChanged = () => {
     this.changeBalances();
+  };
+
+  changeEnableSbcEvent = (event) => {
+    this.setState(() => {
+      return { enableSbc: event.target.checked };
+    });
   };
 
   async deleteAccount() {
@@ -538,26 +545,56 @@ export default class Table extends Component {
             </Col>
           </Row>
           <Row style={{ width: '100%' }}>
-            <ButtonGroup aria-label="Basic example">
-              <Button onClick={(e) => this.solveConcreteSBC('FOUNDATIONS')}>
-                Foundations
-              </Button>
-              <Button onClick={(e) => this.solveConcreteSBC('MARQUEE_1')}>
-                Marquee 1
-              </Button>
-              <Button onClick={(e) => this.solveConcreteSBC('MARQUEE_2')}>
-                Marquee 2
-              </Button>
-              <Button onClick={(e) => this.solveConcreteSBC('MARQUEE_3')}>
-                Marquee 3
-              </Button>
-              <Button onClick={(e) => this.solveConcreteSBC('MARQUEE_4')}>
-                Marquee 4
-              </Button>
-              <Button onClick={(e) => this.solveConcreteSBC('MARQUEE')}>
-                All Marquee
-              </Button>
-            </ButtonGroup>
+            <Col xs="9">
+              <ButtonGroup aria-label="Basic example">
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) => this.solveConcreteSBC('FOUNDATIONS')}
+                >
+                  Foundations
+                </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) => this.solveConcreteSBC('MARQUEE_1')}
+                >
+                  Marquee 1
+                </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) => this.solveConcreteSBC('MARQUEE_2')}
+                >
+                  Marquee 2
+                </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) => this.solveConcreteSBC('MARQUEE_3')}
+                >
+                  Marquee 3
+                </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) => this.solveConcreteSBC('MARQUEE_4')}
+                >
+                  Marquee 4
+                </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) => this.solveConcreteSBC('MARQUEE')}
+                >
+                  All Marquee
+                </Button>
+              </ButtonGroup>
+            </Col>
+            <Col xs="2">
+              <Form.Group className="mb-3" controlId="formBasicCheckbox">
+                <Form.Check
+                  type="checkbox"
+                  value={this.state.enableSbc}
+                  label="Enable sbc buttons"
+                  onClick={this.changeEnableSbcEvent}
+                />
+              </Form.Group>
+            </Col>
           </Row>
         </div>
         <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} />
