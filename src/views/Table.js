@@ -258,6 +258,7 @@ export default class Table extends Component {
     delete dataToUpdate.proxy;
     delete dataToUpdate.accounts_workshift;
     delete dataToUpdate.accounts_challenges;
+    delete dataToUpdate.serverId;
     await apiService.updateAccount(dataToUpdate);
   }
 
