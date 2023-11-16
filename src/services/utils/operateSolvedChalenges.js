@@ -16,6 +16,7 @@ function operateFoundations(solvedChallenges) {
       .map((challenge) => challenge.challenge_index)
   );
 
+  foundationsArray.sort((a, b) => a - b)
   if (foundationsArray.length == 4) {
     solvedFoundations += 'F0';
   } else {
@@ -41,13 +42,14 @@ function operateMarquee(solvedChallenges) {
   });
 
   let marqueeArray = arrayUnique(solvedMarqueeArray);
+  marqueeArray.sort((a, b) => a - b)
   if (marqueeArray.length == 4) {
     solvedMarquee += 'M0';
   } else {
     marqueeArray.forEach((challenge) => {
       solvedMarquee += 'M' + challenge;
     });
-  }
+  }  
 
   return solvedMarquee;
 }
