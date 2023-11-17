@@ -5,6 +5,7 @@ const columnDefsAccounts = [
   {
     field: 'id',
     headerName: 'ID',
+    filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
     checkboxSelection: true,
