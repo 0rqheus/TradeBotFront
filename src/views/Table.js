@@ -44,6 +44,7 @@ export default class Table extends Component {
     total_balance: 0,
     selectedRowsCount: 0,
     enableSbc: false,
+    strategyToSet: '',
 
     // autoGroupColumnDef: {
     //   width: 250,
@@ -101,6 +102,12 @@ export default class Table extends Component {
   changeEnableSbcEvent = (event) => {
     this.setState(() => {
       return { enableSbc: event.target.checked };
+    });
+  };
+
+  changeStrategyToSet = (strategyName) => {
+    this.setState(() => {
+      return { strategyToSet: strategyName };
     });
   };
 
@@ -220,6 +227,12 @@ export default class Table extends Component {
       account_ids: selectedRows.map((row) => row.id),
       to_solve: sbcName,
     });
+  }
+
+  async setStrategy() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    const accIds = selectedRows.map((row) => row.id);
+    await apiService.setStrategyName(accIds, this.state.strategyToSet);
   }
 
   async downloadCSV(input) {
@@ -546,7 +559,7 @@ export default class Table extends Component {
             </Col>
           </Row>
           <Row style={{ width: '100%' }}>
-            <Col xs="9">
+            <Col xs="6">
               <ButtonGroup aria-label="Basic example">
                 <Button
                   disabled={!this.state.enableSbc}
@@ -583,6 +596,22 @@ export default class Table extends Component {
                   onClick={(e) => this.solveConcreteSBC('MARQUEE')}
                 >
                   All Marquee
+                </Button>
+              </ButtonGroup>
+            </Col>
+            <Col xs="3">
+              <input
+                className="input"
+                type="text"
+                placeholder="strategy"
+                value={this.state.strategyToSet}
+                onChange={(event) => {
+                  this.changeStrategyToSet(event.target.value);
+                }}
+              />
+              <ButtonGroup aria-label="Basic example">
+                <Button onClick={(e) => this.setStrategy()}>
+                  Set strategy
                 </Button>
               </ButtonGroup>
             </Col>

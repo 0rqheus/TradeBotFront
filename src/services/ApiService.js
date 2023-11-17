@@ -170,6 +170,19 @@ const DELETE_ACCOUNTS = gql`
   }
 `;
 
+const SET_STRATEGY_NAME = gql`
+  mutation SetStrategyName($ids: [Int!]!, $strategy_name: String) {
+    update_accounts_many(
+      updates: {
+        where: { id: { _in: $ids } }
+        _set: { strategy_name: $strategy_name }
+      }
+    ) {
+      affected_rows
+    }
+  }
+`;
+
 class ApiService {
   client;
 
@@ -325,6 +338,21 @@ class ApiService {
       console.log(result);
     } catch (err) {
       console.error('ERROR deleteAccounts:', err);
+    }
+  };
+
+  setStrategyName = async (ids, strategy_name) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: SET_STRATEGY_NAME,
+        variables: {
+          ids,
+          strategy_name,
+        },
+      });
+      console.log(result);
+    } catch (err) {
+      console.error('ERROR setStrategyName:', err);
     }
   };
 }
