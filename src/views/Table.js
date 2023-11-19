@@ -646,6 +646,7 @@ export default class Table extends Component {
             onSelectionChanged={this.onSelectionChanged}
             animateRows={true}
             onFilterChanged={this.onFilterChanged}
+            enableRangeSelection={true}
             sideBar={'columns'}
           ></AgGridReact>
         </div>
