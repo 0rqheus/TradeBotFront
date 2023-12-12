@@ -159,6 +159,7 @@ const columnDefsAccounts = [
   {
     field: 'workshift_id',
     headerName: 'Workshift',
+    editable: true,
     suppressToolPanel: true,
     enableRowGroup: true,
   },

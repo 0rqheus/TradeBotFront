@@ -300,6 +300,7 @@ class ApiService {
     try {
       delete account.__typename;
       delete account.proxy;
+      console.log(account)
       const result = await this.client.mutate({
         mutation: UPDATE_ACCOUNT,
         variables: {
