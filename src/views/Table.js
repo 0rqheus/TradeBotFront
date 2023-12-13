@@ -597,6 +597,18 @@ export default class Table extends Component {
                 >
                   All Marquee
                 </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) => this.solveConcreteSBC('UEFA_1')}
+                >
+                  Uefa Marquee 1
+                </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) => this.solveConcreteSBC('UEFA_2')}
+                >
+                  Uefa Marquee 2
+                </Button>
               </ButtonGroup>
             </Col>
             <Col xs="3">
