@@ -559,55 +559,67 @@ export default class Table extends Component {
             </Col>
           </Row>
           <Row style={{ width: '100%' }}>
-            <Col xs="6">
+            <Col xs="8">
               <ButtonGroup aria-label="Basic example">
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('FOUNDATIONS')}
+                  onClick={(e) => this.solveConcreteSBC('Foundations I')}
                 >
                   Foundations
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('MARQUEE_1')}
+                  onClick={(e) => this.solveConcreteSBC('Marquee Matchups_1')}
                 >
                   Marquee 1
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('MARQUEE_2')}
+                  onClick={(e) => this.solveConcreteSBC('Marquee Matchups_2')}
                 >
                   Marquee 2
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('MARQUEE_3')}
+                  onClick={(e) => this.solveConcreteSBC('Marquee Matchups_3')}
                 >
                   Marquee 3
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('MARQUEE_4')}
+                  onClick={(e) => this.solveConcreteSBC('Marquee Matchups_4')}
                 >
                   Marquee 4
                 </Button>
-                <Button
+                {/* <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('MARQUEE')}
+                  onClick={(e) => this.solveConcreteSBC('Marquee Matchups.0')}
                 >
                   All Marquee
-                </Button>
+                </Button> */}
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('UEFA_1')}
+                  onClick={(e) => this.solveConcreteSBC('UEFA Marquee Matchups_1')}
                 >
                   Uefa Marquee 1
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('UEFA_2')}
+                  onClick={(e) => this.solveConcreteSBC('UEFA Marquee Matchups_2')}
                 >
                   Uefa Marquee 2
+                </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) => this.solveConcreteSBC("UEFA Women's Marquee Matchups_1")}
+                >
+                  Uefa women Marquee 1
+                </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) => this.solveConcreteSBC("UEFA Women's Marquee Matchups_2")}
+                >
+                  Uefa women Marquee 2
                 </Button>
               </ButtonGroup>
             </Col>
@@ -627,7 +639,7 @@ export default class Table extends Component {
                 </Button>
               </ButtonGroup>
             </Col>
-            <Col xs="2">
+            <Col xs="1">
               <Form.Group className="mb-3" controlId="formBasicCheckbox">
                 <Form.Check
                   type="checkbox"
