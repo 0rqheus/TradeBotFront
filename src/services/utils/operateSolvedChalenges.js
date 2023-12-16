@@ -4,6 +4,8 @@ export default function operateSolvedChallenges(solvedChallenges) {
   let solved = '';
   solved += operateFoundations(solvedChallenges);
   solved += operateMarquee(solvedChallenges);
+  solved += operateUefa(solvedChallenges)
+  solved += operateWomenUefa(solvedChallenges)
 
   return solved;
 }
@@ -52,6 +54,58 @@ function operateMarquee(solvedChallenges) {
   }  
 
   return solvedMarquee;
+}
+
+function operateUefa(solvedChallenges) {
+  let solvedUefaMarquee = '';
+  const solvedUefaMarqueeArray = [];
+
+  solvedChallenges.forEach((challenge) => {
+    if (
+      challenge.sbc_name == 'UEFA Marquee Matchups' &&
+      checkLastSolvedTime(challenge.solved_at)
+    ) {
+      solvedUefaMarqueeArray.push(challenge.challenge_index);
+    }
+  });
+
+  let marqueeArray = arrayUnique(solvedUefaMarqueeArray);
+  marqueeArray.sort((a, b) => a - b)
+  if (marqueeArray.length == 4) {
+    solvedUefaMarquee += 'U0';
+  } else {
+    marqueeArray.forEach((challenge) => {
+      solvedUefaMarquee += 'U' + challenge;
+    });
+  }  
+
+  return solvedUefaMarquee;
+}
+
+function operateWomenUefa(solvedChallenges) {
+  let solvedUefaMarquee = '';
+  const solvedUefaMarqueeArray = [];
+
+  solvedChallenges.forEach((challenge) => {
+    if (
+      challenge.sbc_name == "UEFA Women's Marquee Matchups" &&
+      checkLastSolvedTime(challenge.solved_at)
+    ) {
+      solvedUefaMarqueeArray.push(challenge.challenge_index);
+    }
+  });
+
+  let marqueeArray = arrayUnique(solvedUefaMarqueeArray);
+  marqueeArray.sort((a, b) => a - b)
+  if (marqueeArray.length == 4) {
+    solvedUefaMarquee += 'W0';
+  } else {
+    marqueeArray.forEach((challenge) => {
+      solvedUefaMarquee += 'W' + challenge;
+    });
+  }  
+
+  return solvedUefaMarquee;
 }
 
 function arrayUnique(array) {
