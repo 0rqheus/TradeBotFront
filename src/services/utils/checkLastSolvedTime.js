@@ -1,13 +1,14 @@
 import moment from 'moment';
 
-export default function checkLastSolvedTime(solvedTime) {
+export default function checkLastSolvedTime(solvedTime, chalengeName) {
   const now = Date.now();
   const nowDate = getDateByMillisec(now);
 
-  const lastMarqueeMatchupsUpdateDateToUnix =
-    getLastMarqueeReleaseDate(nowDate);
+  if(chalengeName.toLowerCase().includes('uefa')) {
+    return solvedTime > getLastUefaMarqueeReleaseDate(nowDate);
+  }
 
-  return solvedTime > lastMarqueeMatchupsUpdateDateToUnix;
+  return solvedTime > getLastMarqueeReleaseDate(nowDate);
 }
 
 function getLastMarqueeReleaseDate(nowDate) {
@@ -20,6 +21,23 @@ function getLastMarqueeReleaseDate(nowDate) {
   if (
     (nowDate.dayOfWeek >= 0 && nowDate.dayOfWeek < 4) ||
     (nowDate.dayOfWeek == 4 && nowDate.hourOfDay < 18)
+  ) {
+    lastMarqueeMatchupsUpdateDate.subtract(7, 'days');
+  }
+
+  return lastMarqueeMatchupsUpdateDate.unix() * 1000;
+}
+
+function getLastUefaMarqueeReleaseDate(nowDate) {
+  const lastMarqueeMatchupsUpdateDate = moment()
+    .startOf('week')
+    .day(2)
+    .utc()
+    .set({ hours: 18, minutes: 0, seconds: 0 });
+
+  if (
+    (nowDate.dayOfWeek >= 0 && nowDate.dayOfWeek < 2) ||
+    (nowDate.dayOfWeek == 2 && nowDate.hourOfDay < 18)
   ) {
     lastMarqueeMatchupsUpdateDate.subtract(7, 'days');
   }

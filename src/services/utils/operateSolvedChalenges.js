@@ -37,7 +37,7 @@ function operateMarquee(solvedChallenges) {
   solvedChallenges.forEach((challenge) => {
     if (
       challenge.sbc_name == 'Marquee Matchups' &&
-      checkLastSolvedTime(challenge.solved_at)
+      checkLastSolvedTime(challenge.solved_at, challenge.sbc_name)
     ) {
       solvedMarqueeArray.push(challenge.challenge_index);
     }
@@ -63,7 +63,7 @@ function operateUefa(solvedChallenges) {
   solvedChallenges.forEach((challenge) => {
     if (
       challenge.sbc_name == 'UEFA Marquee Matchups' &&
-      checkLastSolvedTime(challenge.solved_at)
+      checkLastSolvedTime(challenge.solved_at, challenge.sbc_name)
     ) {
       solvedUefaMarqueeArray.push(challenge.challenge_index);
     }
@@ -89,7 +89,7 @@ function operateWomenUefa(solvedChallenges) {
   solvedChallenges.forEach((challenge) => {
     if (
       challenge.sbc_name == "UEFA Women's Marquee Matchups" &&
-      checkLastSolvedTime(challenge.solved_at)
+      checkLastSolvedTime(challenge.solved_at, challenge.sbc_name)
     ) {
       solvedUefaMarqueeArray.push(challenge.challenge_index);
     }
