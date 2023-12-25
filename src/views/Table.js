@@ -621,6 +621,12 @@ export default class Table extends Component {
                 >
                   Uefa women Marquee 2
                 </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) => this.solveConcreteSBC("Daily Tradeable Winter Challenge")}
+                >
+                  Daily Tradeable Winter Challenge
+                </Button>
               </ButtonGroup>
             </Col>
             <Col xs="3">
