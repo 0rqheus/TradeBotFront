@@ -623,7 +623,7 @@ export default class Table extends Component {
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC("Daily Tradeable Winter Challenge")}
+                  onClick={(e) => this.solveConcreteSBC("Daily Tradeable Winter Challenge_1")}
                 >
                   Daily Tradeable Winter Challenge
                 </Button>
