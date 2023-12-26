@@ -6,6 +6,7 @@ export default function operateSolvedChallenges(solvedChallenges) {
   solved += operateMarquee(solvedChallenges);
   solved += operateUefa(solvedChallenges)
   solved += operateWomenUefa(solvedChallenges)
+  solved += operateDaily(solvedChallenges)
 
   return solved;
 }
@@ -71,7 +72,7 @@ function operateUefa(solvedChallenges) {
 
   let marqueeArray = arrayUnique(solvedUefaMarqueeArray);
   marqueeArray.sort((a, b) => a - b)
-  if (marqueeArray.length == 4) {
+  if (marqueeArray.length == 2) {
     solvedUefaMarquee += 'U0';
   } else {
     marqueeArray.forEach((challenge) => {
@@ -97,7 +98,7 @@ function operateWomenUefa(solvedChallenges) {
 
   let marqueeArray = arrayUnique(solvedUefaMarqueeArray);
   marqueeArray.sort((a, b) => a - b)
-  if (marqueeArray.length == 4) {
+  if (marqueeArray.length == 2) {
     solvedUefaMarquee += 'W0';
   } else {
     marqueeArray.forEach((challenge) => {
@@ -106,6 +107,27 @@ function operateWomenUefa(solvedChallenges) {
   }  
 
   return solvedUefaMarquee;
+}
+
+function operateDaily(solvedChallenges) {
+  let solvedDaily = '';
+  const solvedDailyArray = [];
+
+  solvedChallenges.forEach((challenge) => {
+    if (
+      challenge.sbc_name == 'Daily Tradeable Winter Challenge' &&
+      checkLastSolvedTime(challenge.solved_at, challenge.sbc_name)
+    ) {
+      solvedDailyArray.push(challenge.challenge_index);
+    }
+  });
+
+  let marqueeArray = arrayUnique(solvedDailyArray);
+  if(marqueeArray.length == 1) {
+    solvedDaily += 'D';
+  }
+
+  return solvedDaily;
 }
 
 function arrayUnique(array) {
