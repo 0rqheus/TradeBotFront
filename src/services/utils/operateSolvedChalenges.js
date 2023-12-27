@@ -1,4 +1,5 @@
-import checkLastSolvedTime from './checkLastSolvedTime';
+import { checkLastSolvedTime } from './checkLastSolvedTime';
+import checkLastDailyReleaseTime from './checkLastDailyReleaseTime'
 
 export default function operateSolvedChallenges(solvedChallenges) {
   let solved = '';
@@ -116,7 +117,7 @@ function operateDaily(solvedChallenges) {
   solvedChallenges.forEach((challenge) => {
     if (
       challenge.sbc_name == 'Daily Tradeable Winter Challenge' &&
-      checkLastSolvedTime(challenge.solved_at, challenge.sbc_name)
+      checkLastDailyReleaseTime(challenge.solved_at, challenge.sbc_name)
     ) {
       solvedDailyArray.push(challenge.challenge_index);
     }

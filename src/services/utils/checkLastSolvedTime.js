@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-export default function checkLastSolvedTime(solvedTime, chalengeName) {
+export function checkLastSolvedTime(solvedTime, chalengeName) {
   const now = Date.now();
   const nowDate = getDateByMillisec(now);
 
@@ -45,7 +45,7 @@ function getLastUefaMarqueeReleaseDate(nowDate) {
   return lastMarqueeMatchupsUpdateDate.unix() * 1000;
 }
 
-function getDateByMillisec(millisec) {
+export function getDateByMillisec(millisec) {
   const solvedDate = new Date(millisec);
 
   const dayOfMonth = solvedDate.getUTCDate();

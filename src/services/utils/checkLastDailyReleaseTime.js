@@ -1,3 +1,6 @@
+import moment from 'moment';
+import { getDateByMillisec } from './checkLastSolvedTime'
+
 export default function checkLastDailyReleaseTime(solvedTime, chalengeName) {
     const now = Date.now();
     const nowDate = getDateByMillisec(now);
@@ -18,4 +21,4 @@ function getLastDailyReleaseTime() {
     }
   
     return lastDailySbcRefresh.unix() * 1000;
-  }
+}
