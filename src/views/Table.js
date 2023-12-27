@@ -597,7 +597,7 @@ export default class Table extends Component {
                 >
                   All Marquee
                 </Button> */}
-                <Button
+                {/* <Button
                   disabled={!this.state.enableSbc}
                   onClick={(e) => this.solveConcreteSBC('UEFA Marquee Matchups_1')}
                 >
@@ -620,12 +620,18 @@ export default class Table extends Component {
                   onClick={(e) => this.solveConcreteSBC("UEFA Women's Marquee Matchups_2")}
                 >
                   Uefa women Marquee 2
-                </Button>
+                </Button> */}
                 <Button
                   disabled={!this.state.enableSbc}
                   onClick={(e) => this.solveConcreteSBC("Daily Tradeable Winter Challenge_1")}
                 >
                   Daily Tradeable Winter Challenge
+                </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) => this.solveConcreteSBC("Christmas Cheers_1")}
+                >
+                  Christmas Cheers
                 </Button>
               </ButtonGroup>
             </Col>
