@@ -563,7 +563,7 @@ export default class Table extends Component {
               <ButtonGroup aria-label="Basic example">
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('Foundations I')}
+                  onClick={(e) => this.solveConcreteSBC('Foundations_1')}
                 >
                   Foundations
                 </Button>
