@@ -647,9 +647,9 @@ export default class Table extends Component {
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC("Christmas Cheers_1")}
+                  onClick={(e) => this.solveConcreteSBC("New Year's Kick Off_1")}
                 >
-                  Christmas Cheers
+                  New Year's Kick Off
                 </Button>
               </ButtonGroup>
             </Col>
