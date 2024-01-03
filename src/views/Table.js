@@ -643,13 +643,13 @@ export default class Table extends Component {
                   disabled={!this.state.enableSbc}
                   onClick={(e) => this.solveConcreteSBC("Daily Tradeable Winter Challenge_1")}
                 >
-                  Daily Tradeable Winter Challenge
+                  Daily
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
                   onClick={(e) => this.solveConcreteSBC("New Year's Kick Off_1")}
                 >
-                  New Year's Kick Off
+                  NWeekly
                 </Button>
               </ButtonGroup>
             </Col>
