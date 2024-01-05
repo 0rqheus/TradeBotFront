@@ -1,5 +1,5 @@
 function balanceToNumber(balance) {
-  if(balance.includes(',')) {
+  if(String(balance).includes(',')) {
     console.log(balance)
     const numberBalance = Number(balance.replace(',', ''))
     console.log(numberBalance)
