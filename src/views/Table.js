@@ -16,7 +16,7 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import { apiServiceCustomResolvers } from '../services/ApiCustomResolvers';
 import apiServiceArchive from '../services/ApiServiceArchive';
-import accountToBanned from '../services/utils/accountToBanned';
+import { accountToBanned, historyItemToArchive, schedulerInfoToArchive } from '../services/utils/accountToBanned';
 import apiServiceServers from '../services/ApiServiceServers';
 
 const reader = new FileReader();
@@ -113,15 +113,24 @@ export default class Table extends Component {
 
   async deleteAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    const idsToDelete = [];
+    const idsToDelete = selectedRows.map(acc => acc.id);
     const bannedAccsToCreate = [];
+    const historyItemsToCreate = [];
+    const schedulerInfoToCreate = [];
+    const bannedAccsHistoryItems = await apiService.getHistoryItems(idsToDelete);
+    const bannedAccsSchedulerInfo = await apiService.getSchedulerInfo(idsToDelete);
     for (let i = 0; i < selectedRows.length; i++) {
-      let idDeleted = selectedRows[i].id;
-      idsToDelete.push(idDeleted);
       bannedAccsToCreate.push(accountToBanned(selectedRows[i]));
-      // await apiService.deleteAccount(idDeleted);
     }
+    bannedAccsHistoryItems.forEach(historyItem => {
+      historyItemsToCreate.push(historyItemToArchive(historyItem))
+    });
+    bannedAccsSchedulerInfo.forEach(schedulerInfo => {
+      schedulerInfoToCreate.push(schedulerInfoToArchive(schedulerInfo))
+    });
     await apiServiceArchive.createBannedAccounts(bannedAccsToCreate);
+    await apiServiceArchive.createHistoryItems(historyItemsToCreate);
+    await apiServiceArchive.createSchedulerInfo(schedulerInfoToCreate);
     await apiService.deleteAccounts(idsToDelete);
   }
 

@@ -183,6 +183,35 @@ const SET_STRATEGY_NAME = gql`
   }
 `;
 
+const GET_HISTORY_ITEMS = gql`
+  query GetHistoryItems($ids: [Int!]!) {
+    history_items(where: {account_id: {_in: $ids}}) {
+      account_id
+      actual_end
+      actual_start
+      captcha_failed_count
+      captcha_solved_count
+      minutes_active
+      minutes_paused
+      requests_made
+      scheduled_end
+      scheduled_start
+      strategy_name
+      id
+    }
+  }
+`
+
+const GET_SCHEDULER_ACC_INFO = gql`
+  query GetSchedulerAccInfo($ids: [Int!]!) {
+    scheduler_account_info(where: {account_id: {_in: $ids}}) {
+      account_id
+      config_id
+      id
+    }
+  }
+`
+
 class ApiService {
   client;
 
@@ -356,6 +385,34 @@ class ApiService {
       console.error('ERROR setStrategyName:', err);
     }
   };
+
+  getHistoryItems = async(ids) => {
+    try {
+      const result = await this.client.query({
+        query: GET_HISTORY_ITEMS,
+        variables: {
+          ids,
+        },
+      });
+      return result.data.history_items;
+    } catch (err) {
+      console.error('ERROR getHistoryItems:', err);
+    }
+  }
+
+  getSchedulerInfo = async(ids) => {
+    try {
+      const result = await this.client.query({
+        query: GET_SCHEDULER_ACC_INFO,
+        variables: {
+          ids,
+        },
+      });
+      return result.data.scheduler_account_info;
+    } catch (err) {
+      console.error('ERROR getSchedulerInfo:', err);
+    }
+  }
 }
 
 const client = makeApolloClient(
