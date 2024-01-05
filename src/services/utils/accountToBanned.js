@@ -1,5 +1,8 @@
 function balanceToNumber(balance) {
-  return Number(balance.replace(',', ''))
+  console.log(balance)
+  const numberBalance = Number(balance.replace(',', ''))
+  console.log(numberBalance)
+  return numberBalance
 }
 
 export function accountToBanned(account) {
