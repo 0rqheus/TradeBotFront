@@ -16,7 +16,11 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import { apiServiceCustomResolvers } from '../services/ApiCustomResolvers';
 import apiServiceArchive from '../services/ApiServiceArchive';
-import { accountToBanned, historyItemToArchive, schedulerInfoToArchive } from '../services/utils/accountToBanned';
+import {
+  accountToBanned,
+  historyItemToArchive,
+  schedulerInfoToArchive,
+} from '../services/utils/accountToBanned';
 import apiServiceServers from '../services/ApiServiceServers';
 
 const reader = new FileReader();
@@ -113,20 +117,24 @@ export default class Table extends Component {
 
   async deleteAccount() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    const idsToDelete = selectedRows.map(acc => acc.id);
+    const idsToDelete = selectedRows.map((acc) => acc.id);
     const bannedAccsToCreate = [];
     const historyItemsToCreate = [];
     const schedulerInfoToCreate = [];
-    const bannedAccsHistoryItems = await apiService.getHistoryItems(idsToDelete);
-    const bannedAccsSchedulerInfo = await apiService.getSchedulerInfo(idsToDelete);
+    const bannedAccsHistoryItems = await apiService.getHistoryItems(
+      idsToDelete
+    );
+    const bannedAccsSchedulerInfo = await apiService.getSchedulerInfo(
+      idsToDelete
+    );
     for (let i = 0; i < selectedRows.length; i++) {
       bannedAccsToCreate.push(accountToBanned(selectedRows[i]));
     }
-    bannedAccsHistoryItems.forEach(historyItem => {
-      historyItemsToCreate.push(historyItemToArchive(historyItem))
+    bannedAccsHistoryItems.forEach((historyItem) => {
+      historyItemsToCreate.push(historyItemToArchive(historyItem));
     });
-    bannedAccsSchedulerInfo.forEach(schedulerInfo => {
-      schedulerInfoToCreate.push(schedulerInfoToArchive(schedulerInfo))
+    bannedAccsSchedulerInfo.forEach((schedulerInfo) => {
+      schedulerInfoToCreate.push(schedulerInfoToArchive(schedulerInfo));
     });
     await apiServiceArchive.createBannedAccounts(bannedAccsToCreate);
     await apiServiceArchive.createHistoryItems(historyItemsToCreate);
@@ -159,6 +167,22 @@ export default class Table extends Component {
         'START'
       );
     }
+  }
+
+  async startAccountsByServers() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    const accs = selectedRows.map((acc) => {
+      return {
+        id: acc.id,
+        email: acc.email,
+        server_id: acc.serverId,
+      };
+    });
+    await apiServiceCustomResolvers.startByServers({
+      accounts: accs,
+      type: 'START',
+      rabbitUrl: localStorage.getItem('rabbitUrl'),
+    });
   }
 
   async kickStartAccount() {
@@ -448,6 +472,16 @@ export default class Table extends Component {
                 disabled={!this.state.selectedRow}
                 className="addButton"
                 onClick={() => {
+                  this.startAccountsByServers();
+                }}
+                variant="warning"
+              >
+                Start by server
+              </Button>
+              <Button
+                disabled={!this.state.selectedRow}
+                className="addButton"
+                onClick={() => {
                   this.stopAccount();
                 }}
                 variant="warning"
@@ -650,13 +684,17 @@ export default class Table extends Component {
                 </Button> */}
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC("Daily FC Versus Challenge_1")}
+                  onClick={(e) =>
+                    this.solveConcreteSBC('Daily FC Versus Challenge_1')
+                  }
                 >
                   Daily
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC("New Year's Kick Off_1")}
+                  onClick={(e) =>
+                    this.solveConcreteSBC("New Year's Kick Off_1")
+                  }
                 >
                   Weekly
                 </Button>

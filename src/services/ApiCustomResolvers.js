@@ -19,6 +19,12 @@ const SOLVE_SBC = gql`
   }
 `;
 
+const START_BY_SERVERS = gql`
+  mutation SendStartByServers($payload: RabbitPayloadByServers) {
+    sendStartByServers(payload: $payload)
+  }
+`;
+
 class ApiServiceCustomerResolvers {
   client;
 
@@ -45,6 +51,21 @@ class ApiServiceCustomerResolvers {
     try {
       const result = await this.client.mutate({
         mutation: SEND_HTTP_COMMAND,
+        variables: {
+          payload,
+        },
+      });
+      // console.log(result);
+      return result.data;
+    } catch (err) {
+      console.error('ERROR:', err);
+    }
+  };
+
+  startByServers = async (payload) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: START_BY_SERVERS,
         variables: {
           payload,
         },
