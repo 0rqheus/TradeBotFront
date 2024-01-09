@@ -6,16 +6,28 @@ import { apiServiceCustomResolvers } from '../../services/ApiCustomResolvers';
 
 export default function ChangeConfigModal(props) {
   const [maxTimeToTrySbc = '', setMaxTimeToTrySbc] = useState();
+  const [sbcDuration = '', setSbcDuration] = useState();
+  const [shouldTrySbc = false, setShouldTrySbc] = useState();
 
   const handleInputMaxTimeToTrySbc = (event) => {
     setMaxTimeToTrySbc(event.target.value);
+  };
+
+  const handleInputSbcDuration = (event) => {
+    setSbcDuration(event.target.value);
+  };
+
+  const handleInputShouldTrySbc = (event) => {
+    setShouldTrySbc(event.target.checked);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     const accountIds = props.accounts.map((acc) => acc.id);
     const data = {
-      max_time_to_try_sbc: Number(maxTimeToTrySbc),
+      maxTimeToTrySbc: Number(maxTimeToTrySbc),
+      sbcDuration: Number(sbcDuration),
+      shouldTrySbc: shouldTrySbc,
     };
     await apiServiceCustomResolvers.changeConfig({
       account_ids: accountIds,
@@ -44,6 +56,22 @@ export default function ChangeConfigModal(props) {
               value={maxTimeToTrySbc}
               onChange={handleInputMaxTimeToTrySbc}
               placeholder="Max time to try sbc (min)"
+            />
+          </Form.Group>
+          <Form.Group className="mb-3">
+            <Form.Control
+              type="number"
+              value={sbcDuration}
+              onChange={handleInputSbcDuration}
+              placeholder="Sbc duration (min)"
+            />
+          </Form.Group>
+          <Form.Group className="mb-3" controlId="formBasicCheckbox">
+            <Form.Check
+              onClick={handleInputShouldTrySbc}
+              value={shouldTrySbc}
+              type="checkbox"
+              label="Should try sbc"
             />
           </Form.Group>
           <div className="d-grid gap-2">
