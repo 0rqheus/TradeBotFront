@@ -19,6 +19,12 @@ const SOLVE_SBC = gql`
   }
 `;
 
+const CHANGE_CONFIG = gql`
+  mutation ChangeConfig($payload: ChangeConfigPayload) {
+    changeConfig(payload: $payload)
+  }
+`;
+
 const START_BY_SERVERS = gql`
   mutation SendStartByServers($payload: RabbitPayloadByServers) {
     sendStartByServers(payload: $payload)
@@ -89,6 +95,21 @@ class ApiServiceCustomerResolvers {
       return result.data;
     } catch (err) {
       console.error('ERROR:', err);
+    }
+  };
+
+  changeConfig = async (data) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: CHANGE_CONFIG,
+        variables: {
+          payload: data,
+        },
+      });
+      // console.log(result);
+      return result.data;
+    } catch (err) {
+      console.log('error while changing config: ' + err);
     }
   };
 }

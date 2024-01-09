@@ -3,6 +3,7 @@ import { AgGridReact } from 'ag-grid-react';
 import { apiService, client, SUBSCRIBE_ACCOUNTS } from '../services/ApiService';
 import Button from 'react-bootstrap/Button';
 import AddAccountModal from './modals/AddAccountModal';
+import ChangeConfigModal from './modals/ChangeConfig';
 import Form from 'react-bootstrap/Form';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Row from 'react-bootstrap/Row';
@@ -32,6 +33,8 @@ export default class Table extends Component {
     openModal: false,
     selectedRow: false,
     modalShow: false,
+    changeConfigModalShow: false,
+    selectedRows: [],
     gridRef: null,
     gridApi: null,
     rowData: [],
@@ -64,6 +67,8 @@ export default class Table extends Component {
     super(props);
     this.closeModal = this.closeModal.bind(this);
     this.openModal = this.openModal.bind(this);
+    this.changeConfig = this.changeConfig.bind(this);
+    this.closeChangeConfig = this.closeChangeConfig.bind(this);
     this.onSelectionChanged = this.onSelectionChanged.bind(this);
   }
 
@@ -76,6 +81,18 @@ export default class Table extends Component {
   openModal() {
     this.setState(() => {
       return { modalShow: true };
+    });
+  }
+
+  changeConfig() {
+    this.setState(() => {
+      return { changeConfigModalShow: true };
+    });
+  }
+
+  closeChangeConfig() {
+    this.setState(() => {
+      return { changeConfigModalShow: false };
     });
   }
 
@@ -312,6 +329,7 @@ export default class Table extends Component {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     this.setState(() => {
       return {
+        selectedRows: selectedRows,
         selectedRow: selectedRows.length > 0,
         selectedRowsCount: selectedRows.length,
       };
@@ -538,6 +556,15 @@ export default class Table extends Component {
               >
                 Kickstart accounts
               </Button>
+              <Button
+                className="addButton"
+                onClick={() => {
+                  this.changeConfig();
+                }}
+                variant="warning"
+              >
+                Change config
+              </Button>
             </Col>
             <Col xs={1}>
               <input
@@ -729,6 +756,11 @@ export default class Table extends Component {
           </Row>
         </div>
         <AddAccountModal show={this.state.modalShow} onHide={this.closeModal} />
+        <ChangeConfigModal
+          show={this.state.changeConfigModalShow}
+          onHide={this.closeChangeConfig}
+          accounts={this.state.selectedRows}
+        />
         <div className="ag-theme-alpine" style={{ height: 780, width: '100%' }}>
           <AgGridReact
             rowData={this.state.rowData}
