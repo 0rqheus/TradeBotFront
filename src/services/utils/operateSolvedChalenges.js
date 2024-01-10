@@ -7,7 +7,6 @@ export default function operateSolvedChallenges(solvedChallenges) {
   solved += operateMarquee(solvedChallenges);
   solved += operateUefa(solvedChallenges)
   solved += operateWomenUefa(solvedChallenges)
-  solved += operateNewYearsKickoff(solvedChallenges)
   solved += operateDaily(solvedChallenges)
 
   return solved;
@@ -109,27 +108,6 @@ function operateWomenUefa(solvedChallenges) {
   }  
 
   return solvedUefaMarquee;
-}
-
-function operateNewYearsKickoff(solvedChallenges) {
-  let solvedChristmas = '';
-  const solvedChristmasArray = [];
-
-  solvedChallenges.forEach((challenge) => {
-    if (
-      challenge.sbc_name == "New Year's Kick Off"
-    ) {
-      solvedChristmasArray.push(challenge.challenge_index);
-    }
-  });
-
-  let marqueeArray = arrayUnique(solvedChristmasArray);
-  marqueeArray.sort((a, b) => a - b)
-  if (marqueeArray.length == 1) {
-    solvedChristmas += 'K';
-  }
-
-  return solvedChristmas;
 }
 
 function operateDaily(solvedChallenges) {
