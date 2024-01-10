@@ -456,7 +456,7 @@ export default class Table extends Component {
         <div className="buttons">
           <Row style={{ width: '100%' }}>
             <Col xs={5}>
-              <Button
+              {/* <Button
                 className="addButton"
                 onClick={() => {
                   this.openModal();
@@ -464,7 +464,7 @@ export default class Table extends Component {
                 variant="primary"
               >
                 Create
-              </Button>
+              </Button> */}
               <Button
                 disabled={!this.state.selectedRow}
                 className="addButton"
@@ -482,7 +482,7 @@ export default class Table extends Component {
                 onClick={() => {
                   this.startAccountWithPause();
                 }}
-                variant="warning"
+                variant="secondary"
               >
                 Start with pause
               </Button>
