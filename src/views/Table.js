@@ -657,6 +657,12 @@ export default class Table extends Component {
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
+                  onClick={(e) => this.solveConcreteSBC('Daily Bronze Upgrade_1')}
+                >
+                  Daily Bronze Upgrade
+                </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
                   onClick={(e) => this.solveConcreteSBC('Marquee Matchups_1')}
                 >
                   Marquee 1
@@ -717,14 +723,14 @@ export default class Table extends Component {
                 >
                   Daily
                 </Button>
-                <Button
+                {/* <Button
                   disabled={!this.state.enableSbc}
                   onClick={(e) =>
                     this.solveConcreteSBC("New Year's Kick Off_1")
                   }
                 >
                   Weekly
-                </Button>
+                </Button> */}
               </ButtonGroup>
             </Col>
             <Col xs="3">
