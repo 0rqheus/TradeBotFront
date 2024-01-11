@@ -506,7 +506,7 @@ export default class Table extends Component {
               >
                 Stop
               </Button>
-              <Button
+              {/* <Button
                 disabled={!this.state.selectedRow}
                 className="addButton"
                 onClick={() => {
@@ -525,7 +525,7 @@ export default class Table extends Component {
                 variant="warning"
               >
                 Unpause
-              </Button>
+              </Button> */}
               <Button
                 disabled={!this.state.selectedRow}
                 className="addButton"
@@ -657,9 +657,35 @@ export default class Table extends Component {
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('Daily Bronze Upgrade_1')}
+                  onClick={(e) =>
+                    this.solveConcreteSBC('Daily Bronze Upgrade_1')
+                  }
                 >
-                  Daily Bronze Upgrade
+                  Daily Bronze
+                </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) =>
+                    this.solveConcreteSBC('Daily Silver Upgrade_1')
+                  }
+                >
+                  Daily Silver
+                </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) =>
+                    this.solveConcreteSBC('Daily Gold Upgrade_1')
+                  }
+                >
+                  Daily Gold 1
+                </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) =>
+                    this.solveConcreteSBC('Daily Gold Upgrade_2')
+                  }
+                >
+                  Daily Gold 2
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
