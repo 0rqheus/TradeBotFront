@@ -113,6 +113,9 @@ function operateWomenUefa(solvedChallenges) {
 function operateDaily(solvedChallenges) {
   let solvedDaily = '';
   const solvedDailyArray = [];
+  const solvedDailyBronzeArray = [];
+  const solvedDailySilverArray = [];
+  const solvedDailyGoldArray = [];
 
   solvedChallenges.forEach((challenge) => {
     if (
@@ -123,10 +126,54 @@ function operateDaily(solvedChallenges) {
     }
   });
 
+  solvedChallenges.forEach((challenge) => {
+    if (
+      challenge.sbc_name == 'Daily Bronze Upgrade' &&
+      checkLastDailyReleaseTime(challenge.solved_at, challenge.sbc_name)
+    ) {
+      solvedDailyBronzeArray.push(challenge.challenge_index);
+    }
+  });
+
+  solvedChallenges.forEach((challenge) => {
+    if (
+      challenge.sbc_name == 'Daily Silver Upgrade' &&
+      checkLastDailyReleaseTime(challenge.solved_at, challenge.sbc_name)
+    ) {
+      solvedDailySilverArray.push(challenge.challenge_index);
+    }
+  });
+
+  solvedChallenges.forEach((challenge) => {
+    if (
+      challenge.sbc_name == 'Daily Gold Upgrade' &&
+      checkLastDailyReleaseTime(challenge.solved_at, challenge.sbc_name)
+    ) {
+      solvedDailyGoldArray.push(challenge.challenge_index);
+    }
+  });
+
   let marqueeArray = arrayUnique(solvedDailyArray);
+  let bronzeArray = arrayUnique(solvedDailyBronzeArray);
+  let silverArray = arrayUnique(solvedDailySilverArray);
+  let goldArray = arrayUnique(solvedDailyGoldArray);
   if(marqueeArray.length == 1) {
     solvedDaily += 'D';
   }
+  if(bronzeArray.length == 1) {
+    solvedDaily += 'B';
+  }
+  if(silverArray.length == 1) {
+    solvedDaily += 'S';
+  }
+
+  if (goldArray.length == 2) {
+    solvedDaily += 'G0';
+  } else {
+    goldArray.forEach((challenge) => {
+      solvedDaily += 'G' + challenge;
+    });
+  }  
 
   return solvedDaily;
 }
