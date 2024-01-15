@@ -198,6 +198,7 @@ export default class Table extends Component {
     await apiServiceCustomResolvers.startByServers({
       accounts: accs,
       type: 'START',
+      secondsBetween: Number(localStorage.getItem('secondsBetweenAccsStart')),
       rabbitUrl: localStorage.getItem('rabbitUrl'),
     });
   }
@@ -416,7 +417,7 @@ export default class Table extends Component {
     const adminSecret = localStorage.getItem('adminSecret');
     if (!adminSecret) window.location.href = '/';
     this.changeSecondsBetweenAccsStart(
-      localStorage.getItem('secondsBetweenAccsStart') || 10
+      localStorage.getItem('secondsBetweenAccsStart') || 6
     );
     this.changeAccsCountToStartInOneStep(
       localStorage.getItem('accsToStartInOneStep') || 5
@@ -476,7 +477,7 @@ export default class Table extends Component {
               >
                 Delete
               </Button>
-              <Button
+              {/* <Button
                 disabled={!this.state.selectedRow}
                 className="addButton"
                 onClick={() => {
@@ -485,7 +486,7 @@ export default class Table extends Component {
                 variant="secondary"
               >
                 Start with pause
-              </Button>
+              </Button> */}
               <Button
                 disabled={!this.state.selectedRow}
                 className="addButton"
@@ -566,7 +567,7 @@ export default class Table extends Component {
                 Change config
               </Button>
             </Col>
-            <Col xs={1}>
+            <Col xs={2}>
               <input
                 className="input"
                 type="number"
@@ -577,7 +578,7 @@ export default class Table extends Component {
                 }}
               />
             </Col>
-            <Col xs={2}>
+            {/* <Col xs={2}>
               <input
                 className="input"
                 type="number"
@@ -587,7 +588,7 @@ export default class Table extends Component {
                   this.changeAccsCountToStartInOneStep(event.target.value);
                 }}
               />
-            </Col>
+            </Col> */}
             <Col xs={2}>
               <div>
                 <b>Selected:</b> {this.state.selectedRowsCount}
