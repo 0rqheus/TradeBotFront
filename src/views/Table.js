@@ -422,25 +422,25 @@ export default class Table extends Component {
     this.changeAccsCountToStartInOneStep(
       localStorage.getItem('accsToStartInOneStep') || 5
     );
-    const changeRowData = async (data) => {
-      const newData = await this.setAccountServerId(data);
-      this.setState(() => {
-        return { rowData: newData };
-      });
-      await this.changeBalances();
-    };
+    // const changeRowData = async (data) => {
+    //   const newData = await this.setAccountServerId(data);
+    //   this.setState(() => {
+    //     return { rowData: newData };
+    //   });
+    //   await this.changeBalances();
+    // };
 
-    const observer = client.subscribe({
-      query: SUBSCRIBE_ACCOUNTS,
-    });
-    observer.subscribe({
-      next(data) {
-        changeRowData(data.data.accounts);
-      },
-      error(err) {
-        console.error(err);
-      },
-    });
+    // const observer = client.subscribe({
+    //   query: SUBSCRIBE_ACCOUNTS,
+    // });
+    // observer.subscribe({
+    //   next(data) {
+    //     changeRowData(data.data.accounts);
+    //   },
+    //   error(err) {
+    //     console.error(err);
+    //   },
+    // });
     const accounts = await apiService.getAccounts();
     const accountsWithServers = await this.setAccountServerId(accounts);
     console.log(accountsWithServers);
