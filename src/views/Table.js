@@ -29,7 +29,7 @@ const reader = new FileReader();
 export default class Table extends Component {
   state = {
     accsToStartInOneStep: 0,
-    secondsWaitTillStartAccs: 0,
+    maxAccsToStart: 0,
     openModal: false,
     selectedRow: false,
     modalShow: false,
@@ -159,6 +159,13 @@ export default class Table extends Component {
     await apiService.deleteAccounts(idsToDelete);
   }
 
+  async getAccs() {
+    const accounts = await apiService.getAccounts();
+    const accountsWithServers = await this.setAccountServerId(accounts);
+    this.changeRowData(accountsWithServers);
+    await this.changeBalances();
+  }
+
   async sendItToRabbit(id, email, status) {
     const toSend = {
       id,
@@ -199,6 +206,7 @@ export default class Table extends Component {
       accounts: accs,
       type: 'START',
       secondsBetween: Number(localStorage.getItem('secondsBetweenAccsStart')),
+      maxAccsToStart: Number(localStorage.getItem('maxAccsToStart')),
       rabbitUrl: localStorage.getItem('rabbitUrl'),
     });
   }
@@ -363,11 +371,11 @@ export default class Table extends Component {
     localStorage.setItem('secondsBetweenAccsStart', seconds);
   };
 
-  changeAccsCountToStartInOneStep = async (seconds) => {
+  changeMaxAccsToStart = async (accs) => {
     this.setState(() => {
-      return { accsToStartInOneStep: seconds };
+      return { maxAccsToStart: accs };
     });
-    localStorage.setItem('accsToStartInOneStep', seconds);
+    localStorage.setItem('maxAccsToStart', accs);
   };
 
   changeBalances = async () => {
@@ -419,8 +427,8 @@ export default class Table extends Component {
     this.changeSecondsBetweenAccsStart(
       localStorage.getItem('secondsBetweenAccsStart') || 6
     );
-    this.changeAccsCountToStartInOneStep(
-      localStorage.getItem('accsToStartInOneStep') || 5
+    this.changeMaxAccsToStart(
+      localStorage.getItem('maxAccsToStart') || 120
     );
     // const changeRowData = async (data) => {
     //   const newData = await this.setAccountServerId(data);
@@ -443,8 +451,8 @@ export default class Table extends Component {
     // });
     const accounts = await apiService.getAccounts();
     const accountsWithServers = await this.setAccountServerId(accounts);
-    console.log(accountsWithServers);
     this.changeRowData(accountsWithServers);
+    await this.changeBalances();
   }
 
   getRowId(params) {
@@ -476,6 +484,16 @@ export default class Table extends Component {
                 variant="danger"
               >
                 Delete
+              </Button>
+              <Button
+                className="addButton"
+                onClick={() => {
+                  // this.deleteAccount();
+                  this.getAccs();
+                }}
+                variant="primary"
+              >
+                Restart
               </Button>
               {/* <Button
                 disabled={!this.state.selectedRow}
@@ -567,7 +585,7 @@ export default class Table extends Component {
                 Change config
               </Button>
             </Col>
-            <Col xs={2}>
+            <Col xs={1}>
               <input
                 className="input"
                 type="number"
@@ -578,17 +596,17 @@ export default class Table extends Component {
                 }}
               />
             </Col>
-            {/* <Col xs={2}>
+            <Col xs={2}>
               <input
                 className="input"
                 type="number"
                 placeholder="Accounts to start in one step"
-                value={this.state.accsToStartInOneStep}
+                value={this.state.maxAccsToStart}
                 onChange={(event) => {
-                  this.changeAccsCountToStartInOneStep(event.target.value);
+                  this.changeMaxAccsToStart(event.target.value);
                 }}
               />
-            </Col> */}
+            </Col>
             <Col xs={2}>
               <div>
                 <b>Selected:</b> {this.state.selectedRowsCount}
