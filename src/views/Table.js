@@ -161,6 +161,7 @@ export default class Table extends Component {
   }
 
   async getAccs() {
+    await apiService.refresh();
     const accounts = await apiService.getAccounts();
     const accountsWithServers = await this.setAccountServerId(accounts);
     console.log(accountsWithServers)
@@ -762,10 +763,10 @@ export default class Table extends Component {
                 <Button
                   disabled={!this.state.enableSbc}
                   onClick={(e) =>
-                    this.solveConcreteSBC('Daily FC Versus Challenge_1')
+                    this.solveConcreteSBC('Daily Login Upgrade_1')
                   }
                 >
-                  Daily
+                  Daily login
                 </Button>
                 {/* <Button
                   disabled={!this.state.enableSbc}

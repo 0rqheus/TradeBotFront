@@ -219,6 +219,15 @@ class ApiService {
     this.client = client;
   }
 
+  refresh = async() => {
+    const client = makeApolloClient(
+      process.env.REACT_APP_API_URL,
+      process.env.REACT_APP_API_WS_URL,
+      localStorage.getItem('adminSecret')
+    );
+    this.client = client;
+  }
+
   getAccounts = async () => {
     try {
       const result = await this.client.query({
