@@ -1,11 +1,12 @@
-function balanceToNumber(balance) {
+export function balanceToNumber(balance) {
   if(String(balance).includes(',')) {
-    console.log(balance)
-    const numberBalance = Number(balance.replace(',', ''))
-    console.log(numberBalance)
-    return numberBalance
+    const numberBalance = Number(balance.replaceAll(',', ''));
+    // console.log(typeof numberBalance);
+    return numberBalance;
   } else {
-    return balance
+    const numberBalance = Number(balance)
+    // console.log(typeof numberBalance);
+    return numberBalance;
   }
 }
 

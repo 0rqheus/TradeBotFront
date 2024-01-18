@@ -23,6 +23,7 @@ import {
   schedulerInfoToArchive,
 } from '../services/utils/accountToBanned';
 import apiServiceServers from '../services/ApiServiceServers';
+import { balanceToNumber } from '../services/utils/accountToBanned';
 
 const reader = new FileReader();
 
@@ -162,6 +163,7 @@ export default class Table extends Component {
   async getAccs() {
     const accounts = await apiService.getAccounts();
     const accountsWithServers = await this.setAccountServerId(accounts);
+    console.log(accountsWithServers)
     this.changeRowData(accountsWithServers);
     await this.changeBalances();
   }
@@ -385,13 +387,10 @@ export default class Table extends Component {
       accountsAfterFilter.push(node.data)
     );
 
-    let total_freezed_balance = 0;
-    let total_available_balance = 0;
-
-    accountsAfterFilter.forEach((account) => {
-      total_freezed_balance += account.freezed_balance;
-      total_available_balance += account.available_balance;
-    });
+    const total_freezed_balance = accountsAfterFilter
+      .reduce((accumulator, account) => accumulator + balanceToNumber(account.freezed_balance), 0);
+    const total_available_balance = accountsAfterFilter
+      .reduce((accumulator, account) => accumulator + balanceToNumber(account.available_balance), 0);
 
     const total_balance = total_freezed_balance + total_available_balance;
 
@@ -493,7 +492,7 @@ export default class Table extends Component {
                 }}
                 variant="primary"
               >
-                Restart
+                Refresh
               </Button>
               {/* <Button
                 disabled={!this.state.selectedRow}
