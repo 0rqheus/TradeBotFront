@@ -393,7 +393,7 @@ export default class Table extends Component {
     const total_available_balance = accountsAfterFilter
       .reduce((accumulator, account) => accumulator + balanceToNumber(account.available_balance), 0);
 
-    const total_balance = total_freezed_balance + total_available_balance;
+    const total_balance = Number(total_freezed_balance) + Number(total_available_balance);
 
     this.setState(() => {
       return { total_freezed_balance };

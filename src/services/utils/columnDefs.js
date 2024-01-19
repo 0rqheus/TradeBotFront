@@ -1,4 +1,5 @@
 const LOCALE_VALUE = 'en';
+import { balanceToNumber } from './accountToBanned';
 import operateSolvedChallenges from './operateSolvedChalenges';
 
 const columnDefsAccounts = [
@@ -88,14 +89,14 @@ const columnDefsAccounts = [
   {
     headerName: 'Total',
     valueGetter: function sumField(params) {
-      return params.data.freezed_balance + params.data.available_balance;
+      return balanceToNumber(params.data.freezed_balance) + balanceToNumber(params.data.available_balance);
     },
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
     valueFormatter: (param) =>
       (
-        param.data.freezed_balance + param.data.available_balance
+        balanceToNumber(param.data.freezed_balance) + balanceToNumber(param.data.available_balance)
       ).toLocaleString(LOCALE_VALUE),
     width: 100,
     maxWidth: 100,
