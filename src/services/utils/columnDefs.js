@@ -65,24 +65,28 @@ const columnDefsAccounts = [
     maxWidth: 90,
   },
   {
-    field: 'freezed_balance',
     headerName: 'Freezed',
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
+    valueGetter: function sumField(params) {
+      return balanceToNumber(params.data.freezed_balance);
+    },
     valueFormatter: (param) =>
-      param.data.freezed_balance.toLocaleString(LOCALE_VALUE),
+      balanceToNumber(param.data.freezed_balance).toLocaleString(LOCALE_VALUE),
     width: 110,
     maxWidth: 110,
   },
   {
-    field: 'available_balance',
     headerName: 'Available',
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
+    valueGetter: function sumField(params) {
+      return balanceToNumber(params.data.available_balance);
+    },
     valueFormatter: (param) =>
-      param.data.available_balance.toLocaleString(LOCALE_VALUE),
+      balanceToNumber(param.data.available_balance).toLocaleString(LOCALE_VALUE),
     width: 110,
     maxWidth: 110,
   },
