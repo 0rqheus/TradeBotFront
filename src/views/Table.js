@@ -164,7 +164,7 @@ export default class Table extends Component {
     await apiService.refresh();
     const accounts = await apiService.getAccounts();
     const accountsWithServers = await this.setAccountServerId(accounts);
-    console.log(accountsWithServers)
+    console.log(accountsWithServers);
     this.changeRowData(accountsWithServers);
     await this.changeBalances();
   }
@@ -388,12 +388,19 @@ export default class Table extends Component {
       accountsAfterFilter.push(node.data)
     );
 
-    const total_freezed_balance = accountsAfterFilter
-      .reduce((accumulator, account) => accumulator + balanceToNumber(account.freezed_balance), 0);
-    const total_available_balance = accountsAfterFilter
-      .reduce((accumulator, account) => accumulator + balanceToNumber(account.available_balance), 0);
+    const total_freezed_balance = accountsAfterFilter.reduce(
+      (accumulator, account) =>
+        accumulator + balanceToNumber(account.freezed_balance),
+      0
+    );
+    const total_available_balance = accountsAfterFilter.reduce(
+      (accumulator, account) =>
+        accumulator + balanceToNumber(account.available_balance),
+      0
+    );
 
-    const total_balance = Number(total_freezed_balance) + Number(total_available_balance);
+    const total_balance =
+      Number(total_freezed_balance) + Number(total_available_balance);
 
     this.setState(() => {
       return { total_freezed_balance };
@@ -427,9 +434,7 @@ export default class Table extends Component {
     this.changeSecondsBetweenAccsStart(
       localStorage.getItem('secondsBetweenAccsStart') || 6
     );
-    this.changeMaxAccsToStart(
-      localStorage.getItem('maxAccsToStart') || 120
-    );
+    this.changeMaxAccsToStart(localStorage.getItem('maxAccsToStart') || 120);
     // const changeRowData = async (data) => {
     //   const newData = await this.setAccountServerId(data);
     //   this.setState(() => {
@@ -495,7 +500,7 @@ export default class Table extends Component {
               >
                 Refresh
               </Button>
-              {/* <Button
+              <Button
                 disabled={!this.state.selectedRow}
                 className="addButton"
                 onClick={() => {
@@ -504,7 +509,7 @@ export default class Table extends Component {
                 variant="secondary"
               >
                 Start with pause
-              </Button> */}
+              </Button>
               <Button
                 disabled={!this.state.selectedRow}
                 className="addButton"
@@ -692,17 +697,13 @@ export default class Table extends Component {
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) =>
-                    this.solveConcreteSBC('Daily Gold Upgrade_1')
-                  }
+                  onClick={(e) => this.solveConcreteSBC('Daily Gold Upgrade_1')}
                 >
                   Daily Gold 1
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) =>
-                    this.solveConcreteSBC('Daily Gold Upgrade_2')
-                  }
+                  onClick={(e) => this.solveConcreteSBC('Daily Gold Upgrade_2')}
                 >
                   Daily Gold 2
                 </Button>
