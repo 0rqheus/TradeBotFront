@@ -86,21 +86,27 @@ const columnDefsAccounts = [
       return balanceToNumber(params.data.available_balance);
     },
     valueFormatter: (param) =>
-      balanceToNumber(param.data.available_balance).toLocaleString(LOCALE_VALUE),
+      balanceToNumber(param.data.available_balance).toLocaleString(
+        LOCALE_VALUE
+      ),
     width: 110,
     maxWidth: 110,
   },
   {
     headerName: 'Total',
     valueGetter: function sumField(params) {
-      return balanceToNumber(params.data.freezed_balance) + balanceToNumber(params.data.available_balance);
+      return (
+        balanceToNumber(params.data.freezed_balance) +
+        balanceToNumber(params.data.available_balance)
+      );
     },
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
     valueFormatter: (param) =>
       (
-        balanceToNumber(param.data.freezed_balance) + balanceToNumber(param.data.available_balance)
+        balanceToNumber(param.data.freezed_balance) +
+        balanceToNumber(param.data.available_balance)
       ).toLocaleString(LOCALE_VALUE),
     width: 100,
     maxWidth: 100,
@@ -171,6 +177,12 @@ const columnDefsAccounts = [
   {
     field: 'serverId',
     headerName: 'Server Id',
+    suppressToolPanel: true,
+    enableRowGroup: true,
+  },
+  {
+    field: 'requests',
+    headerName: 'Requests',
     suppressToolPanel: true,
     enableRowGroup: true,
   },

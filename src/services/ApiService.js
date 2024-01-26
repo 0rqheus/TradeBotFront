@@ -185,7 +185,7 @@ const SET_STRATEGY_NAME = gql`
 
 const GET_HISTORY_ITEMS = gql`
   query GetHistoryItems($ids: [Int!]!) {
-    history_items(where: {account_id: {_in: $ids}}) {
+    history_items(where: { account_id: { _in: $ids } }) {
       account_id
       actual_end
       actual_start
@@ -200,17 +200,47 @@ const GET_HISTORY_ITEMS = gql`
       id
     }
   }
-`
+`;
+
+const GET_HISTORY_ITEMS_BY_TIME = gql`
+  query GetHistoryItems($from: timestamp, $to: timestamp, $ids: [Int!]!) {
+    history_items(
+      where: {
+        _or: [
+          {
+            scheduled_end: { _is_null: false, _gt: $from }
+            scheduled_start: { _is_null: false, _lt: $to }
+            account_id: { _in: $ids }
+          }
+          {
+            account: { activity_status: { _in: [ON, PAUSED] } }
+            scheduled_end: { _gt: $from }
+            account_id: { _in: $ids }
+          }
+        ]
+      }
+    ) {
+      account_id
+      actual_end
+      actual_start
+      scheduled_end
+      scheduled_start
+      requests_made
+      minutes_active
+      strategy_name
+    }
+  }
+`;
 
 const GET_SCHEDULER_ACC_INFO = gql`
   query GetSchedulerAccInfo($ids: [Int!]!) {
-    scheduler_account_info(where: {account_id: {_in: $ids}}) {
+    scheduler_account_info(where: { account_id: { _in: $ids } }) {
       account_id
       config_id
       id
     }
   }
-`
+`;
 
 class ApiService {
   client;
@@ -219,14 +249,14 @@ class ApiService {
     this.client = client;
   }
 
-  refresh = async() => {
+  refresh = async () => {
     const client = makeApolloClient(
       process.env.REACT_APP_API_URL,
       process.env.REACT_APP_API_WS_URL,
       localStorage.getItem('adminSecret')
     );
     this.client = client;
-  }
+  };
 
   getAccounts = async () => {
     try {
@@ -338,7 +368,7 @@ class ApiService {
     try {
       delete account.__typename;
       delete account.proxy;
-      console.log(account)
+      console.log(account);
       const result = await this.client.mutate({
         mutation: UPDATE_ACCOUNT,
         variables: {
@@ -395,7 +425,7 @@ class ApiService {
     }
   };
 
-  getHistoryItems = async(ids) => {
+  getHistoryItems = async (ids) => {
     try {
       const result = await this.client.query({
         query: GET_HISTORY_ITEMS,
@@ -407,9 +437,9 @@ class ApiService {
     } catch (err) {
       console.error('ERROR getHistoryItems:', err);
     }
-  }
+  };
 
-  getSchedulerInfo = async(ids) => {
+  getSchedulerInfo = async (ids) => {
     try {
       const result = await this.client.query({
         query: GET_SCHEDULER_ACC_INFO,
@@ -421,7 +451,27 @@ class ApiService {
     } catch (err) {
       console.error('ERROR getSchedulerInfo:', err);
     }
-  }
+  };
+
+  getHistoryItemsByTime = async (from, to, ids) => {
+    try {
+      console.log(from.toISOString());
+      console.log(to.toISOString());
+      const result = await this.client.query({
+        query: GET_HISTORY_ITEMS_BY_TIME,
+        variables: {
+          from: from.toISOString(),
+          to: to.toISOString(),
+          ids: ids,
+        },
+      });
+
+      return result.data.history_items || [];
+    } catch (err) {
+      console.log('ERROR getHistoryItems:', err);
+      return [];
+    }
+  };
 }
 
 const client = makeApolloClient(

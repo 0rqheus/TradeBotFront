@@ -24,6 +24,7 @@ import {
 } from '../services/utils/accountToBanned';
 import apiServiceServers from '../services/ApiServiceServers';
 import { balanceToNumber } from '../services/utils/accountToBanned';
+import { duration } from 'moment';
 
 const reader = new FileReader();
 
@@ -428,6 +429,24 @@ export default class Table extends Component {
     return accsWithServer;
   }
 
+  async changeAll(accounts) {
+    const historyItems = await apiService.getHistoryItemsByTime(
+      new Date(Date.now() - duration(12, 'hours').asMilliseconds()),
+      new Date(Date.now()),
+      accounts.map((acc) => acc.id)
+    );
+    accounts.map((acc) => {
+      const accountHistoryItems = historyItems.filter(
+        (historyItem) => historyItem.account_id === acc.id
+      );
+      acc['requests'] = accountHistoryItems.reduce(
+        (current, historyItem) => current + historyItem.requests_made,
+        0
+      );
+    });
+    return accounts;
+  }
+
   async componentDidMount() {
     const adminSecret = localStorage.getItem('adminSecret');
     if (!adminSecret) window.location.href = '/';
@@ -456,7 +475,8 @@ export default class Table extends Component {
     // });
     const accounts = await apiService.getAccounts();
     const accountsWithServers = await this.setAccountServerId(accounts);
-    this.changeRowData(accountsWithServers);
+    const accountsWithRequests = await this.changeAll(accountsWithServers);
+    this.changeRowData(accountsWithRequests);
     await this.changeBalances();
   }
 
