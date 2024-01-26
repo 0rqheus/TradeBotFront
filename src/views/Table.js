@@ -165,8 +165,9 @@ export default class Table extends Component {
     await apiService.refresh();
     const accounts = await apiService.getAccounts();
     const accountsWithServers = await this.setAccountServerId(accounts);
-    console.log(accountsWithServers);
-    this.changeRowData(accountsWithServers);
+    const accountsWithRequests = await this.changeAll(accountsWithServers);
+    console.log(accountsWithRequests);
+    this.changeRowData(accountsWithRequests);
     await this.changeBalances();
   }
 
