@@ -368,7 +368,9 @@ class ApiService {
     try {
       delete account.__typename;
       delete account.proxy;
-      console.log(account);
+      delete account.requests;
+      delete account.available_balance;
+      delete account.freezed_balance;
       const result = await this.client.mutate({
         mutation: UPDATE_ACCOUNT,
         variables: {
