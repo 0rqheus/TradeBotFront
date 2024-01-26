@@ -24,7 +24,7 @@ import {
 } from '../services/utils/accountToBanned';
 import apiServiceServers from '../services/ApiServiceServers';
 import { balanceToNumber } from '../services/utils/accountToBanned';
-import { duration } from 'moment';
+import getLastTimeForRequests from '../services/utils/getLastTimeForRequests';
 
 const reader = new FileReader();
 
@@ -431,7 +431,7 @@ export default class Table extends Component {
 
   async changeAll(accounts) {
     const historyItems = await apiService.getHistoryItemsByTime(
-      new Date(Date.now() - duration(12, 'hours').asMilliseconds()),
+      new Date(getLastTimeForRequests()),
       new Date(Date.now()),
       accounts.map((acc) => acc.id)
     );
