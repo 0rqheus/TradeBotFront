@@ -13,9 +13,9 @@ export function checkLastSolvedTime(solvedTime, chalengeName) {
 
 function getLastMarqueeReleaseDate(nowDate) {
   const lastMarqueeMatchupsUpdateDate = moment()
+    .utc()
     .startOf('week')
     .day(5)
-    .utc()
     .set({ hours: 18, minutes: 0, seconds: 0 });
 
   if (
