@@ -700,7 +700,7 @@ export default class Table extends Component {
                 >
                   Foundations 4
                 </Button>
-                <Button
+                {/* <Button
                   disabled={!this.state.enableSbc}
                   onClick={(e) =>
                     this.solveConcreteSBC('Daily Bronze Upgrade_1')
@@ -715,19 +715,19 @@ export default class Table extends Component {
                   }
                 >
                   Daily Silver
-                </Button>
+                </Button> */}
                 <Button
                   disabled={!this.state.enableSbc}
                   onClick={(e) => this.solveConcreteSBC('Daily Gold Upgrade_1')}
                 >
-                  Daily Gold 1
+                  Daily Gold
                 </Button>
-                <Button
+                {/* <Button
                   disabled={!this.state.enableSbc}
                   onClick={(e) => this.solveConcreteSBC('Daily Gold Upgrade_2')}
                 >
                   Daily Gold 2
-                </Button>
+                </Button> */}
                 <Button
                   disabled={!this.state.enableSbc}
                   onClick={(e) => this.solveConcreteSBC('Marquee Matchups_1')}
@@ -752,6 +752,12 @@ export default class Table extends Component {
                 >
                   Marquee 4
                 </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) => this.solveConcreteSBC('Victory Path_1')}
+                >
+                  Victory path
+                </Button>
                 {/* <Button
                   disabled={!this.state.enableSbc}
                   onClick={(e) => this.solveConcreteSBC('Marquee Matchups.0')}
@@ -769,16 +775,20 @@ export default class Table extends Component {
                   onClick={(e) => this.solveConcreteSBC('UEFA Marquee Matchups_2')}
                 >
                   Uefa Marquee 2
-                </Button>
-                <Button
+                </Button>*/}
+                {/* <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC("UEFA Women's Marquee Matchups_1")}
+                  onClick={(e) =>
+                    this.solveConcreteSBC("UEFA Women's Marquee Matchups_1")
+                  }
                 >
                   Uefa women Marquee 1
-                </Button>
-                <Button
+                </Button> */}
+                {/* <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC("UEFA Women's Marquee Matchups_2")}
+                  onClick={(e) =>
+                    this.solveConcreteSBC("UEFA Women's Marquee Matchups_2")
+                  }
                 >
                   Uefa women Marquee 2
                 </Button> */}
