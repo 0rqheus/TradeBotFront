@@ -188,7 +188,11 @@ export default class Table extends Component {
 
     selectedRows.map((acc) => {
       acc.serverId
-        ? accsToStartByServer.push(acc)
+        ? accsToStartByServer.push({
+            id: acc.id,
+            email: acc.email,
+            server_id: acc.serverId,
+          })
         : accsToStartByPause.push(acc);
     });
 
