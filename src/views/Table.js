@@ -181,39 +181,38 @@ export default class Table extends Component {
     await apiServiceCustomResolvers.sendHttpCommand(toSend);
   }
 
-  async startAccountWithPause() {
+  async selectAccsToStart() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    for (let i = 0; i < selectedRows.length; i++) {
-      if (i % this.state.accsToStartInOneStep == 0 && i > 0) {
-        await new Promise((r) =>
-          setTimeout(r, this.state.secondsWaitTillStartAccs * 1000)
-        );
-      }
-      // console.log(selectedRows[i].id)
-      await this.sendItToRabbit(
-        selectedRows[i].id,
-        selectedRows[i].email,
-        'START'
-      );
-    }
+    const accsToStartByServer = [];
+    const accsToStartByPause = [];
+
+    selectedRows.map((acc) => {
+      acc.serverId
+        ? accsToStartByServer.push(acc)
+        : accsToStartByPause.push(acc);
+    });
+
+    await this.startAccountByServer(accsToStartByServer);
+    await this.startAccountWithPause(accsToStartByPause);
   }
 
-  async startAccountsByServers() {
-    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
-    const accs = selectedRows.map((acc) => {
-      return {
-        id: acc.id,
-        email: acc.email,
-        server_id: acc.serverId,
-      };
-    });
+  async startAccountByServer(accounts) {
     await apiServiceCustomResolvers.startByServers({
-      accounts: accs,
+      accounts,
       type: 'START',
       secondsBetween: Number(localStorage.getItem('secondsBetweenAccsStart')),
       maxAccsToStart: Number(localStorage.getItem('maxAccsToStart')),
       rabbitUrl: localStorage.getItem('rabbitUrl'),
     });
+  }
+
+  async startAccountWithPause(accounts) {
+    for (let i = 0; i < accounts.length; i++) {
+      if (i % 5 == 0 && i > 0) {
+        await new Promise((r) => setTimeout(r, 5000));
+      }
+      await this.sendItToRabbit(accounts[i].id, accounts[i].email, 'START');
+    }
   }
 
   async kickStartAccount() {
@@ -525,21 +524,11 @@ export default class Table extends Component {
                 disabled={!this.state.selectedRow}
                 className="addButton"
                 onClick={() => {
-                  this.startAccountWithPause();
-                }}
-                variant="secondary"
-              >
-                Start with pause
-              </Button>
-              <Button
-                disabled={!this.state.selectedRow}
-                className="addButton"
-                onClick={() => {
-                  this.startAccountsByServers();
+                  this.selectAccsToStart();
                 }}
                 variant="warning"
               >
-                Start by server
+                Universal start
               </Button>
               <Button
                 disabled={!this.state.selectedRow}
