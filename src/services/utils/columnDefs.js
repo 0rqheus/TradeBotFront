@@ -183,6 +183,7 @@ const columnDefsAccounts = [
   {
     field: 'requests',
     headerName: 'Requests',
+    filter: 'agNumberColumnFilter',
     suppressToolPanel: true,
     enableRowGroup: true,
   },
