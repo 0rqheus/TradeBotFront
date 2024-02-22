@@ -59,7 +59,7 @@ const columnDefsAccounts = [
     editable: true,
     enableRowGroup: false,
     width: 90,
-    maxWidth: 150,
+    maxWidth: 450,
   },
   {
     field: 'should_run',
