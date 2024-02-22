@@ -28,6 +28,9 @@ const GET_ACCOUNTS = gql`
         challenge_index
         solved_at
       }
+      scheduler_account_info {
+        block_reason
+      }
       workshift_id
     }
   }
@@ -371,6 +374,7 @@ class ApiService {
       delete account.requests;
       delete account.available_balance;
       delete account.freezed_balance;
+      delete account.scheduler_account_info;
       const result = await this.client.mutate({
         mutation: UPDATE_ACCOUNT,
         variables: {

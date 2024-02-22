@@ -448,6 +448,7 @@ export default class Table extends Component {
         0
       );
     });
+    console.log(accounts);
     return accounts;
   }
 
