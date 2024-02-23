@@ -15,6 +15,7 @@ const GET_ACCOUNTS = gql`
       password
       strategy_name
       group
+      origin
       proxy {
         host
         port

@@ -144,6 +144,12 @@ const columnDefsAccounts = [
     enableRowGroup: true,
   },
   {
+    field: 'origin',
+    headerName: 'Origin',
+    editable: true,
+    enableRowGroup: true,
+  },
+  {
     field: 'group',
     headerName: 'Group',
     editable: true,
