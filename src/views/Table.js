@@ -748,9 +748,11 @@ export default class Table extends Component {
                 </Button>
                 <Button
                   disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('Victory Path_1')}
+                  onClick={(e) =>
+                    this.solveConcreteSBC('Daily Fantasy FC Challenge_1')
+                  }
                 >
-                  Victory path
+                  Daily fantasy
                 </Button>
                 {/* <Button
                   disabled={!this.state.enableSbc}
@@ -786,14 +788,14 @@ export default class Table extends Component {
                 >
                   Uefa women Marquee 2
                 </Button> */}
-                <Button
+                {/* <Button
                   disabled={!this.state.enableSbc}
                   onClick={(e) =>
                     this.solveConcreteSBC('Daily Login Upgrade_1')
                   }
                 >
                   Daily login
-                </Button>
+                </Button> */}
                 {/* <Button
                   disabled={!this.state.enableSbc}
                   onClick={(e) =>
