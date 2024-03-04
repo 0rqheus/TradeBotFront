@@ -373,6 +373,7 @@ class ApiService {
       delete account.__typename;
       delete account.proxy;
       delete account.requests;
+      delete account.minutes_active;
       delete account.available_balance;
       delete account.freezed_balance;
       delete account.scheduler_account_info;

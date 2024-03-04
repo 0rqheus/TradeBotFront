@@ -207,6 +207,13 @@ const columnDefsAccounts = [
     enableRowGroup: true,
   },
   {
+    field: 'minutes_active',
+    headerName: 'Minutes',
+    filter: 'agNumberColumnFilter',
+    suppressToolPanel: true,
+    enableRowGroup: true,
+  },
+  {
     valueGetter: function sumField(params) {
       return operateSolvedChallenges(params.data.accounts_challenges);
     },

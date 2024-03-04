@@ -447,6 +447,12 @@ export default class Table extends Component {
         (current, historyItem) => current + historyItem.requests_made,
         0
       );
+      acc['minutes_active'] = Math.floor(
+        accountHistoryItems.reduce(
+          (current, historyItem) => current + historyItem.minutes_active,
+          0
+        )
+      );
     });
     console.log(accounts);
     return accounts;
