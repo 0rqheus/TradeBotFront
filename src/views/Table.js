@@ -187,13 +187,7 @@ export default class Table extends Component {
     const accsToStartByPause = [];
 
     selectedRows.map((acc) => {
-      acc.serverId
-        ? accsToStartByServer.push({
-            id: acc.id,
-            email: acc.email,
-            server_id: acc.serverId,
-          })
-        : accsToStartByPause.push(acc);
+      accsToStartByPause.push(acc);
     });
 
     await this.startAccountByServer(accsToStartByServer);
