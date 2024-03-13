@@ -206,9 +206,9 @@ export default class Table extends Component {
 
   async startAccountWithPause(accounts) {
     for (let i = 0; i < accounts.length; i++) {
-      if (i % 5 == 0 && i > 0) {
+      // if (i % 5 == 0 && i > 0) {
         await new Promise((r) => setTimeout(r, 5000));
-      }
+      // }
       await this.sendItToRabbit(accounts[i].id, accounts[i].email, 'START');
     }
   }
