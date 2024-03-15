@@ -193,12 +193,12 @@ const columnDefsAccounts = [
     suppressToolPanel: true,
     enableRowGroup: true,
   },
-  {
-    field: 'serverId',
-    headerName: 'Server Id',
-    suppressToolPanel: true,
-    enableRowGroup: true,
-  },
+  // {
+  //   field: 'serverId',
+  //   headerName: 'Server Id',
+  //   suppressToolPanel: true,
+  //   enableRowGroup: true,
+  // },
   {
     field: 'requests',
     headerName: 'Requests',

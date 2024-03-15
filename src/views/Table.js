@@ -164,8 +164,8 @@ export default class Table extends Component {
   async getAccs() {
     await apiService.refresh();
     const accounts = await apiService.getAccounts();
-    const accountsWithServers = await this.setAccountServerId(accounts);
-    const accountsWithRequests = await this.changeAll(accountsWithServers);
+    // const accountsWithServers = await this.setAccountServerId(accounts);
+    const accountsWithRequests = await this.changeAll(accounts);
     console.log(accountsWithRequests);
     this.changeRowData(accountsWithRequests);
     await this.changeBalances();
@@ -332,7 +332,7 @@ export default class Table extends Component {
     delete dataToUpdate.proxy;
     delete dataToUpdate.accounts_workshift;
     delete dataToUpdate.accounts_challenges;
-    delete dataToUpdate.serverId;
+    // delete dataToUpdate.serverId;
     await apiService.updateAccount(dataToUpdate);
   }
 
@@ -433,23 +433,26 @@ export default class Table extends Component {
       new Date(Date.now()),
       accounts.map((acc) => acc.id)
     );
+    const newAccs = [];
     accounts.map((acc) => {
+      const newAcc = { ...acc };
       const accountHistoryItems = historyItems.filter(
         (historyItem) => historyItem.account_id === acc.id
       );
-      acc['requests'] = accountHistoryItems.reduce(
+      newAcc['requests'] = accountHistoryItems.reduce(
         (current, historyItem) => current + historyItem.requests_made,
         0
       );
-      acc['minutes_active'] = Math.floor(
+      newAcc['minutes_active'] = Math.floor(
         accountHistoryItems.reduce(
           (current, historyItem) => current + historyItem.minutes_active,
           0
         )
       );
+      newAccs.push(newAcc)
     });
-    console.log(accounts);
-    return accounts;
+    console.log(newAccs);
+    return newAccs;
   }
 
   async componentDidMount() {
@@ -479,8 +482,8 @@ export default class Table extends Component {
     //   },
     // });
     const accounts = await apiService.getAccounts();
-    const accountsWithServers = await this.setAccountServerId(accounts);
-    const accountsWithRequests = await this.changeAll(accountsWithServers);
+    // const accountsWithServers = await this.setAccountServerId(accounts);
+    const accountsWithRequests = await this.changeAll(accounts);
     this.changeRowData(accountsWithRequests);
     await this.changeBalances();
   }
