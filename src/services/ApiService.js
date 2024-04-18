@@ -32,6 +32,11 @@ const GET_ACCOUNTS = gql`
       scheduler_account_info {
         block_reason
       }
+      ban_analytics_info {
+        ban_alalytics_config {
+          id
+        }
+      }
       workshift_id
     }
   }
@@ -181,6 +186,17 @@ const SET_STRATEGY_NAME = gql`
         where: { id: { _in: $ids } }
         _set: { strategy_name: $strategy_name }
       }
+    ) {
+      affected_rows
+    }
+  }
+`;
+
+const SET_BAN_CONFIG = gql`
+  mutation UpdateBanAnalyticsId($ids: [Int!]!, $ban_analytics_config_id: Int) {
+    update_ban_analytics_info(
+      where: { account_id: { _in: $ids } }
+      _set: { ban_analytics_config_id: $ban_analytics_config_id }
     ) {
       affected_rows
     }
@@ -430,6 +446,21 @@ class ApiService {
       console.log(result);
     } catch (err) {
       console.error('ERROR setStrategyName:', err);
+    }
+  };
+
+  setBanConfig = async (ids, ban_analytics_config_id) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: SET_BAN_CONFIG,
+        variables: {
+          ids,
+          ban_analytics_config_id,
+        },
+      });
+      console.log(result);
+    } catch (err) {
+      console.error('ERROR setBanConfig:', err);
     }
   };
 

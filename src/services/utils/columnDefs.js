@@ -187,6 +187,13 @@ const columnDefsAccounts = [
     maxWidth: 110,
   },
   {
+    field: 'ban_analytics_info.ban_alalytics_config.id',
+    headerName: 'Ban Config',
+    editable: true,
+    suppressToolPanel: true,
+    enableRowGroup: true,
+  },
+  {
     field: 'workshift_id',
     headerName: 'Workshift',
     editable: true,

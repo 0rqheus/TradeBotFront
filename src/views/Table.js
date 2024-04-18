@@ -54,6 +54,7 @@ export default class Table extends Component {
     selectedRowsCount: 0,
     enableSbc: false,
     strategyToSet: '',
+    banConfigToSet: 0,
 
     // autoGroupColumnDef: {
     //   width: 250,
@@ -131,6 +132,12 @@ export default class Table extends Component {
   changeStrategyToSet = (strategyName) => {
     this.setState(() => {
       return { strategyToSet: strategyName };
+    });
+  };
+
+  changeBanConfigToSet = (banConfig) => {
+    this.setState(() => {
+      return { banConfigToSet: banConfig };
     });
   };
 
@@ -294,6 +301,12 @@ export default class Table extends Component {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     const accIds = selectedRows.map((row) => row.id);
     await apiService.setStrategyName(accIds, this.state.strategyToSet);
+  }
+
+  async setBanConfig() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    const accIds = selectedRows.map((row) => row.id);
+    await apiService.setBanConfig(accIds, this.state.banConfigToSet);
   }
 
   async downloadCSV(input) {
@@ -671,7 +684,7 @@ export default class Table extends Component {
             </Col>
           </Row>
           <Row style={{ width: '100%' }}>
-            <Col xs="8">
+            <Col xs="5">
               <ButtonGroup aria-label="Basic example">
                 <Button
                   disabled={!this.state.enableSbc}
@@ -697,116 +710,12 @@ export default class Table extends Component {
                 >
                   Foundations 4
                 </Button>
-                {/* <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) =>
-                    this.solveConcreteSBC('Daily Bronze Upgrade_1')
-                  }
-                >
-                  Daily Bronze
-                </Button>
-                <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) =>
-                    this.solveConcreteSBC('Daily Silver Upgrade_1')
-                  }
-                >
-                  Daily Silver
-                </Button> */}
                 <Button
                   disabled={!this.state.enableSbc}
                   onClick={(e) => this.solveConcreteSBC('Daily Gold Upgrade_1')}
                 >
                   Daily Gold
                 </Button>
-                {/* <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('Daily Gold Upgrade_2')}
-                >
-                  Daily Gold 2
-                </Button> */}
-                <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('Marquee Matchups_1')}
-                >
-                  Marquee 1
-                </Button>
-                <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('Marquee Matchups_2')}
-                >
-                  Marquee 2
-                </Button>
-                <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('Marquee Matchups_3')}
-                >
-                  Marquee 3
-                </Button>
-                <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('Marquee Matchups_4')}
-                >
-                  Marquee 4
-                </Button>
-                <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) =>
-                    this.solveConcreteSBC('Daily Fantasy FC Challenge_1')
-                  }
-                >
-                  Daily fantasy
-                </Button>
-                {/* <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('Marquee Matchups.0')}
-                >
-                  All Marquee
-                </Button> */}
-                {/* <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('UEFA Marquee Matchups_1')}
-                >
-                  Uefa Marquee 1
-                </Button>
-                <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) => this.solveConcreteSBC('UEFA Marquee Matchups_2')}
-                >
-                  Uefa Marquee 2
-                </Button>*/}
-                {/* <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) =>
-                    this.solveConcreteSBC("UEFA Women's Marquee Matchups_1")
-                  }
-                >
-                  Uefa women Marquee 1
-                </Button> */}
-                {/* <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) =>
-                    this.solveConcreteSBC("UEFA Women's Marquee Matchups_2")
-                  }
-                >
-                  Uefa women Marquee 2
-                </Button> */}
-                {/* <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) =>
-                    this.solveConcreteSBC('Daily Login Upgrade_1')
-                  }
-                >
-                  Daily login
-                </Button> */}
-                {/* <Button
-                  disabled={!this.state.enableSbc}
-                  onClick={(e) =>
-                    this.solveConcreteSBC("New Year's Kick Off_1")
-                  }
-                >
-                  Weekly
-                </Button> */}
               </ButtonGroup>
             </Col>
             <Col xs="3">
@@ -822,6 +731,22 @@ export default class Table extends Component {
               <ButtonGroup aria-label="Basic example">
                 <Button onClick={(e) => this.setStrategy()}>
                   Set strategy
+                </Button>
+              </ButtonGroup>
+            </Col>
+            <Col xs="3">
+              <input
+                className="input"
+                type="number"
+                placeholder="ban config"
+                value={this.state.banConfigToSet}
+                onChange={(event) => {
+                  this.changeBanConfigToSet(event.target.value);
+                }}
+              />
+              <ButtonGroup aria-label="Basic example">
+                <Button onClick={(e) => this.setBanConfig()}>
+                  Set ban config
                 </Button>
               </ButtonGroup>
             </Col>
