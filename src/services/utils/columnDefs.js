@@ -146,6 +146,7 @@ const columnDefsAccounts = [
   {
     field: 'origin',
     headerName: 'Origin',
+    hide: true,
     editable: true,
     enableRowGroup: true,
   },
@@ -190,6 +191,7 @@ const columnDefsAccounts = [
     field: 'ban_analytics_info.ban_alalytics_config.id',
     headerName: 'Ban Config',
     editable: true,
+    hide: true,
     suppressToolPanel: true,
     enableRowGroup: true,
   },
@@ -217,8 +219,9 @@ const columnDefsAccounts = [
     field: 'minutes_active',
     headerName: 'Minutes',
     filter: 'agNumberColumnFilter',
-    suppressToolPanel: true,
+    hide: true,
     enableRowGroup: true,
+    suppressToolPanel: true,
   },
   {
     valueGetter: function sumField(params) {
