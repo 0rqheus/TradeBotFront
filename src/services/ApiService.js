@@ -234,7 +234,7 @@ const GET_HISTORY_ITEMS_BY_TIME = gql`
           }
           {
             account: { activity_status: { _in: [ON, PAUSED] } }
-            scheduled_end: { _gt: $from }
+            scheduled_start: { _gt: $from }
             account_id: { _in: $ids }
           }
         ]
