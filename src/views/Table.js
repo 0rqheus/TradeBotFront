@@ -214,7 +214,12 @@ export default class Table extends Component {
   async startAccountWithPause(accounts) {
     for (let i = 0; i < accounts.length; i++) {
       if (i % Number(localStorage.getItem('maxAccsToStart')) == 0 && i > 0) {
-        await new Promise((r) => setTimeout(r, Number(localStorage.getItem('secondsBetweenAccsStart')) * 1000));
+        await new Promise((r) =>
+          setTimeout(
+            r,
+            Number(localStorage.getItem('secondsBetweenAccsStart')) * 1000
+          )
+        );
       }
       await this.sendItToRabbit(accounts[i].id, accounts[i].email, 'START');
     }
@@ -462,7 +467,7 @@ export default class Table extends Component {
           0
         )
       );
-      newAccs.push(newAcc)
+      newAccs.push(newAcc);
     });
     console.log(newAccs);
     return newAccs;
@@ -715,6 +720,16 @@ export default class Table extends Component {
                   onClick={(e) => this.solveConcreteSBC('Daily Gold Upgrade_1')}
                 >
                   Daily Gold
+                </Button>
+                <Button
+                  disabled={!this.state.enableSbc}
+                  onClick={(e) =>
+                    this.solveConcreteSBC(
+                      'Team of the Season Daily Login Upgrade_1'
+                    )
+                  }
+                >
+                  Daily Login
                 </Button>
               </ButtonGroup>
             </Col>
