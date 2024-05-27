@@ -128,6 +128,14 @@ const columnDefsAccounts = [
     enableRowGroup: true,
   },
   {
+    field: 'proxy_id',
+    headerName: 'Proxy id',
+    filter: 'agNumberColumnFilter',
+    editable: true,
+    hide: true,
+    enableRowGroup: true,
+  },
+  {
     field: 'proxy.port',
     headerName: 'Port',
     filter: 'agNumberColumnFilter',
