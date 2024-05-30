@@ -25,17 +25,26 @@ const GET_ACCOUNTS = gql`
         buy_now
         list
       }
-      accounts_challenges {
-        sbc_name
-        challenge_index
-        solved_at
-      }
+      # accounts_challenges {
+      #   sbc_name
+      #   challenge_index
+      #   solved_at
+      # }
       scheduler_account_info {
         block_reason
       }
       ban_analytics_info {
         ban_alalytics_config {
           id
+        }
+      }
+      general_account {
+        id
+        solutions {
+          is_solved
+          expires_at
+          challenge_index
+          sbc_name
         }
       }
       workshift_id

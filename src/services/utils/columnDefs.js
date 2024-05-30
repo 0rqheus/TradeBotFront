@@ -233,7 +233,8 @@ const columnDefsAccounts = [
   },
   {
     valueGetter: function sumField(params) {
-      return operateSolvedChallenges(params.data.accounts_challenges);
+      const general_account = params.data.general_account;
+      return operateSolvedChallenges(general_account ? general_account.solutions : []);
     },
     headerName: 'Challenges',
     filter: 'agTextColumnFilter',

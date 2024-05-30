@@ -2,6 +2,10 @@ import { checkLastSolvedTime } from './checkLastSolvedTime';
 import checkLastDailyReleaseTime from './checkLastDailyReleaseTime'
 
 export default function operateSolvedChallenges(solvedChallenges) {
+  solvedChallenges = solvedChallenges
+    .filter(challenge => challenge.expires_at > Date.now() && challenge.is_solved === true);
+
+  console.log(solvedChallenges);
   let solved = '';
   solved += operateFoundations(solvedChallenges);
   solved += operateMarquee(solvedChallenges);
@@ -38,8 +42,7 @@ function operateMarquee(solvedChallenges) {
 
   solvedChallenges.forEach((challenge) => {
     if (
-      challenge.sbc_name == 'Marquee Matchups' &&
-      checkLastSolvedTime(challenge.solved_at, challenge.sbc_name)
+      challenge.sbc_name == 'Marquee Matchups'
     ) {
       solvedMarqueeArray.push(challenge.challenge_index);
     }
@@ -64,8 +67,7 @@ function operateUefa(solvedChallenges) {
 
   solvedChallenges.forEach((challenge) => {
     if (
-      challenge.sbc_name == 'UEFA Marquee Matchups' &&
-      checkLastSolvedTime(challenge.solved_at, challenge.sbc_name)
+      challenge.sbc_name == 'UEFA Marquee Matchups'
     ) {
       solvedUefaMarqueeArray.push(challenge.challenge_index);
     }
@@ -90,8 +92,7 @@ function operateWomenUefa(solvedChallenges) {
 
   solvedChallenges.forEach((challenge) => {
     if (
-      challenge.sbc_name == "UEFA Women's Marquee Matchups" &&
-      checkLastSolvedTime(challenge.solved_at, challenge.sbc_name)
+      challenge.sbc_name == "UEFA Women's Marquee Matchups"
     ) {
       solvedUefaMarqueeArray.push(challenge.challenge_index);
     }
@@ -119,8 +120,7 @@ function operateDaily(solvedChallenges) {
 
   solvedChallenges.forEach((challenge) => {
     if (
-      challenge.sbc_name == 'Daily Tradeable Winter Challenge' &&
-      checkLastDailyReleaseTime(challenge.solved_at, challenge.sbc_name)
+      challenge.sbc_name == 'Daily Tradeable Winter Challenge'
     ) {
       solvedDailyArray.push(challenge.challenge_index);
     }
@@ -128,26 +128,7 @@ function operateDaily(solvedChallenges) {
 
   solvedChallenges.forEach((challenge) => {
     if (
-      challenge.sbc_name == 'Daily Bronze Upgrade' &&
-      checkLastDailyReleaseTime(challenge.solved_at, challenge.sbc_name)
-    ) {
-      solvedDailyBronzeArray.push(challenge.challenge_index);
-    }
-  });
-
-  solvedChallenges.forEach((challenge) => {
-    if (
-      challenge.sbc_name == 'Daily Silver Upgrade' &&
-      checkLastDailyReleaseTime(challenge.solved_at, challenge.sbc_name)
-    ) {
-      solvedDailySilverArray.push(challenge.challenge_index);
-    }
-  });
-
-  solvedChallenges.forEach((challenge) => {
-    if (
-      challenge.sbc_name == 'Daily Gold Upgrade' &&
-      checkLastDailyReleaseTime(challenge.solved_at, challenge.sbc_name)
+      challenge.sbc_name == 'Daily Gold Upgrade'
     ) {
       solvedDailyGoldArray.push(challenge.challenge_index);
     }
