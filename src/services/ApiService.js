@@ -404,6 +404,7 @@ class ApiService {
       delete account.freezed_balance;
       delete account.scheduler_account_info;
       delete account.ban_analytics_info;
+      delete account.general_account;
       const result = await this.client.mutate({
         mutation: UPDATE_ACCOUNT,
         variables: {
