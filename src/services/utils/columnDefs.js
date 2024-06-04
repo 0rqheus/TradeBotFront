@@ -16,6 +16,15 @@ const columnDefsAccounts = [
     maxWidth: 100,
   },
   {
+    field: 'general_account.id',
+    headerName: 'G_ID',
+    filter: 'agNumberColumnFilter',
+    editable: true,
+    enableRowGroup: true,
+    width: 100,
+    maxWidth: 100,
+  },
+  {
     field: 'email',
     headerName: 'Email',
     filter: 'agTextColumnFilter',
@@ -71,6 +80,8 @@ const columnDefsAccounts = [
     },
     width: 90,
     maxWidth: 90,
+    hide: true,
+    enableRowGroup: true,
   },
   {
     headerName: 'Freezed',
@@ -208,6 +219,7 @@ const columnDefsAccounts = [
     headerName: 'Workshift',
     editable: true,
     suppressToolPanel: true,
+    hide: true,
     enableRowGroup: true,
   },
   // {
