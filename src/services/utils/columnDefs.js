@@ -244,12 +244,20 @@ const columnDefsAccounts = [
     suppressToolPanel: true,
   },
   {
+    field: 'sbc_submits',
+    headerName: 'Sbc submits',
+    filter: 'agNumberColumnFilter',
+    enableRowGroup: true,
+    suppressToolPanel: true,
+  },
+  {
     valueGetter: function sumField(params) {
       const general_account = params.data.general_account;
       return operateSolvedChallenges(general_account ? general_account.solutions : []);
     },
     headerName: 'Challenges',
     filter: 'agTextColumnFilter',
+    hide: true,
     suppressToolPanel: true,
     enableRowGroup: true,
   },

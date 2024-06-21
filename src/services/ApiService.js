@@ -228,6 +228,7 @@ const GET_HISTORY_ITEMS = gql`
       scheduled_start
       strategy_name
       id
+      sbc_submits
     }
   }
 `;
@@ -258,6 +259,7 @@ const GET_HISTORY_ITEMS_BY_TIME = gql`
       requests_made
       minutes_active
       strategy_name
+      sbc_submits
     }
   }
 `;

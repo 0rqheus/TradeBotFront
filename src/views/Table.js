@@ -467,6 +467,12 @@ export default class Table extends Component {
           0
         )
       );
+      newAcc['sbc_submits'] = Math.floor(
+        accountHistoryItems.reduce(
+          (current, historyItem) => current + historyItem.sbc_submits,
+          0
+        )
+      );
       newAccs.push(newAcc);
     });
     console.log(newAccs);
