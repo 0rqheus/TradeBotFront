@@ -32,6 +32,7 @@ const GET_ACCOUNTS = gql`
       # }
       scheduler_account_info {
         block_reason
+        service_name
       }
       ban_analytics_info {
         ban_alalytics_config {
@@ -207,6 +208,17 @@ const SET_BAN_CONFIG = gql`
     update_ban_analytics_info(
       where: { account_id: { _in: $ids } }
       _set: { ban_analytics_config_id: $ban_analytics_config_id }
+    ) {
+      affected_rows
+    }
+  }
+`;
+
+const SET_SERVICE_NAME = gql`
+  mutation UpdateBanAnalyticsId($ids: [Int!]!, $service_name: String) {
+    update_scheduler_account_info(
+      where: { account_id: { _in: $ids } }
+      _set: { service_name: $service_name }
     ) {
       affected_rows
     }
@@ -407,6 +419,7 @@ class ApiService {
       delete account.scheduler_account_info;
       delete account.ban_analytics_info;
       delete account.general_account;
+      delete account.service_name;
       const result = await this.client.mutate({
         mutation: UPDATE_ACCOUNT,
         variables: {
@@ -475,6 +488,21 @@ class ApiService {
       console.log(result);
     } catch (err) {
       console.error('ERROR setBanConfig:', err);
+    }
+  };
+
+  setServiceName = async (ids, service_name) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: SET_SERVICE_NAME,
+        variables: {
+          ids,
+          service_name,
+        },
+      });
+      console.log(result);
+    } catch (err) {
+      console.error('ERROR setServiceName:', err);
     }
   };
 

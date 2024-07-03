@@ -54,6 +54,7 @@ export default class Table extends Component {
     selectedRowsCount: 0,
     enableSbc: false,
     strategyToSet: '',
+    serviceName: '',
     banConfigToSet: 0,
 
     // autoGroupColumnDef: {
@@ -138,6 +139,12 @@ export default class Table extends Component {
   changeBanConfigToSet = (banConfig) => {
     this.setState(() => {
       return { banConfigToSet: banConfig };
+    });
+  };
+  
+  changeServiceName = (serviceNameToSet) => {
+    this.setState(() => {
+      return { serviceName: serviceNameToSet };
     });
   };
 
@@ -312,6 +319,12 @@ export default class Table extends Component {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     const accIds = selectedRows.map((row) => row.id);
     await apiService.setBanConfig(accIds, this.state.banConfigToSet);
+  }
+
+  async setServiceName() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    const accIds = selectedRows.map((row) => row.id);
+    await apiService.setServiceName(accIds, this.state.serviceName);
   }
 
   async downloadCSV(input) {
@@ -695,7 +708,7 @@ export default class Table extends Component {
             </Col>
           </Row>
           <Row style={{ width: '100%' }}>
-            <Col xs="5">
+            <Col xs="4">
               <ButtonGroup aria-label="Basic example">
                 <Button
                   disabled={!this.state.enableSbc}
@@ -721,7 +734,7 @@ export default class Table extends Component {
                 >
                   Foundations 4
                 </Button>
-                <Button
+                {/* <Button
                   disabled={!this.state.enableSbc}
                   onClick={(e) => this.solveConcreteSBC('Daily Gold Upgrade_1')}
                 >
@@ -736,10 +749,10 @@ export default class Table extends Component {
                   }
                 >
                   Daily Login
-                </Button>
+                </Button> */}
               </ButtonGroup>
             </Col>
-            <Col xs="3">
+            <Col xs="2">
               <input
                 className="input"
                 type="text"
@@ -755,7 +768,7 @@ export default class Table extends Component {
                 </Button>
               </ButtonGroup>
             </Col>
-            <Col xs="3">
+            <Col xs="2">
               <input
                 className="input"
                 type="number"
@@ -768,6 +781,22 @@ export default class Table extends Component {
               <ButtonGroup aria-label="Basic example">
                 <Button onClick={(e) => this.setBanConfig()}>
                   Set ban config
+                </Button>
+              </ButtonGroup>
+            </Col>
+            <Col xs="2">
+              <input
+                className="input"
+                type="text"
+                placeholder="service name"
+                value={this.state.serviceName}
+                onChange={(event) => {
+                  this.changeServiceName(event.target.value);
+                }}
+              />
+              <ButtonGroup aria-label="Basic example">
+                <Button onClick={(e) => this.setServiceName()}>
+                  Set service name
                 </Button>
               </ButtonGroup>
             </Col>

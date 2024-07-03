@@ -71,6 +71,14 @@ const columnDefsAccounts = [
     maxWidth: 450,
   },
   {
+    field: 'scheduler_account_info.service_name',
+    headerName: 'Service',
+    editable: true,
+    enableRowGroup: false,
+    width: 90,
+    maxWidth: 450,
+  },
+  {
     field: 'should_run',
     headerName: 'Should run',
     editable: true,
