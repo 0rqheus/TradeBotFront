@@ -16,7 +16,7 @@ const columnDefsAccounts = [
     maxWidth: 100,
   },
   {
-    field: 'general_account.id',
+    field: 'general_account_id',
     headerName: 'G_ID',
     filter: 'agNumberColumnFilter',
     editable: true,
@@ -258,17 +258,17 @@ const columnDefsAccounts = [
     enableRowGroup: true,
     suppressToolPanel: true,
   },
-  {
-    valueGetter: function sumField(params) {
-      const general_account = params.data.general_account;
-      return operateSolvedChallenges(general_account ? general_account.solutions : []);
-    },
-    headerName: 'Challenges',
-    filter: 'agTextColumnFilter',
-    hide: true,
-    suppressToolPanel: true,
-    enableRowGroup: true,
-  },
+  // {
+  //   valueGetter: function sumField(params) {
+  //     const general_account = params.data.general_account;
+  //     return operateSolvedChallenges(general_account ? general_account.solutions : []);
+  //   },
+  //   headerName: 'Challenges',
+  //   filter: 'agTextColumnFilter',
+  //   hide: true,
+  //   suppressToolPanel: true,
+  //   enableRowGroup: true,
+  // },
 ];
 
 export default columnDefsAccounts;

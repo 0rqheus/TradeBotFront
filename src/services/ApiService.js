@@ -39,15 +39,16 @@ const GET_ACCOUNTS = gql`
           id
         }
       }
-      general_account {
-        id
-        solutions {
-          is_solved
-          expires_at
-          challenge_index
-          sbc_name
-        }
-      }
+      general_account_id
+      # general_account {
+      #   id
+      #   solutions {
+      #     is_solved
+      #     expires_at
+      #     challenge_index
+      #     sbc_name
+      #   }
+      # }
       workshift_id
     }
   }
