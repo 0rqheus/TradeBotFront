@@ -55,6 +55,7 @@ export default class Table extends Component {
     enableSbc: false,
     strategyToSet: '',
     serviceName: '',
+    serviceNames: [],
     banConfigToSet: 0,
 
     // autoGroupColumnDef: {
@@ -145,6 +146,12 @@ export default class Table extends Component {
   changeServiceName = (serviceNameToSet) => {
     this.setState(() => {
       return { serviceName: serviceNameToSet };
+    });
+  };
+
+  changeServiceNames = (serviceNamesToSet) => {
+    this.setState(() => {
+      return { serviceNames: serviceNamesToSet };
     });
   };
 
@@ -518,6 +525,9 @@ export default class Table extends Component {
     //     console.error(err);
     //   },
     // });
+    const serviceSelection = (await apiService.getActiveServices()).map(service => service.service_name);
+    console.log(serviceSelection);
+    this.changeServiceNames(serviceSelection);
     const accounts = await apiService.getAccounts();
     // const accountsWithServers = await this.setAccountServerId(accounts);
     const accountsWithRequests = await this.changeAll(accounts);
@@ -785,15 +795,19 @@ export default class Table extends Component {
               </ButtonGroup>
             </Col>
             <Col xs="2">
-              <input
-                className="input"
-                type="text"
-                placeholder="service name"
-                value={this.state.serviceName}
-                onChange={(event) => {
-                  this.changeServiceName(event.target.value);
-                }}
-              />
+              <Form.Select onChange={(event) => {
+                this.changeServiceName(event.target.value);
+              }}>
+                {(() => {
+                  const options = [];
+
+                  for (const serviceName of this.state.serviceNames) {
+                    options.push(<option value={serviceName}>{serviceName}</option>);
+                  }
+
+                  return options;
+                })()}
+              </Form.Select>
               <ButtonGroup aria-label="Basic example">
                 <Button onClick={(e) => this.setServiceName()}>
                   Set service name

@@ -54,6 +54,14 @@ const GET_ACCOUNTS = gql`
   }
 `;
 
+const GET_WORKER_SERVICES = gql`
+  query GetWorkerServices {
+    worker_services {
+      service_name
+    }
+  }
+`
+
 const UPDATE_ACCOUNT = gql`
   mutation MyMutation7($id: Int!, $_set: accounts_set_input!) {
     update_accounts_by_pk(pk_columns: { id: $id }, _set: $_set) {
@@ -518,6 +526,17 @@ class ApiService {
       return result.data.history_items;
     } catch (err) {
       console.error('ERROR getHistoryItems:', err);
+    }
+  };
+
+  getActiveServices = async () => {
+    try {
+      const result = await this.client.query({
+        query: GET_WORKER_SERVICES,
+      });
+      return result.data.worker_services;
+    } catch (err) {
+      console.error('ERROR getActiveServices:', err);
     }
   };
 
