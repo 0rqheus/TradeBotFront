@@ -209,18 +209,26 @@ export default class Table extends Component {
 
     selectedRows.map((acc) => {
       accsToStartByPause.push(acc);
+      if(acc.scheduler_account_info.service_name) {
+        accsToStartByServer.push({
+          id: acc.id,
+          email: acc.email,
+          service_name: acc.scheduler_account_info.service_name
+        });
+      }
     });
 
     await this.startAccountByServer(accsToStartByServer);
-    await this.startAccountWithPause(accsToStartByPause);
+    // await this.startAccountWithPause(accsToStartByPause);
   }
 
   async startAccountByServer(accounts) {
+    console.log(accounts);
     await apiServiceCustomResolvers.startByServers({
       accounts,
       type: 'START',
-      secondsBetween: Number(localStorage.getItem('secondsBetweenAccsStart')),
-      maxAccsToStart: Number(localStorage.getItem('maxAccsToStart')),
+      secondsBetween: 12,
+      maxAccsToStart: 93,
       rabbitUrl: localStorage.getItem('rabbitUrl'),
     });
   }
