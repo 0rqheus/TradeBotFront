@@ -223,6 +223,17 @@ const SET_BAN_CONFIG = gql`
   }
 `;
 
+const SET_SCHEDULER_CONFIG = gql`
+  mutation UpdateBanAnalyticsId($ids: [Int!]!, $config_id: Int) {
+    update_scheduler_account_info(
+      where: { account_id: { _in: $ids } }
+      _set: { config_id: $config_id }
+    ) {
+      affected_rows
+    }
+  }
+`;
+
 const SET_SERVICE_NAME = gql`
   mutation UpdateBanAnalyticsId($ids: [Int!]!, $service_name: String) {
     update_scheduler_account_info(
@@ -497,6 +508,21 @@ class ApiService {
       console.log(result);
     } catch (err) {
       console.error('ERROR setBanConfig:', err);
+    }
+  };
+
+  setSchedulerConfig = async (ids, config_id) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: SET_SCHEDULER_CONFIG,
+        variables: {
+          ids,
+          config_id,
+        },
+      });
+      console.log(result);
+    } catch (err) {
+      console.error('ERROR setSchedulerConfig:', err);
     }
   };
 

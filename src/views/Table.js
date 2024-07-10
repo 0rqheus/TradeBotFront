@@ -336,6 +336,12 @@ export default class Table extends Component {
     await apiService.setBanConfig(accIds, this.state.banConfigToSet);
   }
 
+  async setSchedulerConfig() {
+    const selectedRows = this.state.gridRef.current.api.getSelectedRows();
+    const accIds = selectedRows.map((row) => row.id);
+    await apiService.setSchedulerConfig(accIds, this.state.banConfigToSet);
+  }
+
   async setServiceName() {
     const selectedRows = this.state.gridRef.current.api.getSelectedRows();
     const accIds = selectedRows.map((row) => row.id);
@@ -786,7 +792,7 @@ export default class Table extends Component {
                 </Button>
               </ButtonGroup>
             </Col>
-            <Col xs="2">
+            <Col xs="3">
               <input
                 className="input"
                 type="number"
@@ -799,6 +805,9 @@ export default class Table extends Component {
               <ButtonGroup aria-label="Basic example">
                 <Button onClick={(e) => this.setBanConfig()}>
                   Set ban config
+                </Button>
+                <Button onClick={(e) => this.setSchedulerConfig()}>
+                  Set scheduler config
                 </Button>
               </ButtonGroup>
             </Col>
