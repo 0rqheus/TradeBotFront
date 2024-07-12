@@ -33,6 +33,9 @@ const GET_ACCOUNTS = gql`
       scheduler_account_info {
         block_reason
         service_name
+        scheduler_config {
+          id
+        }
       }
       ban_analytics_info {
         ban_alalytics_config {

@@ -223,6 +223,14 @@ const columnDefsAccounts = [
     enableRowGroup: true,
   },
   {
+    field: 'scheduler_account_info.scheduler_config.id',
+    headerName: 'Scheduler Config',
+    editable: true,
+    hide: true,
+    suppressToolPanel: true,
+    enableRowGroup: true,
+  },
+  {
     field: 'workshift_id',
     headerName: 'Workshift',
     editable: true,
