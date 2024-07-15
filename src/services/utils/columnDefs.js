@@ -71,6 +71,14 @@ const columnDefsAccounts = [
     maxWidth: 450,
   },
   {
+    field: 'scheduler_account_info.blocked_at',
+    headerName: 'Blocked at',
+    filter: 'agNumberColumnFilter',
+    editable: true,
+    hide: true,
+    enableRowGroup: true,
+  },
+  {
     field: 'scheduler_account_info.service_name',
     headerName: 'Service',
     editable: true,
