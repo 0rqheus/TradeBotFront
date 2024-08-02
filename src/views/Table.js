@@ -373,6 +373,7 @@ export default class Table extends Component {
         await createAccs(newObject, apiService);
         await apiService.refresh();
       }
+      alert('accs downloaded');
     };
 
     // await createAccs(accsToCreate, apiService);
