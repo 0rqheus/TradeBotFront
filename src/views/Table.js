@@ -25,6 +25,7 @@ import {
 import apiServiceServers from '../services/ApiServiceServers';
 import { balanceToNumber } from '../services/utils/accountToBanned';
 import getLastTimeForRequests from '../services/utils/getLastTimeForRequests';
+import createAccs from '../services/utils/checkNewAcc';
 
 const reader = new FileReader();
 
@@ -269,6 +270,7 @@ export default class Table extends Component {
     selectedRows.forEach(async (row) => {
       // await apiService.updateAccountStatus(row._id, 'STOP');
       await this.sendItToRabbit(row.id, row.email, 'STOP');
+      await new Promise(r => setTimeout(r, 100));
     });
   }
 
@@ -350,32 +352,30 @@ export default class Table extends Component {
 
   async downloadCSV(input) {
     const csv = input.target.files[0];
+    const accsToCreate = [];
     reader.readAsText(csv);
     reader.onload = async (e) => {
       let lines = e.target.result.split('\n');
-      let headers = lines[0].split(',');
       for (let i = 1; i < lines.length; i++) {
-        let obj = {};
-        let currentline = lines[i].split(',');
-        for (let j = 0; j < headers.length; j++) {
-          headers[j] = headers[j].trim();
-          obj[headers[j]] = currentline[j]
-            .replace(/\"/g, '')
-            .replace(/\r/g, '');
-        }
+        let currentLine = lines[i].split(',');
         let newObject = {
-          email: obj['Email'],
-          password: obj['Password'],
-          gauth: obj['Gauth'],
-          proxyId: obj['ProxyId'],
-          proxyIp: obj['ProxyHost'],
-          proxyPort: obj['ProxyPort'],
-          proxyLogin: obj['ProxyLogin'],
-          proxyPass: obj['ProxyPass'],
+          account_owner: currentLine[0],
+          origin: currentLine[1],
+          email: currentLine[2].toLowerCase(),
+          password: currentLine[3],
+          gauth: currentLine[4],
+          proxyIp: currentLine[5],
+          proxyPort: currentLine[6],
+          proxyLogin: currentLine[7],
+          proxyPass: currentLine[8],
         };
-        await apiService.createAccount(newObject);
+        // accsToCreate.push(newObject);
+        await createAccs(newObject, apiService);
+        await apiService.refresh();
       }
     };
+
+    // await createAccs(accsToCreate, apiService);
   }
 
   async onCellValueChanged(event) {

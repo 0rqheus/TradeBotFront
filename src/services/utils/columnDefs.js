@@ -186,6 +186,13 @@ const columnDefsAccounts = [
     enableRowGroup: true,
   },
   {
+    field: 'account_owner',
+    headerName: 'Account Owner',
+    hide: true,
+    editable: true,
+    enableRowGroup: true,
+  },
+  {
     field: 'group',
     headerName: 'Group',
     editable: true,

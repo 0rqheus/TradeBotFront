@@ -17,6 +17,7 @@ const GET_ACCOUNTS = gql`
       group
       origin
       proxy_id
+      account_owner
       proxy {
         host
         port
@@ -73,6 +74,64 @@ const UPDATE_ACCOUNT = gql`
     }
   }
 `;
+
+const CREATE_NEW_PROXY = gql`
+  mutation CreateProxy(
+    $object: proxies_insert_input!
+  ) {
+    insert_proxies_one(
+      object: $object
+    ) {
+      id
+      host
+      port
+    }
+  }
+`
+
+const CREATE_NEW_GENERAL_ACC = gql`
+  mutation CreateGeneralAcc(
+    $email: String
+  ) {
+    insert_general_accounts_one(
+      object: {email: $email}
+    ) {
+      id
+    }
+  }
+`
+
+const GET_GENERAL_ACC_BY_EMAIL = gql`
+  query GetGeneralAccByEmail(
+    $email: String
+  ) {
+    general_accounts(where: {email: {_eq: $email}}) {
+      id
+    }
+  }
+`
+
+const GET_EXISTING_ACCOUNT_OWNER = gql`
+  query GetMulingCreds(
+    $account_owner: String
+  ) {
+    mulling_creds(where: {account_owner: {_eq: $account_owner}}) {
+      account_owner
+    }
+  }
+`
+
+const CREATE_NEW_MULING_CREDS = gql`
+  mutation CreateMulingCreds(
+    $account_owner: String
+  ) {
+    insert_mulling_creds_one(
+      object: {account_owner: $account_owner}
+    ) {
+      account_owner
+    }
+  }
+`
 
 const CONNECT_ACCOUNT_TO_PROXY = gql`
   mutation CreateAccount(
@@ -154,6 +213,35 @@ const CREATE_ACCOUNT_WITH_PROXY = gql`
     }
   }
 `;
+
+const GET_ALL_ACCOUNTS = gql`
+  query GetAllAccounts {
+    accounts {
+      id
+      email
+    },
+  }
+`
+
+const GET_ALL_PROXIES = gql`
+  query GetAllProxies {
+    proxies {
+      id
+      host
+      port
+    },
+  }
+`
+
+const CREATE_ACCOUNT_FOR_EXCHANGE = gql`
+  mutation CreateAccount(
+    $object: accounts_insert_input!
+  ) {
+    insert_accounts_one(object: $object) {
+      id
+    }
+  }
+`
 
 const SUBSCRIBE_ACCOUNTS = gql`
   subscription SubscribeAccounts {
@@ -601,6 +689,128 @@ class ApiService {
     } catch (err) {
       console.log('ERROR getHistoryItems:', err);
       return [];
+    }
+  };
+
+  getAllAccounts = async () => {
+    try {
+      const result = await this.client.query({
+        query: GET_ALL_ACCOUNTS
+      });
+
+      return result.data.accounts || [];
+    } catch (err) {
+      console.log('ERROR getAllAccounts:', err);
+      return [];
+    }
+  };
+
+  getAllProxies = async () => {
+    try {
+      const result = await this.client.query({
+        query: GET_ALL_PROXIES
+      });
+
+      return result.data.proxies || [];
+    } catch (err) {
+      console.log('ERROR getAllProxies:', err);
+      return [];
+    }
+  };
+
+  createNewProxy = async (object) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: CREATE_NEW_PROXY,
+        variables: {
+          object
+        },
+      });
+      console.log(result);
+
+      return result.data.insert_proxies_one;
+    } catch (err) {
+      console.error('ERROR createNewProxy:', err);
+    }
+  };
+
+  getExistingGeneralAcc = async(email) => {
+    try {
+      const result = await this.client.query({
+        query: GET_GENERAL_ACC_BY_EMAIL,
+        variables: {
+          email
+        },
+      });
+      console.log(result);
+
+      return result.data.general_accounts || [];
+    } catch (err) {
+      console.error('ERROR getExistingGeneralAcc:', err);
+    }
+  }
+
+  createGeneralAccount = async (email) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: CREATE_NEW_GENERAL_ACC,
+        variables: {
+          email
+        },
+      });
+      console.log(result);
+
+      return result.data.insert_general_accounts_one;
+    } catch (err) {
+      console.error('ERROR createGeneralAccount:', err);
+    }
+  };
+
+  getExistingMullingCreds = async(account_owner) => {
+    try {
+      const result = await this.client.query({
+        query: GET_EXISTING_ACCOUNT_OWNER,
+        variables: {
+          account_owner
+        },
+      });
+      console.log(result);
+
+      return result.data.mulling_creds || [];
+    } catch (err) {
+      console.error('ERROR getExistingMullingCreds:', err);
+    }
+  }
+
+  createMullingCreds = async (account_owner) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: CREATE_NEW_MULING_CREDS,
+        variables: {
+          account_owner
+        },
+      });
+      console.log(result);
+
+      return result.data.insert_mulling_creds_one;
+    } catch (err) {
+      console.error('ERROR createMullingCreds:', err);
+    }
+  };
+
+  createAccountForExchange = async (object) => {
+    try {
+      const result = await this.client.mutate({
+        mutation: CREATE_ACCOUNT_FOR_EXCHANGE,
+        variables: {
+          object
+        },
+      });
+      console.log(result);
+
+      return result.data.insert_accounts_one;
+    } catch (err) {
+      console.error('ERROR createAccountForExchange:', err);
     }
   };
 }
