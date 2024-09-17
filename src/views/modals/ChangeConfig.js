@@ -4,35 +4,24 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { apiServiceCustomResolvers } from '../../services/ApiCustomResolvers';
 
-export default function ChangeConfigModal(props) {
-  const [maxTimeToTrySbc = '', setMaxTimeToTrySbc] = useState();
-  const [sbcDuration = '', setSbcDuration] = useState();
-  const [shouldTrySbc = false, setShouldTrySbc] = useState();
-
-  const handleInputMaxTimeToTrySbc = (event) => {
-    setMaxTimeToTrySbc(event.target.value);
-  };
-
-  const handleInputSbcDuration = (event) => {
-    setSbcDuration(event.target.value);
-  };
-
-  const handleInputShouldTrySbc = (event) => {
-    setShouldTrySbc(event.target.checked);
-  };
+const ChangeConfigModal = (props) => {
+  const [maxTimeToTrySbc, setMaxTimeToTrySbc] = useState('');
+  const [sbcDuration, setSbcDuration] = useState('');
+  const [shouldTrySbc, setShouldTrySbc] = useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     const accountIds = props.accounts.map((acc) => acc.id);
-    const data = {
-      maxTimeToTrySbc: Number(maxTimeToTrySbc),
-      sbcDuration: Number(sbcDuration),
-      shouldTrySbc: shouldTrySbc,
-    };
     await apiServiceCustomResolvers.changeConfig({
       account_ids: accountIds,
-      config: data,
+      config: {
+        maxTimeToTrySbc: Number(maxTimeToTrySbc),
+        sbcDuration: Number(sbcDuration),
+        shouldTrySbc,
+      },
     });
+
     props.onHide();
   };
 
@@ -45,7 +34,7 @@ export default function ChangeConfigModal(props) {
     >
       <Modal.Header closeButton>
         <Modal.Title id="contained-modal-title-vcenter">
-          Изменить конфиг воркера
+          Change worker config
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -54,29 +43,29 @@ export default function ChangeConfigModal(props) {
             <Form.Control
               type="number"
               value={maxTimeToTrySbc}
-              onChange={handleInputMaxTimeToTrySbc}
-              placeholder="Max time to try sbc (min)"
+              onChange={(event) => setMaxTimeToTrySbc(event.target.value)}
+              placeholder="Max time to try SBC (min)"
             />
           </Form.Group>
           <Form.Group className="mb-3">
             <Form.Control
               type="number"
               value={sbcDuration}
-              onChange={handleInputSbcDuration}
-              placeholder="Sbc duration (min)"
+              onChange={(event) => setSbcDuration(event.target.value)}
+              placeholder="SBC duration (min)"
             />
           </Form.Group>
           <Form.Group className="mb-3" controlId="formBasicCheckbox">
             <Form.Check
-              onClick={handleInputShouldTrySbc}
-              value={shouldTrySbc}
+              onChange={(event) => setShouldTrySbc(event.target.checked)}
+              checked={shouldTrySbc}
               type="checkbox"
-              label="Should try sbc"
+              label="Should try SBC"
             />
           </Form.Group>
           <div className="d-grid gap-2">
             <Button className="modalButton" variant="primary" type="submit">
-              Отправить
+              Send
             </Button>
           </div>
         </Form>
@@ -84,3 +73,5 @@ export default function ChangeConfigModal(props) {
     </Modal>
   );
 }
+
+export default ChangeConfigModal;

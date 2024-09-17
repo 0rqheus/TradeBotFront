@@ -1,8 +1,13 @@
-const LOCALE_VALUE = 'en';
-import { balanceToNumber } from './accountToBanned';
-import operateSolvedChallenges from './operateSolvedChalenges';
+import { balanceStringToNumber, formatNumber } from './utils';
 
-const columnDefsAccounts = [
+export const defaultColDef = {
+  resizable: true,
+  sortable: true,
+  flex: 1,
+  filter: true,
+}
+
+export const columnDefsAccounts = [
   {
     field: 'id',
     headerName: 'ID',
@@ -30,12 +35,10 @@ const columnDefsAccounts = [
     filter: 'agTextColumnFilter',
     editable: true,
     enableRowGroup: true,
-    valueGetter: (params) => {
-      return params.data.email;
-    },
+    valueGetter: (params) => params.data.email,
     valueSetter: (params) => {
-      var newVal = params.newValue;
-      var valueChanged = params.data.email !== newVal;
+      const newVal = params.newValue;
+      const valueChanged = params.data.email !== newVal;
       if (valueChanged) {
         params.data.email = newVal;
       }
@@ -48,12 +51,10 @@ const columnDefsAccounts = [
     filter: 'agTextColumnFilter',
     editable: true,
     enableRowGroup: true,
-    valueGetter: (params) => {
-      return params.data.activity_status;
-    },
+    valueGetter: (params) => params.data.activity_status,
     valueSetter: (params) => {
-      var newVal = params.newValue;
-      var valueChanged = params.data.activity_status !== newVal;
+      const newVal = params.newValue;
+      const valueChanged = params.data.activity_status !== newVal;
       if (valueChanged) {
         params.data.activity_status = newVal;
       }
@@ -91,9 +92,7 @@ const columnDefsAccounts = [
     headerName: 'Should run',
     editable: true,
     enableRowGroup: true,
-    cellRenderer: (params) => {
-      return params.value.toString();
-    },
+    cellRenderer: (params) => params.value.toString(),
     width: 90,
     maxWidth: 90,
     hide: true,
@@ -104,11 +103,8 @@ const columnDefsAccounts = [
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
-    valueGetter: function sumField(params) {
-      return balanceToNumber(params.data.freezed_balance);
-    },
-    valueFormatter: (param) =>
-      balanceToNumber(param.data.freezed_balance).toLocaleString(LOCALE_VALUE),
+    valueGetter: (params) => balanceStringToNumber(params.data.freezed_balance),
+    valueFormatter: (param) => formatNumber(balanceStringToNumber(param.data.freezed_balance)),
     width: 110,
     maxWidth: 110,
   },
@@ -117,32 +113,23 @@ const columnDefsAccounts = [
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
-    valueGetter: function sumField(params) {
-      return balanceToNumber(params.data.available_balance);
-    },
-    valueFormatter: (param) =>
-      balanceToNumber(param.data.available_balance).toLocaleString(
-        LOCALE_VALUE
-      ),
+    valueGetter: (params) => balanceStringToNumber(params.data.available_balance),
+    valueFormatter: (param) => formatNumber(balanceStringToNumber(param.data.available_balance)),
     width: 110,
     maxWidth: 110,
   },
   {
     headerName: 'Total',
-    valueGetter: function sumField(params) {
-      return (
-        balanceToNumber(params.data.freezed_balance) +
-        balanceToNumber(params.data.available_balance)
-      );
-    },
+    valueGetter: (params) => (
+      balanceStringToNumber(params.data.freezed_balance) +
+      balanceStringToNumber(params.data.available_balance)),
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
-    valueFormatter: (param) =>
-      (
-        balanceToNumber(param.data.freezed_balance) +
-        balanceToNumber(param.data.available_balance)
-      ).toLocaleString(LOCALE_VALUE),
+    valueFormatter: (param) => formatNumber(
+      balanceStringToNumber(param.data.freezed_balance) +
+      balanceStringToNumber(param.data.available_balance)
+    ),
     width: 100,
     maxWidth: 100,
   },
@@ -200,11 +187,9 @@ const columnDefsAccounts = [
     enableRowGroup: true,
   },
   {
-    valueGetter: function sumField(params) {
-      return params.data.objectives_progress
-        ? params.data.objectives_progress.list
-        : 0;
-    },
+    valueGetter: (params) => params.data.objectives_progress
+      ? params.data.objectives_progress.list
+      : 0,
     headerName: 'List',
     filter: 'agNumberColumnFilter',
     suppressToolPanel: true,
@@ -215,11 +200,9 @@ const columnDefsAccounts = [
     maxWidth: 80,
   },
   {
-    valueGetter: function sumField(params) {
-      return params.data.objectives_progress
-        ? params.data.objectives_progress.buy_now
-        : 0;
-    },
+    valueGetter: (params) => params.data.objectives_progress
+      ? params.data.objectives_progress.buy_now
+      : 0,
     headerName: 'Buy now',
     filter: 'agNumberColumnFilter',
     suppressToolPanel: true,
@@ -253,12 +236,6 @@ const columnDefsAccounts = [
     hide: true,
     enableRowGroup: true,
   },
-  // {
-  //   field: 'serverId',
-  //   headerName: 'Server Id',
-  //   suppressToolPanel: true,
-  //   enableRowGroup: true,
-  // },
   {
     field: 'requests',
     headerName: 'Requests',
@@ -281,17 +258,4 @@ const columnDefsAccounts = [
     enableRowGroup: true,
     suppressToolPanel: true,
   },
-  // {
-  //   valueGetter: function sumField(params) {
-  //     const general_account = params.data.general_account;
-  //     return operateSolvedChallenges(general_account ? general_account.solutions : []);
-  //   },
-  //   headerName: 'Challenges',
-  //   filter: 'agTextColumnFilter',
-  //   hide: true,
-  //   suppressToolPanel: true,
-  //   enableRowGroup: true,
-  // },
 ];
-
-export default columnDefsAccounts;

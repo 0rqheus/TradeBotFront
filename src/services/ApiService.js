@@ -532,6 +532,10 @@ class ApiService {
       delete account.ban_analytics_info;
       delete account.general_account;
       delete account.service_name;
+      delete account.objectives_progress;
+      delete account.proxy;
+      delete account.accounts_workshift;
+      delete account.accounts_challenges;
       const result = await this.client.mutate({
         mutation: UPDATE_ACCOUNT,
         variables: {
