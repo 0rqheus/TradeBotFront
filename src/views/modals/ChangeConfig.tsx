@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { apiServiceCustomResolvers } from '../../services/ApiCustomResolvers';
 
-const ChangeConfigModal = (props) => {
+const ChangeConfigModal = (props: any) => {
   const [maxTimeToTrySbc, setMaxTimeToTrySbc] = useState('');
   const [sbcDuration, setSbcDuration] = useState('');
   const [shouldTrySbc, setShouldTrySbc] = useState(false);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    const accountIds = props.accounts.map((acc) => acc.id);
+    const accountIds = props.accounts.map((acc: any) => acc.id);
     await apiServiceCustomResolvers.changeConfig({
       account_ids: accountIds,
       config: {

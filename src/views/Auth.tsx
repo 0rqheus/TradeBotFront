@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 
@@ -6,7 +6,7 @@ const Auth = () => {
   const [secret, setSecret] = useState('');
   const [rabbitUrl, setRabbitUrl] = useState('');
 
-  const handleLogin = async (event) => {
+  const handleLogin = async (event: any) => {
     event.preventDefault();
     localStorage.setItem('adminSecret', secret);
     localStorage.setItem('rabbitUrl', rabbitUrl);

@@ -35,8 +35,8 @@ export const columnDefsAccounts = [
     filter: 'agTextColumnFilter',
     editable: true,
     enableRowGroup: true,
-    valueGetter: (params) => params.data.email,
-    valueSetter: (params) => {
+    valueGetter: (params: any) => params.data.email,
+    valueSetter: (params: any) => {
       const newVal = params.newValue;
       const valueChanged = params.data.email !== newVal;
       if (valueChanged) {
@@ -51,8 +51,8 @@ export const columnDefsAccounts = [
     filter: 'agTextColumnFilter',
     editable: true,
     enableRowGroup: true,
-    valueGetter: (params) => params.data.activity_status,
-    valueSetter: (params) => {
+    valueGetter: (params: any) => params.data.activity_status,
+    valueSetter: (params: any) => {
       const newVal = params.newValue;
       const valueChanged = params.data.activity_status !== newVal;
       if (valueChanged) {
@@ -92,19 +92,18 @@ export const columnDefsAccounts = [
     headerName: 'Should run',
     editable: true,
     enableRowGroup: true,
-    cellRenderer: (params) => params.value.toString(),
+    cellRenderer: (params: any) => params.value.toString(),
     width: 90,
     maxWidth: 90,
     hide: true,
-    enableRowGroup: true,
   },
   {
     headerName: 'Freezed',
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
-    valueGetter: (params) => balanceStringToNumber(params.data.freezed_balance),
-    valueFormatter: (param) => formatNumber(balanceStringToNumber(param.data.freezed_balance)),
+    valueGetter: (params: any) => balanceStringToNumber(params.data.freezed_balance),
+    valueFormatter: (param: any) => formatNumber(balanceStringToNumber(param.data.freezed_balance)),
     width: 110,
     maxWidth: 110,
   },
@@ -113,20 +112,20 @@ export const columnDefsAccounts = [
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
-    valueGetter: (params) => balanceStringToNumber(params.data.available_balance),
-    valueFormatter: (param) => formatNumber(balanceStringToNumber(param.data.available_balance)),
+    valueGetter: (params: any) => balanceStringToNumber(params.data.available_balance),
+    valueFormatter: (param: any) => formatNumber(balanceStringToNumber(param.data.available_balance)),
     width: 110,
     maxWidth: 110,
   },
   {
     headerName: 'Total',
-    valueGetter: (params) => (
+    valueGetter: (params: any) => (
       balanceStringToNumber(params.data.freezed_balance) +
       balanceStringToNumber(params.data.available_balance)),
     filter: 'agNumberColumnFilter',
     editable: true,
     enableRowGroup: true,
-    valueFormatter: (param) => formatNumber(
+    valueFormatter: (param: any) => formatNumber(
       balanceStringToNumber(param.data.freezed_balance) +
       balanceStringToNumber(param.data.available_balance)
     ),
@@ -187,7 +186,7 @@ export const columnDefsAccounts = [
     enableRowGroup: true,
   },
   {
-    valueGetter: (params) => params.data.objectives_progress
+    valueGetter: (params: any) => params.data.objectives_progress
       ? params.data.objectives_progress.list
       : 0,
     headerName: 'List',
@@ -200,7 +199,7 @@ export const columnDefsAccounts = [
     maxWidth: 80,
   },
   {
-    valueGetter: (params) => params.data.objectives_progress
+    valueGetter: (params: any) => params.data.objectives_progress
       ? params.data.objectives_progress.buy_now
       : 0,
     headerName: 'Buy now',

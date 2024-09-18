@@ -1,5 +1,7 @@
-import makeApolloClient from './utils/makeApolloClient';
+import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
+import makeApolloClient from '../utils/makeApolloClient';
 import gql from 'graphql-tag';
+import { AccountToDisplay } from './ApiService';
 
 const SEND_COMMAND = gql`
   mutation SendCommand($payload: RabbitPayload!) {
@@ -32,13 +34,12 @@ const START_BY_SERVERS = gql`
 `;
 
 class ApiServiceCustomerResolvers {
-  client;
-
-  constructor(client) {
-    this.client = client;
+  constructor(
+    private readonly client: ApolloClient<NormalizedCacheObject>
+  ) {
   }
 
-  sendCommand = async (payload) => {
+  sendCommand = async (payload: any) => {
     try {
       const result = await this.client.mutate({
         mutation: SEND_COMMAND,
@@ -49,11 +50,11 @@ class ApiServiceCustomerResolvers {
       // console.log(result);
       return result.data;
     } catch (err) {
-      console.erorr('ERROR:', err);
+      console.error('ERROR:', err);
     }
   };
 
-  sendHttpCommand = async (payload) => {
+  sendHttpCommand = async (payload: any) => {
     try {
       const result = await this.client.mutate({
         mutation: SEND_HTTP_COMMAND,
@@ -68,7 +69,7 @@ class ApiServiceCustomerResolvers {
     }
   };
 
-  startByServers = async (payload) => {
+  startByServers = async (payload: any) => {
     try {
       const result = await this.client.mutate({
         mutation: START_BY_SERVERS,
@@ -83,7 +84,7 @@ class ApiServiceCustomerResolvers {
     }
   };
 
-  sendSolveSbcCommand = async (payload) => {
+  sendSolveSbcCommand = async (payload: any) => {
     try {
       const result = await this.client.mutate({
         mutation: SOLVE_SBC,
@@ -98,7 +99,7 @@ class ApiServiceCustomerResolvers {
     }
   };
 
-  changeConfig = async (data) => {
+  changeConfig = async (data: any) => {
     try {
       const result = await this.client.mutate({
         mutation: CHANGE_CONFIG,
@@ -112,11 +113,57 @@ class ApiServiceCustomerResolvers {
       console.log('error while changing config: ' + err);
     }
   };
+
+  private sendRabbitCommand = async (id: number, email: string, status: string) => {
+    const toSend = {
+      id,
+      email: email,
+      type: status,
+      rabbitUrl: localStorage.getItem('rabbitUrl'),
+    };
+    await this.sendHttpCommand(toSend);
+  }
+
+  startAccounts = async (accounts: AccountToDisplay[], type: 'START' | 'KICKSTART') => {
+    const accsToStartByServer = accounts
+      .filter((acc) => acc.scheduler_account_info!.service_name)
+      .map((acc) => ({
+        id: acc.id,
+        email: acc.email,
+        service_name: acc.scheduler_account_info!.service_name
+      }));
+
+    await apiServiceCustomResolvers.startByServers({
+      accounts: accsToStartByServer,
+      type,
+      // @todo: tbd pass??
+      secondsBetween: 12,
+      maxAccsToStart: 93,
+      // @todo: set in init?
+      rabbitUrl: localStorage.getItem('rabbitUrl'),
+    });
+  }
+
+  stopAccounts = async (accounts: AccountToDisplay[]) => {
+    // @todo: chunk + Promise.all?
+    accounts.forEach(async (acc) => {
+      await this.sendRabbitCommand(acc.id, acc.email, 'STOP');
+    });
+  }
+
+  blockAccounts = async (accounts: AccountToDisplay[]) => {
+    accounts.forEach(async (acc) => {
+      await this.sendRabbitCommand(acc.id, acc.email, 'BLOCK');
+    });
+  }
+
+  resetAccounts = async (accounts: AccountToDisplay[]) => {
+    accounts.forEach(async (acc) => {
+      await this.sendRabbitCommand(acc.id, acc.email, 'RESET');
+    });
+  }
 }
 
-const client = makeApolloClient(
-  process.env.REACT_APP_CUSTOM_RESOLVERS_URL,
-  null
-);
+const client = makeApolloClient(process.env.REACT_APP_CUSTOM_RESOLVERS_URL!);
 const apiServiceCustomResolvers = new ApiServiceCustomerResolvers(client);
 export { apiServiceCustomResolvers };
