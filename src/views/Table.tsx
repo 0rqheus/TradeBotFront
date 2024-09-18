@@ -1,10 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-// import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -18,7 +14,7 @@ import { columnDefsAccounts, defaultColDef } from '../utils/columnDefs';
 import { balanceStringToNumber, formatNumber, getLastTimeForRequests, getAccountsWithRunStats, getAccGroup, chunkArray } from '../utils/utils';
 import { GridApi } from 'ag-grid-community';
 import { accounts_insert_input, accounts_updates } from '../generated/trade';
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Input, List, ListItem, ListItemText, Modal, Stack, Typography } from '@mui/material';
+import { Box, Button, Modal, Stack, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import { VisuallyHiddenInput } from './partials/HiddenInput';
 
@@ -347,35 +343,15 @@ const Table = () => {
           </div>
         </div>
       </Stack>
+      
       <ChangeConfigModal
         show={isConfigModalOpened}
         onHide={() => setIsConfigModalOpened(false)}
         accounts={selectedRows}
       />
-      <div className="ag-theme-alpine" style={{ height: 780, width: '100%' }}>
-        <AgGridReact
-          rowData={rowData}
-          // ref={gridRef}
-          // immutableData={true}
-          getRowId={(params) => params.data.id.toString()}
-          columnDefs={columnDefsAccounts}
-          defaultColDef={defaultColDef}
-          rowGroupPanelShow={'always'}
-          pivotPanelShow={'always'}
-          suppressAggFuncInHeader={true}
-          // autoGroupColumnDef={autoGroupColumnDef}
-          onGridReady={(value) => { gridRef.current = value.api; }}
-          rowSelection={'multiple'}
-          // onCellValueChanged={(event) => apiService.updateAccount(event.data.id, event.data)}
-          onSelectionChanged={onSelectionChanged}
-          animateRows={true}
-          onFilterChanged={() => updateTotalBalanceInfo()}
-          enableRangeSelection={true}
-          sideBar={'columns'}
-        ></AgGridReact>
-      </div>
 
-      <Modal
+      
+<Modal
         open={isMoreModalOpened}
         onClose={() => setIsMoreModalOpened(false)}
         aria-labelledby="modal-modal-title"
@@ -446,11 +422,9 @@ const Table = () => {
                 serviceNames.map((name) => <option value={name}>{name}</option>)
               }
             </Form.Select>
-            <ButtonGroup aria-label="Basic example">
-              <Button onClick={() => apiService.updateAccountSchedulerInfo(selectedRows, { service_name: serviceName })}>
-                Update service name
-              </Button>
-            </ButtonGroup>
+            <Button onClick={() => apiService.updateAccountSchedulerInfo(selectedRows, { service_name: serviceName })}>
+              Update service name
+            </Button>
 
             <Button color='warning' variant="contained">
               Change config
@@ -458,6 +432,26 @@ const Table = () => {
           </Stack>
         </Box>
       </Modal>
+
+      <div className="ag-theme-alpine" style={{ height: 780, width: '100%' }}>
+        <AgGridReact
+          rowData={rowData}
+          getRowId={(params) => params.data.id.toString()}
+          columnDefs={columnDefsAccounts}
+          defaultColDef={defaultColDef}
+          rowGroupPanelShow={'always'}
+          pivotPanelShow={'always'}
+          suppressAggFuncInHeader={true}
+          onGridReady={(value) => { gridRef.current = value.api; }}
+          rowSelection={'multiple'}
+          // onCellValueChanged={(event) => apiService.updateAccount(event.data.id, event.data)}
+          onSelectionChanged={onSelectionChanged}
+          animateRows={true}
+          onFilterChanged={() => updateTotalBalanceInfo()}
+          enableRangeSelection={true}
+          sideBar={{toolPanels: ['columns']}}
+        ></AgGridReact>
+      </div>
     </div>
   );
 }
