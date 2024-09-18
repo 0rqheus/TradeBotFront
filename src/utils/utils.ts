@@ -39,7 +39,6 @@ export const getAccountsWithRunStats = (accounts: Account[], historyItems: Histo
   return newAccs;
 }
 
-// @todo: tbd
 export const getAccGroup = (host: string, port: string) => {
   const fittingPort = port.slice(2).replace(/^0+/, '')
 
@@ -47,4 +46,14 @@ export const getAccGroup = (host: string, port: string) => {
   hostSplitted.push(fittingPort);
 
   return hostSplitted.join('.');
+}
+
+export function chunkArray<T>(sourceArray: T[], chunkSize: number): T[][] {
+  const resultArray: T[][] = [];
+  for (let i = 0; i < sourceArray.length; i += chunkSize) {
+    const chunk = sourceArray.slice(i, i + chunkSize);
+
+    resultArray.push(chunk);
+  }
+  return resultArray;
 }

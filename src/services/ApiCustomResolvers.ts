@@ -2,6 +2,7 @@ import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import makeApolloClient from '../utils/makeApolloClient';
 import gql from 'graphql-tag';
 import { AccountToDisplay } from './ApiService';
+import { chunkArray } from '../utils/utils';
 
 const SEND_COMMAND = gql`
   mutation SendCommand($payload: RabbitPayload!) {
@@ -54,7 +55,7 @@ class ApiServiceCustomerResolvers {
     }
   };
 
-  sendHttpCommand = async (payload: any) => {
+  private sendHttpCommand = async (payload: { id: number, email: string, type: string, rabbitUrl: string }) => {
     try {
       const result = await this.client.mutate({
         mutation: SEND_HTTP_COMMAND,
@@ -114,17 +115,26 @@ class ApiServiceCustomerResolvers {
     }
   };
 
-  private sendRabbitCommand = async (id: number, email: string, status: string) => {
-    const toSend = {
-      id,
-      email: email,
-      type: status,
-      rabbitUrl: localStorage.getItem('rabbitUrl'),
-    };
-    await this.sendHttpCommand(toSend);
+  sendCommands = async (accounts: AccountToDisplay[], type: 'STOP' | 'BLOCK' | 'RESET') => {
+    const commands = accounts.map((acc) => ({
+      id: acc.id,
+      email: acc.email,
+      type,
+      rabbitUrl: localStorage.getItem('rabbitUrl')!,
+    }));
+
+    const chunks = chunkArray(commands, 10);
+    for (const chunk of chunks) {
+      await Promise.all(chunk.map((c) => this.sendHttpCommand(c)))
+    }
   }
 
-  startAccounts = async (accounts: AccountToDisplay[], type: 'START' | 'KICKSTART') => {
+  startAccounts = async (
+    accounts: AccountToDisplay[], 
+    type: 'START' | 'KICKSTART', 
+    secondsBetweenStart: number,
+    maxAccsToStartAtOnce: number
+  ) => {
     const accsToStartByServer = accounts
       .filter((acc) => acc.scheduler_account_info!.service_name)
       .map((acc) => ({
@@ -136,30 +146,10 @@ class ApiServiceCustomerResolvers {
     await apiServiceCustomResolvers.startByServers({
       accounts: accsToStartByServer,
       type,
-      // @todo: tbd pass??
-      secondsBetween: 12,
-      maxAccsToStart: 93,
+      secondsBetween: secondsBetweenStart,
+      maxAccsToStart: maxAccsToStartAtOnce,
       // @todo: set in init?
       rabbitUrl: localStorage.getItem('rabbitUrl'),
-    });
-  }
-
-  stopAccounts = async (accounts: AccountToDisplay[]) => {
-    // @todo: chunk + Promise.all?
-    accounts.forEach(async (acc) => {
-      await this.sendRabbitCommand(acc.id, acc.email, 'STOP');
-    });
-  }
-
-  blockAccounts = async (accounts: AccountToDisplay[]) => {
-    accounts.forEach(async (acc) => {
-      await this.sendRabbitCommand(acc.id, acc.email, 'BLOCK');
-    });
-  }
-
-  resetAccounts = async (accounts: AccountToDisplay[]) => {
-    accounts.forEach(async (acc) => {
-      await this.sendRabbitCommand(acc.id, acc.email, 'RESET');
     });
   }
 }

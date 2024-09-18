@@ -8,6 +8,7 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
+    "removeComments": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -22,7 +23,6 @@
     "experimentalDecorators": true,
   },
   "include": [
-    "src",
-    "generated"
+    "src"
   ]
 }

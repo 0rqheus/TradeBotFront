@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import Button from 'react-bootstrap/Button';
+// import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Row from 'react-bootstrap/Row';
@@ -15,12 +15,16 @@ import ChangeConfigModal from './modals/ChangeConfig';
 import apiService, { Account, AccountImportInput, AccountToDisplay, } from '../services/ApiService';
 import { apiServiceCustomResolvers } from '../services/ApiCustomResolvers';
 import { columnDefsAccounts, defaultColDef } from '../utils/columnDefs';
-import { balanceStringToNumber, formatNumber, getLastTimeForRequests, getAccountsWithRunStats, getAccGroup } from '../utils/utils';
+import { balanceStringToNumber, formatNumber, getLastTimeForRequests, getAccountsWithRunStats, getAccGroup, chunkArray } from '../utils/utils';
 import { GridApi } from 'ag-grid-community';
-import { accounts_insert_input, accounts_updates } from '../../generated/trade';
+import { accounts_insert_input, accounts_updates } from '../generated/trade';
+import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Input, List, ListItem, ListItemText, Modal, Stack, Typography } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2';
+import { VisuallyHiddenInput } from './partials/HiddenInput';
 
 const Table = () => {
   const [isModalOpened, setIsModalOpened] = useState(false);
+  const [isMoreModalOpened, setIsMoreModalOpened] = useState(false);
   const [isConfigModalOpened, setIsConfigModalOpened] = useState(false);
 
   const [totalBalance, setTotalBalance] = useState(0);
@@ -29,13 +33,13 @@ const Table = () => {
   const [strategyToSet, setStrategyToSet] = useState('');
   const [targetConfig, setTargetConfig] = useState(0);
   const [serviceName, setServiceName] = useState('');
-  const [serviceNames, setServiceNames] = useState([] as string[]);
+  const [serviceNames, setServiceNames] = useState<string[]>([]);
 
   const [secondsBetweenAccsStart, setSecondsBetweenAccsStart] = useState(Number(localStorage.getItem('secondsBetweenAccsStart')) || 6);
   const [maxAccsToStart, setMaxAccsToStart] = useState(Number(localStorage.getItem('maxAccsToStart')) || 120);
 
-  const [rowData, setRowData] = useState([] as AccountToDisplay[]);
-  const [selectedRows, setSelectedRows] = useState([] as AccountToDisplay[]);
+  const [rowData, setRowData] = useState<AccountToDisplay[]>([]);
+  const [selectedRows, setSelectedRows] = useState<AccountToDisplay[]>([]);
   const [isAnyRowSelected, setIsAnyRowSelected] = useState(false);
 
   const gridRef = useRef({} as GridApi<AccountToDisplay>)
@@ -59,8 +63,6 @@ const Table = () => {
   }, [])
 
   const fetchAccounts = async () => {
-    //  @todo remove????
-    // await apiService.refresh();
     const accounts = await apiService.getFullAccounts();
 
     const historyItems = await apiService.getHistoryItemsByTime(
@@ -70,7 +72,7 @@ const Table = () => {
     );
 
     const accountsWithRequests = getAccountsWithRunStats(accounts, historyItems);
-    console.log(accountsWithRequests);
+    // console.log(accountsWithRequests);
     setRowData(accountsWithRequests.map((d: Account): AccountToDisplay => ({
       ...d,
       freezed_balance: formatNumber(d.freezed_balance),
@@ -147,14 +149,12 @@ const Table = () => {
           },
           scheduler_account_info: {
             data: {
-              // @todo: tbd use correct
-              config_id: 1,
+              config_id: 24,
             }
           },
           ban_analytics_info: {
             data: {
-              // @todo: tbd use correct
-              ban_analytics_config_id: 1
+              ban_analytics_config_id: 9
             }
           },
           // @todo: tbd get account_owner from precreated?
@@ -206,9 +206,16 @@ const Table = () => {
       }
     }
 
-    // @todo: chunk?
-    await apiService.createAccounts(insertData);
-    await apiService.updateAccountsBatch(updateData)
+    // @todo progressbar?
+    const insertChunks = chunkArray(insertData, 100);
+    for (const chunk of insertChunks) {
+      await apiService.createAccounts(chunk);
+    }
+
+    const updateChunks = chunkArray(updateData, 100);
+    for (const chunk of updateChunks) {
+      await apiService.updateAccountsBatch(chunk)
+    }
   }
 
   const onSelectionChanged = async () => {
@@ -224,171 +231,122 @@ const Table = () => {
 
   return (
     <div>
-      <div className="buttons">
-        <Row style={{ width: '100%' }}>
-          <Col xs={5}>
+      <Stack direction="row" spacing={'auto'} className="buttons">
+        <Stack direction="row" height={50} spacing={2} width={100}>
+          <Button
+            variant='contained'
+            size="medium"
+            onClick={() => fetchAccounts()}
+          >
+            Refresh
+          </Button>
+
+          <Button
+            variant='contained'
+            size="medium"
+            disabled={!isAnyRowSelected}
+            onClick={() => setIsModalOpened(true)}
+          >
+            Delete
+          </Button>
+
+          <Button
+            component="label"
+            size="medium"
+            role={undefined}
+            variant="contained"
+            tabIndex={-1}
+          // startIcon={<CloudUploadIcon />}
+          >
+            Upload
+            <VisuallyHiddenInput
+              type="file"
+              onChange={importAccountsFromCSV}
+              multiple
+            />
+          </Button>
+        </Stack>
+
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+          <Grid xs={3}>
             <Button
+              variant='contained'
+              size="large"
               disabled={!isAnyRowSelected}
-              className="addButton"
-              onClick={() => setIsModalOpened(true)}
-              variant="danger"
+              onClick={() => apiServiceCustomResolvers.startAccounts(selectedRows, 'START', secondsBetweenAccsStart, maxAccsToStart)}
             >
-              Delete
+              Start
             </Button>
+          </Grid>
+          <Grid xs={3}>
             <Button
-              className="addButton"
-              onClick={() => fetchAccounts()}
-              variant="primary"
-            >
-              Refresh
-            </Button>
-            <Button
+              variant='contained'
+              size="large"
               disabled={!isAnyRowSelected}
-              className="addButton"
-              onClick={() => apiServiceCustomResolvers.startAccounts(selectedRows, 'START')}
-              variant="warning"
-            >
-              Universal start
-            </Button>
-            <Button
-              disabled={!isAnyRowSelected}
-              className="addButton"
-              onClick={() => apiServiceCustomResolvers.stopAccounts(selectedRows)}
-              variant="warning"
+              onClick={() => apiServiceCustomResolvers.sendCommands(selectedRows, 'STOP')}
             >
               Stop
             </Button>
+          </Grid>
+          <Grid xs={3}>
             <Button
+              variant='contained'
+              size="large"
               disabled={!isAnyRowSelected}
-              className="addButton"
-              onClick={() => apiServiceCustomResolvers.blockAccounts(selectedRows)}
-              variant="warning"
-            >
-              Block
-            </Button>
-            <Button
-              disabled={!isAnyRowSelected}
-              className="addButton"
-              onClick={() => apiServiceCustomResolvers.resetAccounts(selectedRows)}
-              variant="warning"
+              onClick={() => apiServiceCustomResolvers.sendCommands(selectedRows, 'RESET')}
             >
               Reset
             </Button>
+          </Grid>
+          <Grid xs={3}>
             <Button
+              variant='contained'
+              size="large"
               disabled={!isAnyRowSelected}
-              className="addButton"
-              onClick={() => apiServiceCustomResolvers.startAccounts(selectedRows, 'KICKSTART')}
-              variant="warning"
+              onClick={() => apiServiceCustomResolvers.sendCommands(selectedRows, 'BLOCK')}
             >
-              Kickstart accounts
+              Block
             </Button>
-            <Button
-              className="addButton"
-              onClick={() => setIsConfigModalOpened(true)}
-              variant="warning"
-            >
-              Change config
+          </Grid>
+        </Grid>
+
+        <Dialog
+          open={isModalOpened}
+          onClose={() => setIsModalOpened(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {'Are you sure you want to delete these accounts?'}
+          </DialogTitle>
+          <DialogActions>
+            <Button variant='contained' onClick={() => setIsModalOpened(false)}>
+              Cancel
             </Button>
-          </Col>
-          <Col xs={1}>
-            <input
-              className="input"
-              type="number"
-              placeholder="Seconds before accs start"
-              value={secondsBetweenAccsStart}
-              onChange={(event) => setSecondsBetweenAccsStart(Number(event.target.value))}
-            />
-          </Col>
-          <Col xs={2}>
-            <input
-              className="input"
-              type="number"
-              placeholder="Accounts to start in one step"
-              value={maxAccsToStart}
-              onChange={(event) => setMaxAccsToStart(Number(event.target.value))}
-            />
-          </Col>
-          <Col xs={2}>
-            <div>
-              <b>Selected:</b> {selectedRows.length}
-            </div>
-            <div>
-              <b>Available balance:</b>{' '}
-              {formatNumber(availableBalance)}
-            </div>
-            <div>
-              <b>Total balance:</b>{' '}
-              {formatNumber(totalBalance)}
-            </div>
-          </Col>
-          <Col xs={1}>
-            <Dialog
-              open={isModalOpened}
-              onClose={() => setIsModalOpened(false)}
-              aria-labelledby="alert-dialog-title"
-              aria-describedby="alert-dialog-description"
-            >
-              <DialogTitle id="alert-dialog-title">
-                {'Are you sure you want to delete these accounts?'}
-              </DialogTitle>
-              <DialogActions>
-                <Button variant="primary" onClick={() => setIsModalOpened(false)}>
-                  Cancel
-                </Button>
-                <Button variant="danger" onClick={() => handleCloseAndDelete()}>
-                  Delete
-                </Button>
-              </DialogActions>
-            </Dialog>
-            <input type="file" onChange={importAccountsFromCSV} />
-          </Col>
-        </Row>
-        <Row style={{ width: '100%' }}>
-          <Col xs="2">
-            <input
-              className="input"
-              type="text"
-              placeholder="strategy"
-              value={strategyToSet}
-              onChange={(event) => setStrategyToSet(event.target.value)}
-            />
-            <ButtonGroup aria-label="Basic example">
-              <Button onClick={() => apiService.updateAccounts(selectedRows, { strategy_name: strategyToSet })}>
-                Set strategy
-              </Button>
-            </ButtonGroup>
-          </Col>
-          <Col xs="3">
-            <input
-              className="input"
-              type="number"
-              placeholder="ban config"
-              value={targetConfig}
-              onChange={(event) => setTargetConfig(Number(event.target.value))}
-            />
-            <ButtonGroup aria-label="Basic example">
-              <Button onClick={() => apiService.updateAccountBansConfig(selectedRows, targetConfig)}>
-                Set ban config
-              </Button>
-              <Button onClick={() => apiService.updateAccountSchedulerInfo(selectedRows, { config_id: targetConfig })}>
-                Set scheduler config
-              </Button>
-            </ButtonGroup>
-          </Col>
-          <Col xs="2">
-            <Form.Select onChange={(event) => setServiceName(event.target.value)}>
-              {
-                serviceNames.map((name) => <option value={name}>{name}</option>)
-              }
-            </Form.Select>
-            <ButtonGroup aria-label="Basic example">
-              <Button onClick={() => apiService.updateAccountSchedulerInfo(selectedRows, { service_name: serviceName })}>
-                Update service name
-              </Button>
-            </ButtonGroup>
-          </Col>
-        </Row>
-      </div>
+            <Button color='error' variant="contained" onClick={() => handleCloseAndDelete()}>
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <Button color='info' variant="contained" onClick={() => setIsMoreModalOpened(true)}>
+          More
+        </Button>
+
+        <div>
+          <b>Selected:</b> {selectedRows.length}
+        </div>
+        <div>
+          <div>
+            <b>Available balance:</b>{' '}
+            {formatNumber(availableBalance)}
+          </div>
+          <div>
+            <b>Total balance:</b>{' '}
+            {formatNumber(totalBalance)}
+          </div>
+        </div>
+      </Stack>
       <ChangeConfigModal
         show={isConfigModalOpened}
         onHide={() => setIsConfigModalOpened(false)}
@@ -408,7 +366,6 @@ const Table = () => {
           // autoGroupColumnDef={autoGroupColumnDef}
           onGridReady={(value) => { gridRef.current = value.api; }}
           rowSelection={'multiple'}
-          // @todo?
           // onCellValueChanged={(event) => apiService.updateAccount(event.data.id, event.data)}
           onSelectionChanged={onSelectionChanged}
           animateRows={true}
@@ -417,6 +374,90 @@ const Table = () => {
           sideBar={'columns'}
         ></AgGridReact>
       </div>
+
+      <Modal
+        open={isMoreModalOpened}
+        onClose={() => setIsMoreModalOpened(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={{
+          position: 'absolute' as 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: 800,
+          bgcolor: 'background.paper',
+          border: '2px solid #000',
+          boxShadow: 24,
+          p: 4,
+        }}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Additional settings
+          </Typography>
+          <Stack id="modal-modal-description">
+            <Stack direction={'row'}>
+              <input
+                className="input"
+                type="number"
+                placeholder="Seconds before accs start"
+                value={secondsBetweenAccsStart}
+                onChange={(event) => setSecondsBetweenAccsStart(Number(event.target.value))}
+              />
+              <input
+                className="input"
+                type="number"
+                placeholder="Accounts to start in one step"
+                value={maxAccsToStart}
+                onChange={(event) => setMaxAccsToStart(Number(event.target.value))}
+              />
+            </Stack>
+            <Stack>
+              <input
+                className="input"
+                type="text"
+                placeholder="strategy"
+                value={strategyToSet}
+                onChange={(event) => setStrategyToSet(event.target.value)}
+              />
+              <Button onClick={() => apiService.updateAccounts(selectedRows, { strategy_name: strategyToSet })}>
+                Set strategy
+              </Button>
+            </Stack>
+
+            <input
+              className="input"
+              type="number"
+              placeholder="ban config"
+              value={targetConfig}
+              onChange={(event) => setTargetConfig(Number(event.target.value))}
+            />
+            <Stack direction={'row'}>
+              <Button onClick={() => apiService.updateAccountBansConfig(selectedRows, targetConfig)}>
+                Set ban config
+              </Button>
+              <Button onClick={() => apiService.updateAccountSchedulerInfo(selectedRows, { config_id: targetConfig })}>
+                Set scheduler config
+              </Button>
+            </Stack>
+
+            <Form.Select onChange={(event) => setServiceName(event.target.value)}>
+              {
+                serviceNames.map((name) => <option value={name}>{name}</option>)
+              }
+            </Form.Select>
+            <ButtonGroup aria-label="Basic example">
+              <Button onClick={() => apiService.updateAccountSchedulerInfo(selectedRows, { service_name: serviceName })}>
+                Update service name
+              </Button>
+            </ButtonGroup>
+
+            <Button color='warning' variant="contained">
+              Change config
+            </Button>
+          </Stack>
+        </Box>
+      </Modal>
     </div>
   );
 }

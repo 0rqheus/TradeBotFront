@@ -9,7 +9,7 @@
   "scripts": {
     "build": "react-scripts build",
     "start": "react-scripts start",
-    "generate-graphql-interfaces": "node scripts/generateGQLInterfaces"
+    "generate-graphql-interfaces": "node scripts/generateGQLInterfaces && eslint src/generated --fix"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",

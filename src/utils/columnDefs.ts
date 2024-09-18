@@ -12,7 +12,6 @@ export const columnDefsAccounts = [
     field: 'id',
     headerName: 'ID',
     filter: 'agNumberColumnFilter',
-    editable: true,
     enableRowGroup: true,
     checkboxSelection: true,
     headerCheckboxSelection: true,
@@ -24,7 +23,6 @@ export const columnDefsAccounts = [
     field: 'general_account_id',
     headerName: 'G_ID',
     filter: 'agNumberColumnFilter',
-    editable: true,
     enableRowGroup: true,
     width: 100,
     maxWidth: 100,
@@ -33,7 +31,6 @@ export const columnDefsAccounts = [
     field: 'email',
     headerName: 'Email',
     filter: 'agTextColumnFilter',
-    editable: true,
     enableRowGroup: true,
     valueGetter: (params: any) => params.data.email,
     valueSetter: (params: any) => {
@@ -49,7 +46,6 @@ export const columnDefsAccounts = [
     field: 'activity_status',
     headerName: 'Status',
     filter: 'agTextColumnFilter',
-    editable: true,
     enableRowGroup: true,
     valueGetter: (params: any) => params.data.activity_status,
     valueSetter: (params: any) => {
@@ -66,7 +62,6 @@ export const columnDefsAccounts = [
   {
     field: 'scheduler_account_info.block_reason',
     headerName: 'Reason',
-    editable: true,
     enableRowGroup: false,
     width: 90,
     maxWidth: 450,
@@ -75,14 +70,12 @@ export const columnDefsAccounts = [
     field: 'scheduler_account_info.blocked_at',
     headerName: 'Blocked at',
     filter: 'agNumberColumnFilter',
-    editable: true,
     hide: true,
     enableRowGroup: true,
   },
   {
     field: 'scheduler_account_info.service_name',
     headerName: 'Service',
-    editable: true,
     enableRowGroup: false,
     width: 90,
     maxWidth: 450,
@@ -90,7 +83,6 @@ export const columnDefsAccounts = [
   {
     field: 'should_run',
     headerName: 'Should run',
-    editable: true,
     enableRowGroup: true,
     cellRenderer: (params: any) => params.value.toString(),
     width: 90,
@@ -100,7 +92,6 @@ export const columnDefsAccounts = [
   {
     headerName: 'Freezed',
     filter: 'agNumberColumnFilter',
-    editable: true,
     enableRowGroup: true,
     valueGetter: (params: any) => balanceStringToNumber(params.data.freezed_balance),
     valueFormatter: (param: any) => formatNumber(balanceStringToNumber(param.data.freezed_balance)),
@@ -110,7 +101,6 @@ export const columnDefsAccounts = [
   {
     headerName: 'Available',
     filter: 'agNumberColumnFilter',
-    editable: true,
     enableRowGroup: true,
     valueGetter: (params: any) => balanceStringToNumber(params.data.available_balance),
     valueFormatter: (param: any) => formatNumber(balanceStringToNumber(param.data.available_balance)),
@@ -123,7 +113,6 @@ export const columnDefsAccounts = [
       balanceStringToNumber(params.data.freezed_balance) +
       balanceStringToNumber(params.data.available_balance)),
     filter: 'agNumberColumnFilter',
-    editable: true,
     enableRowGroup: true,
     valueFormatter: (param: any) => formatNumber(
       balanceStringToNumber(param.data.freezed_balance) +
@@ -136,7 +125,6 @@ export const columnDefsAccounts = [
     field: 'proxy.host',
     headerName: 'Proxy ip',
     filter: 'agTextColumnFilter',
-    editable: true,
     hide: true,
     enableRowGroup: true,
   },
@@ -144,7 +132,6 @@ export const columnDefsAccounts = [
     field: 'proxy_id',
     headerName: 'Proxy id',
     filter: 'agNumberColumnFilter',
-    editable: true,
     hide: true,
     enableRowGroup: true,
   },
@@ -152,7 +139,6 @@ export const columnDefsAccounts = [
     field: 'proxy.port',
     headerName: 'Port',
     filter: 'agNumberColumnFilter',
-    editable: true,
     hide: true,
     enableRowGroup: false,
     width: 90,
@@ -161,27 +147,23 @@ export const columnDefsAccounts = [
   {
     field: 'strategy_name',
     headerName: 'Strategy',
-    editable: true,
     enableRowGroup: true,
   },
   {
     field: 'origin',
     headerName: 'Origin',
     hide: true,
-    editable: true,
     enableRowGroup: true,
   },
   {
     field: 'account_owner',
     headerName: 'Account Owner',
     hide: true,
-    editable: true,
     enableRowGroup: true,
   },
   {
     field: 'group',
     headerName: 'Group',
-    editable: true,
     hide: true,
     enableRowGroup: true,
   },
@@ -192,7 +174,6 @@ export const columnDefsAccounts = [
     headerName: 'List',
     filter: 'agNumberColumnFilter',
     suppressToolPanel: true,
-    editable: true,
     hide: true,
     enableRowGroup: true,
     width: 80,
@@ -205,7 +186,6 @@ export const columnDefsAccounts = [
     headerName: 'Buy now',
     filter: 'agNumberColumnFilter',
     suppressToolPanel: true,
-    editable: true,
     hide: true,
     enableRowGroup: true,
     width: 110,
@@ -214,7 +194,6 @@ export const columnDefsAccounts = [
   {
     field: 'ban_analytics_info.ban_alalytics_config.id',
     headerName: 'Ban Config',
-    editable: true,
     hide: true,
     suppressToolPanel: true,
     enableRowGroup: true,
@@ -222,7 +201,6 @@ export const columnDefsAccounts = [
   {
     field: 'scheduler_account_info.scheduler_config.id',
     headerName: 'Scheduler Config',
-    editable: true,
     hide: true,
     suppressToolPanel: true,
     enableRowGroup: true,
@@ -230,7 +208,6 @@ export const columnDefsAccounts = [
   {
     field: 'workshift_id',
     headerName: 'Workshift',
-    editable: true,
     suppressToolPanel: true,
     hide: true,
     enableRowGroup: true,

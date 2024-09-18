@@ -3,7 +3,7 @@ import {
   accounts_insert_input,
   scheduler_account_info_set_input,
   accounts_updates
-} from '../../generated/trade'
+} from '../generated/trade'
 
 export interface AccountImportInput {
   accountOwner: string
@@ -49,7 +49,6 @@ export class ApiService {
   ) {
   }
 
-  // @todo: validate embeddings
   @tryCatch([])
   async getFullAccounts() {
     const result = await this.client.query({
@@ -149,6 +148,9 @@ export class ApiService {
 
   @tryCatch(0)
   async createAccounts(objects: accounts_insert_input[]) {
+    if(objects.length === 0) {
+      return 0;
+    }
     const result = await this.client.mutation({
       insert_accounts: {
         __args: {
@@ -218,6 +220,9 @@ export class ApiService {
 
   @tryCatch([])
   async updateAccountsBatch(updates: accounts_updates[]) {
+    if(updates.length === 0) {
+      return 0;
+    }
     const result = await this.client.mutation({
       update_accounts_many: {
         __args: {
@@ -324,7 +329,6 @@ export class ApiService {
         __args: {
           where: {
             account_id: { _in: accountIds },
-            // @todo: tbd check conditions
             _or: [
               {
                 scheduled_end: { _is_null: false, _gt: from.toISOString() },
@@ -336,17 +340,17 @@ export class ApiService {
               }
             ]
           }
-        }
+        },
+        account_id: true,
+        actual_end: true,
+        actual_start: true,
+        scheduled_end: true,
+        scheduled_start: true,
+        requests_made: true,
+        minutes_active: true,
+        strategy_name: true,
+        sbc_submits: true,
       },
-      account_id: true,
-      actual_end: true,
-      actual_start: true,
-      scheduled_end: true,
-      scheduled_start: true,
-      requests_made: true,
-      minutes_active: true,
-      strategy_name: true,
-      sbc_submits: true,
     });
 
     return result.history_items;
@@ -383,9 +387,10 @@ export class ApiService {
 
 // const client = makeApolloClient(process.env.REACT_APP_API_URL!, localStorage.getItem('adminSecret')!);
 const apiService = new ApiService(createClient({
-  url: process.env.SERVER_ENDPOINT,
+  url: process.env.REACT_APP_API_URL,
+  fetch,
   headers: {
-    'x-hasura-admin-secret': process.env.SERVER_ENDPOINT_ADMIN_SECRET!
+    'x-hasura-admin-secret': process.env.REACT_APP_API_ADMIN_SECRET!
   },
   batch: {
     batchInterval: 100,
