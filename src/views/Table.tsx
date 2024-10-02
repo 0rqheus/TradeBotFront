@@ -216,8 +216,13 @@ const Table = () => {
   }
 
   const handleAccountDelete = async () => {
-    await apiService.deleteAccounts(selectedRows);
+    const deleted = await apiService.deleteAccounts(selectedRows);
+    console.log('deleted count', deleted)
+
     setIsModalOpened(false)
+
+    const idsToDelete = selectedRows.map((r) => r.id);
+    setRowData(rowData.filter((row) => !idsToDelete.includes(row.id)))
   };
 
   return (
@@ -270,8 +275,8 @@ const Table = () => {
         <ConfirmationModal
           text='Are you sure you want to delete these accounts?'
           open={isModalOpened}
-          handleSubmit={() => setIsModalOpened(false)}
-          handleClose={() => handleAccountDelete()}
+          handleSubmit={() => handleAccountDelete()}
+          handleClose={() => setIsModalOpened(false)}
         />
 
         <Button color='info' size="medium" variant="contained" onClick={() => setIsMoreModalOpened(true)}>
