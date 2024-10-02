@@ -218,6 +218,31 @@ export class ApiService {
     return result.update_accounts?.affected_rows ?? 0
   }
 
+  @tryCatch(null)
+  async updateAccount(id: number, data: AccountToDisplay) {
+    const result = await this.client.mutation({
+      update_accounts_by_pk: {
+        __args: {
+          pk_columns: {
+            id
+          },
+          _set: {
+            activity_status: data.activity_status,
+            should_run: data.should_run,
+            strategy_name: data.strategy_name,
+            group: data.group,
+            origin: data.origin,
+            proxy_id: data.proxy_id,
+            account_owner: data.account_owner,
+            workshift_id: data.workshift_id,
+          }
+        },
+        id: true
+      }
+    });
+    return result.update_accounts_by_pk?.id
+  }
+
   @tryCatch([])
   async updateAccountsBatch(updates: accounts_updates[]) {
     if(updates.length === 0) {
@@ -385,7 +410,7 @@ export class ApiService {
   }
 }
 
-// const client = makeApolloClient(process.env.REACT_APP_API_URL!, localStorage.getItem('adminSecret')!);
+// @todo: pass user auth!!
 const apiService = new ApiService(createClient({
   url: process.env.REACT_APP_API_URL,
   fetch,
@@ -397,4 +422,5 @@ const apiService = new ApiService(createClient({
     maxBatchSize: 20,
   }
 }));
+
 export default apiService;

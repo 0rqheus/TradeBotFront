@@ -1,22 +1,19 @@
 import { useEffect, useState, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import Form from 'react-bootstrap/Form';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogTitle from '@mui/material/DialogTitle';
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import ChangeConfigModal from './modals/ChangeConfig';
 import apiService, { Account, AccountImportInput, AccountToDisplay, } from '../services/ApiService';
-import { apiServiceCustomResolvers } from '../services/ApiCustomResolvers';
 import { columnDefsAccounts, defaultColDef } from '../utils/columnDefs';
 import { balanceStringToNumber, formatNumber, getLastTimeForRequests, getAccountsWithRunStats, getAccGroup, chunkArray } from '../utils/utils';
 import { GridApi } from 'ag-grid-community';
 import { accounts_insert_input, accounts_updates } from '../generated/trade';
 import { Box, Button, Modal, Stack, Typography } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
 import { VisuallyHiddenInput } from './partials/HiddenInput';
+import ConfirmationModal from './modals/ConfirmationModal';
+import AccountsActivityActions from './partials/AccountsActivityActions';
 
 const Table = () => {
   const [isModalOpened, setIsModalOpened] = useState(false);
@@ -43,13 +40,7 @@ const Table = () => {
   // @todo: useRef for api clients?
 
   useEffect(() => {
-    // @todo: move to router
     (async function () {
-      const adminSecret = localStorage.getItem('adminSecret');
-      if (!adminSecret) {
-        window.location.href = '/';
-      }
-
       const activeServices = await apiService.getActiveServices();
       setServiceNames(activeServices.map((s) => s.service_name));
 
@@ -220,7 +211,11 @@ const Table = () => {
     setIsAnyRowSelected(selectedRows.length > 0)
   }
 
-  const handleCloseAndDelete = async () => {
+  const onCellDataUpdated = async (acc: AccountToDisplay) => {
+    await apiService.updateAccount(acc.id, acc)
+  }
+
+  const handleAccountDelete = async () => {
     await apiService.deleteAccounts(selectedRows);
     setIsModalOpened(false)
   };
@@ -263,69 +258,23 @@ const Table = () => {
           </Button>
         </Stack>
 
-        <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          <Grid xs={3}>
-            <Button
-              variant='contained'
-              size="large"
-              disabled={!isAnyRowSelected}
-              onClick={() => apiServiceCustomResolvers.startAccounts(selectedRows, 'START', secondsBetweenAccsStart, maxAccsToStart)}
-            >
-              Start
-            </Button>
-          </Grid>
-          <Grid xs={3}>
-            <Button
-              variant='contained'
-              size="large"
-              disabled={!isAnyRowSelected}
-              onClick={() => apiServiceCustomResolvers.sendCommands(selectedRows, 'STOP')}
-            >
-              Stop
-            </Button>
-          </Grid>
-          <Grid xs={3}>
-            <Button
-              variant='contained'
-              size="large"
-              disabled={!isAnyRowSelected}
-              onClick={() => apiServiceCustomResolvers.sendCommands(selectedRows, 'RESET')}
-            >
-              Reset
-            </Button>
-          </Grid>
-          <Grid xs={3}>
-            <Button
-              variant='contained'
-              size="large"
-              disabled={!isAnyRowSelected}
-              onClick={() => apiServiceCustomResolvers.sendCommands(selectedRows, 'BLOCK')}
-            >
-              Block
-            </Button>
-          </Grid>
-        </Grid>
+        <Box width={350} paddingTop={1}>
+          <AccountsActivityActions
+            disabled={!isAnyRowSelected}
+            accounts={selectedRows}
+            chunkSizeToStart={maxAccsToStart}
+            secondsBetweenStart={secondsBetweenAccsStart}
+          />
+        </Box>
 
-        <Dialog
+        <ConfirmationModal
+          text='Are you sure you want to delete these accounts?'
           open={isModalOpened}
-          onClose={() => setIsModalOpened(false)}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-        >
-          <DialogTitle id="alert-dialog-title">
-            {'Are you sure you want to delete these accounts?'}
-          </DialogTitle>
-          <DialogActions>
-            <Button variant='contained' onClick={() => setIsModalOpened(false)}>
-              Cancel
-            </Button>
-            <Button color='error' variant="contained" onClick={() => handleCloseAndDelete()}>
-              Delete
-            </Button>
-          </DialogActions>
-        </Dialog>
+          handleSubmit={() => setIsModalOpened(false)}
+          handleClose={() => handleAccountDelete()}
+        />
 
-        <Button color='info' variant="contained" onClick={() => setIsMoreModalOpened(true)}>
+        <Button color='info' size="medium" variant="contained" onClick={() => setIsMoreModalOpened(true)}>
           More
         </Button>
 
@@ -343,15 +292,14 @@ const Table = () => {
           </div>
         </div>
       </Stack>
-      
+
       <ChangeConfigModal
         show={isConfigModalOpened}
         onHide={() => setIsConfigModalOpened(false)}
         accounts={selectedRows}
       />
 
-      
-<Modal
+      <Modal
         open={isMoreModalOpened}
         onClose={() => setIsMoreModalOpened(false)}
         aria-labelledby="modal-modal-title"
@@ -444,12 +392,12 @@ const Table = () => {
           suppressAggFuncInHeader={true}
           onGridReady={(value) => { gridRef.current = value.api; }}
           rowSelection={'multiple'}
-          // onCellValueChanged={(event) => apiService.updateAccount(event.data.id, event.data)}
+          onCellValueChanged={(event) => onCellDataUpdated(event.data)}
           onSelectionChanged={onSelectionChanged}
           animateRows={true}
           onFilterChanged={() => updateTotalBalanceInfo()}
           enableRangeSelection={true}
-          sideBar={{toolPanels: ['columns']}}
+          sideBar={{ toolPanels: ['columns'] }}
         ></AgGridReact>
       </div>
     </div>
