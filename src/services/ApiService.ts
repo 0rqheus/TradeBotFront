@@ -58,10 +58,10 @@ export class ApiService {
         activity_status: true,
         freezed_balance: true,
         available_balance: true,
-        gauth: true,
+        // gauth: true,
         should_run: true,
         platform: true,
-        password: true,
+        // password: true,
         strategy_name: true,
         group: true,
         origin: true,
@@ -148,7 +148,7 @@ export class ApiService {
 
   @tryCatch(0)
   async createAccounts(objects: accounts_insert_input[]) {
-    if(objects.length === 0) {
+    if (objects.length === 0) {
       return 0;
     }
     const result = await this.client.mutation({
@@ -245,7 +245,7 @@ export class ApiService {
 
   @tryCatch([])
   async updateAccountsBatch(updates: accounts_updates[]) {
-    if(updates.length === 0) {
+    if (updates.length === 0) {
       return 0;
     }
     const result = await this.client.mutation({
@@ -411,16 +411,14 @@ export class ApiService {
 }
 
 // @todo: pass user auth!!
-const apiService = new ApiService(createClient({
-  url: process.env.REACT_APP_API_URL,
-  fetch,
-  headers: {
-    'x-hasura-admin-secret': process.env.REACT_APP_API_ADMIN_SECRET!
-  },
-  batch: {
-    batchInterval: 100,
-    maxBatchSize: 20,
-  }
-}));
+const createApiService = (token: string) =>
+  new ApiService(createClient({
+    url: process.env.REACT_APP_API_URL,
+    fetch,
+    headers: {
+      'Authorization': `Bearer ${token}`
+      // 'x-hasura-admin-secret': process.env.REACT_APP_API_ADMIN_SECRET!
+    }
+  }));
 
-export default apiService;
+export default createApiService;

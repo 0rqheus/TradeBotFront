@@ -5,18 +5,22 @@ import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import ChangeConfigModal from './modals/ChangeConfig';
-import apiService, { Account, AccountImportInput, AccountToDisplay, } from '../services/ApiService';
+import createApiService, { Account, AccountImportInput, AccountToDisplay, ApiService, } from '../services/ApiService';
 import { columnDefsAccounts, defaultColDef } from '../utils/columnDefs';
 import { balanceStringToNumber, formatNumber, getLastTimeForRequests, getAccountsWithRunStats, getAccGroup, chunkArray } from '../utils/utils';
 import { GridApi } from 'ag-grid-community';
 import { accounts_insert_input, accounts_updates } from '../generated/trade';
-import { Box, Button, Modal, Stack, Typography } from '@mui/material';
+import { Box, Button, IconButton, Modal, Stack, Typography } from '@mui/material';
 import { VisuallyHiddenInput } from './partials/HiddenInput';
 import ConfirmationModal from './modals/ConfirmationModal';
 import AccountsActivityActions from './partials/AccountsActivityActions';
+import { useAuth } from '../AuthProvider';
+import { Delete as DeleteIcon, Refresh as RefreshIcon, UploadFile as UploadFileIcon } from '@mui/icons-material'
 
 const Table = () => {
-  const [isModalOpened, setIsModalOpened] = useState(false);
+  const auth = useAuth();
+
+  const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false);
   const [isMoreModalOpened, setIsMoreModalOpened] = useState(false);
   const [isConfigModalOpened, setIsConfigModalOpened] = useState(false);
 
@@ -36,12 +40,13 @@ const Table = () => {
   const [isAnyRowSelected, setIsAnyRowSelected] = useState(false);
 
   const gridRef = useRef({} as GridApi<AccountToDisplay>)
-
-  // @todo: useRef for api clients?
+  const apiService = useRef({} as ApiService)
 
   useEffect(() => {
     (async function () {
-      const activeServices = await apiService.getActiveServices();
+      apiService.current = createApiService(auth.user?.token!)
+
+      const activeServices = await apiService.current.getActiveServices();
       setServiceNames(activeServices.map((s) => s.service_name));
 
       await fetchAccounts()
@@ -50,9 +55,9 @@ const Table = () => {
   }, [])
 
   const fetchAccounts = async () => {
-    const accounts = await apiService.getFullAccounts();
+    const accounts = await apiService.current.getFullAccounts();
 
-    const historyItems = await apiService.getHistoryItemsByTime(
+    const historyItems = await apiService.current.getHistoryItemsByTime(
       new Date(getLastTimeForRequests()),
       new Date(Date.now()),
       accounts.map((acc) => acc.id)
@@ -113,10 +118,10 @@ const Table = () => {
   }
 
   const createOrUpdateAccs = async (accs: AccountImportInput[]) => {
-    const existingAccs = await apiService.getAccountsByEmails(accs.map((acc) => acc.email))
+    const existingAccs = await apiService.current.getAccountsByEmails(accs.map((acc) => acc.email))
     const existingEmails = new Set(existingAccs.map((acc) => acc.email))
 
-    const allProxies = await apiService.getProxiesByHosts(accs.map((acc) => acc.proxyIp));
+    const allProxies = await apiService.current.getProxiesByHosts(accs.map((acc) => acc.proxyIp));
 
     const insertData: accounts_insert_input[] = [];
     const updateData: accounts_updates[] = [];
@@ -166,7 +171,7 @@ const Table = () => {
       } else {
 
         const proxy = allProxies.find((p) => p.host === acc.proxyIp && p.port === acc.proxyPort);
-        const proxyId = proxy?.id ?? await apiService.createNewProxy({
+        const proxyId = proxy?.id ?? await apiService.current.createNewProxy({
           host: acc.proxyIp,
           port: acc.proxyPort,
           username: acc.proxyLogin,
@@ -196,12 +201,12 @@ const Table = () => {
     // @todo progressbar?
     const insertChunks = chunkArray(insertData, 100);
     for (const chunk of insertChunks) {
-      await apiService.createAccounts(chunk);
+      await apiService.current.createAccounts(chunk);
     }
 
     const updateChunks = chunkArray(updateData, 100);
     for (const chunk of updateChunks) {
-      await apiService.updateAccountsBatch(chunk)
+      await apiService.current.updateAccountsBatch(chunk)
     }
   }
 
@@ -212,14 +217,14 @@ const Table = () => {
   }
 
   const onCellDataUpdated = async (acc: AccountToDisplay) => {
-    await apiService.updateAccount(acc.id, acc)
+    await apiService.current.updateAccount(acc.id, acc)
   }
 
   const handleAccountDelete = async () => {
-    const deleted = await apiService.deleteAccounts(selectedRows);
+    const deleted = await apiService.current.deleteAccounts(selectedRows);
     console.log('deleted count', deleted)
 
-    setIsModalOpened(false)
+    setIsDeleteModalOpened(false)
 
     const idsToDelete = selectedRows.map((r) => r.id);
     setRowData(rowData.filter((row) => !idsToDelete.includes(row.id)))
@@ -229,38 +234,35 @@ const Table = () => {
     <div>
       <Stack direction="row" spacing={'auto'} className="buttons">
         <Stack direction="row" height={50} spacing={2} width={100}>
-          <Button
-            variant='contained'
-            size="medium"
+          <IconButton
+            aria-label="refresh"
+            color="primary"
             onClick={() => fetchAccounts()}
           >
-            Refresh
-          </Button>
+            <RefreshIcon />
+          </IconButton>
 
-          <Button
-            variant='contained'
-            size="medium"
+          <IconButton
+            aria-label="delete"
             disabled={!isAnyRowSelected}
-            onClick={() => setIsModalOpened(true)}
+            color="primary"
+            onClick={() => setIsDeleteModalOpened(true)}
           >
-            Delete
-          </Button>
+            <DeleteIcon />
+          </IconButton>
 
-          <Button
+          <IconButton
+            aria-label="upload"
             component="label"
-            size="medium"
-            role={undefined}
-            variant="contained"
-            tabIndex={-1}
-          // startIcon={<CloudUploadIcon />}
+            color="primary"
           >
-            Upload
             <VisuallyHiddenInput
               type="file"
               onChange={importAccountsFromCSV}
               multiple
             />
-          </Button>
+            <UploadFileIcon />
+          </IconButton>
         </Stack>
 
         <Box width={350} paddingTop={1}>
@@ -271,13 +273,6 @@ const Table = () => {
             secondsBetweenStart={secondsBetweenAccsStart}
           />
         </Box>
-
-        <ConfirmationModal
-          text='Are you sure you want to delete these accounts?'
-          open={isModalOpened}
-          handleSubmit={() => handleAccountDelete()}
-          handleClose={() => setIsModalOpened(false)}
-        />
 
         <Button color='info' size="medium" variant="contained" onClick={() => setIsMoreModalOpened(true)}>
           More
@@ -302,6 +297,13 @@ const Table = () => {
         show={isConfigModalOpened}
         onHide={() => setIsConfigModalOpened(false)}
         accounts={selectedRows}
+      />
+
+      <ConfirmationModal
+        text='Are you sure you want to delete these accounts?'
+        open={isDeleteModalOpened}
+        handleSubmit={() => handleAccountDelete()}
+        handleClose={() => setIsDeleteModalOpened(false)}
       />
 
       <Modal
@@ -349,7 +351,7 @@ const Table = () => {
                 value={strategyToSet}
                 onChange={(event) => setStrategyToSet(event.target.value)}
               />
-              <Button onClick={() => apiService.updateAccounts(selectedRows, { strategy_name: strategyToSet })}>
+              <Button onClick={() => apiService.current.updateAccounts(selectedRows, { strategy_name: strategyToSet })}>
                 Set strategy
               </Button>
             </Stack>
@@ -362,10 +364,10 @@ const Table = () => {
               onChange={(event) => setTargetConfig(Number(event.target.value))}
             />
             <Stack direction={'row'}>
-              <Button onClick={() => apiService.updateAccountBansConfig(selectedRows, targetConfig)}>
+              <Button onClick={() => apiService.current.updateAccountBansConfig(selectedRows, targetConfig)}>
                 Set ban config
               </Button>
-              <Button onClick={() => apiService.updateAccountSchedulerInfo(selectedRows, { config_id: targetConfig })}>
+              <Button onClick={() => apiService.current.updateAccountSchedulerInfo(selectedRows, { config_id: targetConfig })}>
                 Set scheduler config
               </Button>
             </Stack>
@@ -375,7 +377,7 @@ const Table = () => {
                 serviceNames.map((name) => <option value={name}>{name}</option>)
               }
             </Form.Select>
-            <Button onClick={() => apiService.updateAccountSchedulerInfo(selectedRows, { service_name: serviceName })}>
+            <Button onClick={() => apiService.current.updateAccountSchedulerInfo(selectedRows, { service_name: serviceName })}>
               Update service name
             </Button>
 

@@ -1,74 +1,44 @@
-import { Box, Button, Card, FormControl, FormLabel, TextField, Typography } from '@mui/material';
+import { Box, Button, Card, FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput, Typography } from '@mui/material';
+import { useAuth } from '../AuthProvider';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { VisibilityOff, Visibility } from '@mui/icons-material'
 
 const Auth = () => {
+  const auth = useAuth();
+  const navigate = useNavigate();
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [errText, setErrText] = useState("");
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    const requestData = {
-      email: formData.get('email')!,
-      password: formData.get('password')!,
+    const creds = {
+      username: formData.get('username')!.toString(),
+      password: formData.get('password')!.toString(),
     };
-    console.log(requestData);
 
-    const response = await fetch('localhost:3000/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(requestData),
+    await auth.login(creds, (err) => {
+      if (err) {
+        setErrText(err.toString());
+        return;
+      }
+
+      navigate('/');
     });
-
-    if(response.status === 200) {
-      const data = await response.json();
-      localStorage.setItem('sbc-panel-user-tkn', data.token)
-      localStorage.setItem('sbc-panel-user-role', data.role)
-    } else if(response.status === 401) {
-      // @todo:
-      return;
-    } else {
-      // @todo:
-      return;
-    }
-
-    // @todo: 
-    // redirect
   };
 
-  // return (
-  //   <div>
-  //     <Form className="Form" noValidate onSubmit={handleLogin}>
-  //       <Form.Group className="mb-3">
-  //         <Form.Label>Enter admin secret</Form.Label>
-  //         <Form.Control
-  //           type="text"
-  //           onChange={(e) => setSecret(e.target.value)}
-  //           value={secret}
-  //         />
-  //       </Form.Group>
-  //       <Form.Group className="mb-3">
-  //         <Form.Label>Enter rabbit URL</Form.Label>
-  //         <Form.Control
-  //           type="text"
-  //           onChange={(e) => setRabbitUrl(e.target.value)}
-  //           value={rabbitUrl}
-  //         />
-  //       </Form.Group>
-
-  //       <div className="d-grid gap-2">
-  //         <Button className="modalButton" variant="primary" type="submit">
-  //           Login
-  //         </Button>
-  //       </div>
-  //     </Form>
-  //   </div>
-  // );
-
   return (
-    <Card variant="outlined">
+    <Card variant="outlined" className="auth-form">
       <Typography
-        component="h1"
-        variant="h4"
-        sx={{ width: '100%', fontSize: 'clamp(2rem, 10vw, 2.15rem)' }}
+        variant="body1"
+        color="red"
+        sx={{mb:4}}
+        display={errText.length !== 0 ? "block" : "none" }
       >
-        Sign in
+        {errText}
       </Typography>
       <Box
         component="form"
@@ -78,45 +48,46 @@ const Auth = () => {
           display: 'flex',
           flexDirection: 'column',
           width: '100%',
-          gap: 2,
+          gap: 3,
         }}
       >
-        <FormControl>
-          <FormLabel htmlFor="email">Email</FormLabel>
-          <TextField
-            id="email"
-            type="email"
-            name="email"
-            placeholder="your@email.com"
-            autoComplete="email"
-            autoFocus
+        <FormControl variant="outlined">
+          <InputLabel htmlFor="username">Username</InputLabel>
+          <OutlinedInput
+            id="username"
+            name="username"
             required
-            fullWidth
-            variant="outlined"
-            color='primary'
-            sx={{ ariaLabel: 'email' }}
+            label="username"
           />
         </FormControl>
-        <FormControl>
-          <FormLabel htmlFor="password">Password</FormLabel>
-          <TextField
-            name="password"
-            placeholder="••••••"
-            type="password"
+
+        <FormControl variant="outlined">
+          <InputLabel htmlFor="password">Password</InputLabel>
+          <OutlinedInput
             id="password"
-            autoComplete="current-password"
-            autoFocus
+            name="password"
+            type={showPassword ? 'text' : 'password'}
             required
-            fullWidth
-            variant="outlined"
-            color='primary'
+            endAdornment={
+              <InputAdornment position="end">
+                <IconButton
+                  aria-label="toggle password visibility"
+                  onClick={() => setShowPassword(!showPassword)}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            }
+            label="Password"
           />
         </FormControl>
+
         <Button
           type="submit"
-          fullWidth
           variant="contained"
-        // onClick={validateInputs}
+          // size="large"
+          sx={{ width: 250, height: 50, alignSelf: 'center' }}
         >
           Sign in
         </Button>
