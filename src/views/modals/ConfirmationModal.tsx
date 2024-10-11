@@ -7,14 +7,12 @@ interface ConfirmationModalProps {
   handleSubmit: () => void,
 }
 
-// @todo: do not rerender!
 const ConfirmationModal = ({ text, open, handleClose, handleSubmit }: ConfirmationModalProps) => {
   return (
     <Dialog
       open={open}
       onClose={handleClose}
       aria-labelledby="alert-dialog-title"
-      aria-describedby="alert-dialog-description"
     >
       <DialogTitle id="alert-dialog-title">
         {text}

@@ -1,75 +1,90 @@
-import { useState } from 'react';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
-import { apiServiceCustomResolvers } from '../../services/ApiCustomResolvers';
+// import { apiServiceCustomResolvers } from '../../services/ApiCustomResolvers';
+import { Account } from '../../services/ApiService';
+import { Box, Button, FormControlLabel, Modal, Switch, TextField, Typography } from '@mui/material';
+import { CustomModalContainer } from '../partials/CustomModalContainer';
 
-const ChangeConfigModal = (props: any) => {
-  const [maxTimeToTrySbc, setMaxTimeToTrySbc] = useState('');
-  const [sbcDuration, setSbcDuration] = useState('');
-  const [shouldTrySbc, setShouldTrySbc] = useState(false);
+interface ChangeConfigModalProps {
+  open: boolean,
+  handleClose: () => void,
+  selectedRows: Account[]
+}
 
+const ChangeConfigModal = ({ open, handleClose, selectedRows }: ChangeConfigModalProps) => {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
-    const accountIds = props.accounts.map((acc: any) => acc.id);
-    await apiServiceCustomResolvers.changeConfig({
-      account_ids: accountIds,
-      config: {
-        maxTimeToTrySbc: Number(maxTimeToTrySbc),
-        sbcDuration: Number(sbcDuration),
-        shouldTrySbc,
-      },
-    });
+    const formData = new FormData(event.currentTarget);
+    console.log(formData.get('max-time-to-try-sbc'));
+    console.log(formData.get('should-try-sbc'));
+    
 
-    props.onHide();
+    // TODO: SEND CONFIG
+    // const accountIds = selectedRows.map((acc: any) => acc.id);
+    // await apiService.changeConfig({
+    //   account_ids: accountIds,
+    //   config: {
+    //     maxTimeToTrySbc: Number(maxTimeToTrySbc),
+    //     sbcDuration: Number(sbcDuration),
+    //     shouldTrySbc,
+    //   },
+    // });
+
+    handleClose();
   };
 
   return (
     <Modal
-      {...props}
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
     >
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
+      <CustomModalContainer>
+        <Typography id="modal-modal-title" variant="h5" component="h2" align='center'>
           Change worker config
-        </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Form noValidate onSubmit={handleSubmit}>
-          <Form.Group className="mb-3">
-            <Form.Control
-              type="number"
-              value={maxTimeToTrySbc}
-              onChange={(event) => setMaxTimeToTrySbc(event.target.value)}
-              placeholder="Max time to try SBC (min)"
+        </Typography>
+
+        <Box
+          id="modal-modal-description"
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            gap: 3,
+            marginTop: 4
+          }}>
+
+          <TextField
+            name="max-time-to-try-sbc"
+            label="Max time to try SBC"
+            type='number'
+            variant="outlined"
+          />
+
+          <TextField
+            name="sbc-duration"
+            label="SBC duration"
+            type='number'
+            variant="outlined"
+          />
+
+          <FormControlLabel 
+            name="should-try-sbc"
+            label="Should try SBC?"
+            control={<Switch defaultChecked/>} 
             />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Control
-              type="number"
-              value={sbcDuration}
-              onChange={(event) => setSbcDuration(event.target.value)}
-              placeholder="SBC duration (min)"
-            />
-          </Form.Group>
-          <Form.Group className="mb-3" controlId="formBasicCheckbox">
-            <Form.Check
-              onChange={(event) => setShouldTrySbc(event.target.checked)}
-              checked={shouldTrySbc}
-              type="checkbox"
-              label="Should try SBC"
-            />
-          </Form.Group>
-          <div className="d-grid gap-2">
-            <Button className="modalButton" variant="primary" type="submit">
-              Send
-            </Button>
-          </div>
-        </Form>
-      </Modal.Body>
+
+          <Button
+            type="submit"
+            variant="contained"
+            color='primary'
+          >
+            Update config
+          </Button>
+        </Box>
+      </CustomModalContainer>
     </Modal>
   );
 }

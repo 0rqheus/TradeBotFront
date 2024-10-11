@@ -93,7 +93,6 @@ export const columnDefsAccounts = [
     headerName: 'Freezed',
     filter: 'agNumberColumnFilter',
     enableRowGroup: true,
-    valueGetter: (params: any) => balanceStringToNumber(params.data.freezed_balance),
     valueFormatter: (param: any) => formatNumber(balanceStringToNumber(param.data.freezed_balance)),
     width: 110,
     maxWidth: 110,
@@ -102,22 +101,15 @@ export const columnDefsAccounts = [
     headerName: 'Available',
     filter: 'agNumberColumnFilter',
     enableRowGroup: true,
-    valueGetter: (params: any) => balanceStringToNumber(params.data.available_balance),
-    valueFormatter: (param: any) => formatNumber(balanceStringToNumber(param.data.available_balance)),
+    valueFormatter: (param: any) => formatNumber(param.data.available_balance),
     width: 110,
     maxWidth: 110,
   },
   {
     headerName: 'Total',
-    valueGetter: (params: any) => (
-      balanceStringToNumber(params.data.freezed_balance) +
-      balanceStringToNumber(params.data.available_balance)),
     filter: 'agNumberColumnFilter',
     enableRowGroup: true,
-    valueFormatter: (param: any) => formatNumber(
-      balanceStringToNumber(param.data.freezed_balance) +
-      balanceStringToNumber(param.data.available_balance)
-    ),
+    valueFormatter: (param: any) => formatNumber(param.data.freezed_balance + param.data.available_balance),
     width: 100,
     maxWidth: 100,
   },

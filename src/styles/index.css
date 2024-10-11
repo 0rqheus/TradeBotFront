@@ -3,7 +3,7 @@
 }
 
 .buttons {
-  margin: 10px;
+  margin: 5px;
 }
 
 .addButton {
@@ -12,6 +12,10 @@
 
 .input {
   margin-right: 20px;
+}
+
+body {
+  margin: 0px;
 }
 
 .auth-form {

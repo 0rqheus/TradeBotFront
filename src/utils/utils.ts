@@ -3,7 +3,7 @@ import { Account, HistoryItem } from '../services/ApiService';
 
 export const sleep = (delay: number) => new Promise(r => setTimeout(r, delay));
 
-export const balanceStringToNumber = (balanceString: string) => Number(balanceString.replaceAll(',', ''));
+export const balanceStringToNumber = (balanceString: string) => Number(balanceString.toString()?.replaceAll(',', ''));
 
 export const formatNumber = (value: number) => value.toLocaleString('en')
 

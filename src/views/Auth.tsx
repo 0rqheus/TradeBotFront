@@ -43,7 +43,6 @@ const Auth = () => {
       <Box
         component="form"
         onSubmit={handleSubmit}
-        // noValidate
         sx={{
           display: 'flex',
           flexDirection: 'column',
@@ -86,7 +85,6 @@ const Auth = () => {
         <Button
           type="submit"
           variant="contained"
-          // size="large"
           sx={{ width: 250, height: 50, alignSelf: 'center' }}
         >
           Sign in

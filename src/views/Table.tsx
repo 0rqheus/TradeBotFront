@@ -1,227 +1,85 @@
 import { useEffect, useState, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
-import Form from 'react-bootstrap/Form';
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
-import ChangeConfigModal from './modals/ChangeConfig';
-import createApiService, { Account, AccountImportInput, AccountToDisplay, ApiService, } from '../services/ApiService';
+import createApiService, { Account, ApiService, } from '../services/ApiService';
 import { columnDefsAccounts, defaultColDef } from '../utils/columnDefs';
-import { balanceStringToNumber, formatNumber, getLastTimeForRequests, getAccountsWithRunStats, getAccGroup, chunkArray } from '../utils/utils';
+import { formatNumber, getLastTimeForRequests, getAccountsWithRunStats } from '../utils/utils';
 import { GridApi } from 'ag-grid-community';
-import { accounts_insert_input, accounts_updates } from '../generated/trade';
-import { Box, Button, IconButton, Modal, Stack, Typography } from '@mui/material';
-import { VisuallyHiddenInput } from './partials/HiddenInput';
+import { Box, Stack, Typography } from '@mui/material';
 import ConfirmationModal from './modals/ConfirmationModal';
 import AccountsActivityActions from './partials/AccountsActivityActions';
 import { useAuth } from '../AuthProvider';
-import { Delete as DeleteIcon, Refresh as RefreshIcon, UploadFile as UploadFileIcon } from '@mui/icons-material'
+import AdditionalSettingsModal from './modals/AdditionalSettingsModal';
+import ChangeConfigModal from './modals/ChangeConfig';
 
 const Table = () => {
   const auth = useAuth();
 
   const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false);
-  const [isMoreModalOpened, setIsMoreModalOpened] = useState(false);
+  const [isSettingsModalOpened, setIsSettingsModalOpened] = useState(false);
   const [isConfigModalOpened, setIsConfigModalOpened] = useState(false);
 
+  const [rowData, setRowData] = useState<Account[]>([]);
+  const [selectedRows, setSelectedRows] = useState<Account[]>([]);
   const [totalBalance, setTotalBalance] = useState(0);
   const [availableBalance, setAvailableBalance] = useState(0);
 
-  const [strategyToSet, setStrategyToSet] = useState('');
-  const [targetConfig, setTargetConfig] = useState(0);
-  const [serviceName, setServiceName] = useState('');
-  const [serviceNames, setServiceNames] = useState<string[]>([]);
-
-  const [secondsBetweenAccsStart, setSecondsBetweenAccsStart] = useState(Number(localStorage.getItem('secondsBetweenAccsStart')) || 6);
-  const [maxAccsToStart, setMaxAccsToStart] = useState(Number(localStorage.getItem('maxAccsToStart')) || 120);
-
-  const [rowData, setRowData] = useState<AccountToDisplay[]>([]);
-  const [selectedRows, setSelectedRows] = useState<AccountToDisplay[]>([]);
-  const [isAnyRowSelected, setIsAnyRowSelected] = useState(false);
-
-  const gridRef = useRef({} as GridApi<AccountToDisplay>)
-  const apiService = useRef({} as ApiService)
+  const gridRef = useRef({} as GridApi<Account>)
+  const apiServiceRef = useRef({} as ApiService)
 
   useEffect(() => {
     (async function () {
-      apiService.current = createApiService(auth.user?.token!)
-
-      const activeServices = await apiService.current.getActiveServices();
-      setServiceNames(activeServices.map((s) => s.service_name));
-
+      apiServiceRef.current = createApiService(auth.user?.token!)
       await fetchAccounts()
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchAccounts = async () => {
-    const accounts = await apiService.current.getFullAccounts();
-
-    const historyItems = await apiService.current.getHistoryItemsByTime(
+    const accounts = await apiServiceRef.current.getFullAccounts();
+    const historyItems = await apiServiceRef.current.getHistoryItemsByTime(
       new Date(getLastTimeForRequests()),
       new Date(Date.now()),
       accounts.map((acc) => acc.id)
     );
-
     const accountsWithRequests = getAccountsWithRunStats(accounts, historyItems);
-    // console.log(accountsWithRequests);
-    setRowData(accountsWithRequests.map((d: Account): AccountToDisplay => ({
-      ...d,
-      freezed_balance: formatNumber(d.freezed_balance),
-      available_balance: formatNumber(d.available_balance)
-    })));
+    console.log('accounts', accountsWithRequests.length);
+    
+    setRowData(accountsWithRequests);
     updateTotalBalanceInfo();
   }
 
   const updateTotalBalanceInfo = () => {
-    const totalFreezedBalance = selectedRows.reduce(
-      (total, acc) => total + balanceStringToNumber(acc.freezed_balance.toString()),
+    const accs: Account[] = [];
+    gridRef.current.forEachNodeAfterFilter((node) => {
+      accs.push(node.data!);
+    })
+
+    const totalFreezedBalance = accs.reduce(
+      (total, acc) => total + acc.freezed_balance,
       0);
 
-    const totalAvailableBalance = selectedRows.reduce(
-      (total, acc) => total + balanceStringToNumber(acc.available_balance.toString()),
+    const totalAvailableBalance = accs.reduce(
+      (total, acc) => total + acc.available_balance,
       0);
     setAvailableBalance(totalAvailableBalance);
 
     setTotalBalance(totalFreezedBalance + totalAvailableBalance);
   };
 
-  const importAccountsFromCSV = async (event: any) => {
-    const csv = event.target.files[0];
-    const accsToCreate: AccountImportInput[] = [];
-
-    const reader = new FileReader();
-    reader.readAsText(csv);
-    reader.onload = async (e) => {
-      const data = e.target!.result! as string;
-      const rows = data.split('\n');
-      for (let i = 1; i < rows.length; i++) {
-        const rowValues = rows[i].split(',');
-        const newObject = {
-          accountOwner: rowValues[0], // use username?
-          origin: rowValues[1],
-          email: rowValues[2].toLowerCase(),
-          password: rowValues[3],
-          gauth: rowValues[4],
-          proxyIp: rowValues[5],
-          proxyPort: rowValues[6],
-          proxyLogin: rowValues[7],
-          proxyPass: rowValues[8],
-        };
-        accsToCreate.push(newObject);
-      }
-    };
-
-    await createOrUpdateAccs(accsToCreate);
-
-    await fetchAccounts();
-  }
-
-  const createOrUpdateAccs = async (accs: AccountImportInput[]) => {
-    const existingAccs = await apiService.current.getAccountsByEmails(accs.map((acc) => acc.email))
-    const existingEmails = new Set(existingAccs.map((acc) => acc.email))
-
-    const allProxies = await apiService.current.getProxiesByHosts(accs.map((acc) => acc.proxyIp));
-
-    const insertData: accounts_insert_input[] = [];
-    const updateData: accounts_updates[] = [];
-
-    for (const acc of accs) {
-      if (!existingEmails.has(acc.email)) {
-        const newAcc: accounts_insert_input = {
-          email: acc.email,
-          password: acc.password,
-          gauth: acc.gauth,
-          group: getAccGroup(acc.proxyIp, acc.proxyPort),
-          origin: acc.origin,
-          general_account: {
-            data: {
-              email: acc.email
-            }
-          },
-          scheduler_account_info: {
-            data: {
-              config_id: 24,
-            }
-          },
-          ban_analytics_info: {
-            data: {
-              ban_analytics_config_id: 9
-            }
-          },
-          // @todo: tbd get account_owner from precreated?
-          account_owner: acc.accountOwner,
-        };
-
-        const proxy = allProxies.find((p) => p.host === acc.proxyIp && p.port === acc.proxyPort);
-        if (proxy) {
-          newAcc.proxy_id = proxy.id;
-        } else {
-          newAcc.proxy = {
-            data: {
-              host: acc.proxyIp,
-              port: acc.proxyPort,
-              username: acc.proxyLogin,
-              password: acc.proxyPass,
-            }
-          };
-        }
-
-        insertData.push(newAcc);
-      } else {
-
-        const proxy = allProxies.find((p) => p.host === acc.proxyIp && p.port === acc.proxyPort);
-        const proxyId = proxy?.id ?? await apiService.current.createNewProxy({
-          host: acc.proxyIp,
-          port: acc.proxyPort,
-          username: acc.proxyLogin,
-          password: acc.proxyPass,
-        });
-        if (!proxyId) {
-          throw new Error('Cannot create proxy');
-        }
-
-        const updatedAcc: accounts_updates = {
-          where: {
-            email: { _eq: acc.email }
-          },
-          _set: {
-            password: acc.password,
-            gauth: acc.gauth,
-            group: getAccGroup(acc.proxyIp, acc.proxyPort),
-            origin: acc.origin,
-            proxy_id: proxyId
-          }
-        }
-
-        updateData.push(updatedAcc);
-      }
-    }
-
-    // @todo progressbar?
-    const insertChunks = chunkArray(insertData, 100);
-    for (const chunk of insertChunks) {
-      await apiService.current.createAccounts(chunk);
-    }
-
-    const updateChunks = chunkArray(updateData, 100);
-    for (const chunk of updateChunks) {
-      await apiService.current.updateAccountsBatch(chunk)
-    }
-  }
-
   const onSelectionChanged = async () => {
     const selectedRows = gridRef.current.getSelectedRows();
     setSelectedRows(selectedRows);
-    setIsAnyRowSelected(selectedRows.length > 0)
   }
 
-  const onCellDataUpdated = async (acc: AccountToDisplay) => {
-    await apiService.current.updateAccount(acc.id, acc)
+  const onCellDataUpdated = async (acc: Account) => {
+    await apiServiceRef.current.updateAccount(acc.id, acc)
   }
 
   const handleAccountDelete = async () => {
-    const deleted = await apiService.current.deleteAccounts(selectedRows);
+    const deleted = await apiServiceRef.current.deleteAccounts(selectedRows);
     console.log('deleted count', deleted)
 
     setIsDeleteModalOpened(false)
@@ -231,73 +89,32 @@ const Table = () => {
   };
 
   return (
-    <div>
-      <Stack direction="row" spacing={'auto'} className="buttons">
-        <Stack direction="row" height={50} spacing={2} width={100}>
-          <IconButton
-            aria-label="refresh"
-            color="primary"
-            onClick={() => fetchAccounts()}
-          >
-            <RefreshIcon />
-          </IconButton>
+    <>
+      <Stack className='header' direction="row" spacing={'auto'} height={'8vh'} >
+        <AccountsActivityActions
+          accounts={selectedRows}
+          fetchAccounts={fetchAccounts}
+          openConfig={() => setIsConfigModalOpened(true)}
+          openSettings={() => setIsSettingsModalOpened(true)}
+          openDeleteConfirmation={() => setIsDeleteModalOpened(true)}
+        />
 
-          <IconButton
-            aria-label="delete"
-            disabled={!isAnyRowSelected}
-            color="primary"
-            onClick={() => setIsDeleteModalOpened(true)}
-          >
-            <DeleteIcon />
-          </IconButton>
-
-          <IconButton
-            aria-label="upload"
-            component="label"
-            color="primary"
-          >
-            <VisuallyHiddenInput
-              type="file"
-              onChange={importAccountsFromCSV}
-              multiple
-            />
-            <UploadFileIcon />
-          </IconButton>
+        <Stack className='accounts-info' direction="row" spacing={6} px={2}>
+          <Box >
+            <Typography variant="body1">
+              <b>Selected:</b> {selectedRows.length}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="body1">
+              <b>Available balance:</b> {formatNumber(availableBalance)}
+            </Typography>
+            <Typography variant="body1">
+              <b>Total balance:</b> {formatNumber(totalBalance)}
+            </Typography>
+          </Box>
         </Stack>
-
-        <Box width={350} paddingTop={1}>
-          <AccountsActivityActions
-            disabled={!isAnyRowSelected}
-            accounts={selectedRows}
-            chunkSizeToStart={maxAccsToStart}
-            secondsBetweenStart={secondsBetweenAccsStart}
-          />
-        </Box>
-
-        <Button color='info' size="medium" variant="contained" onClick={() => setIsMoreModalOpened(true)}>
-          More
-        </Button>
-
-        <div>
-          <b>Selected:</b> {selectedRows.length}
-        </div>
-        <div>
-          <div>
-            <b>Available balance:</b>{' '}
-            {formatNumber(availableBalance)}
-          </div>
-          <div>
-            <b>Total balance:</b>{' '}
-            {formatNumber(totalBalance)}
-          </div>
-        </div>
       </Stack>
-
-      <ChangeConfigModal
-        show={isConfigModalOpened}
-        onHide={() => setIsConfigModalOpened(false)}
-        accounts={selectedRows}
-      />
 
       <ConfirmationModal
         text='Are you sure you want to delete these accounts?'
@@ -306,89 +123,20 @@ const Table = () => {
         handleClose={() => setIsDeleteModalOpened(false)}
       />
 
-      <Modal
-        open={isMoreModalOpened}
-        onClose={() => setIsMoreModalOpened(false)}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={{
-          position: 'absolute' as 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          width: 800,
-          bgcolor: 'background.paper',
-          border: '2px solid #000',
-          boxShadow: 24,
-          p: 4,
-        }}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Additional settings
-          </Typography>
-          <Stack id="modal-modal-description">
-            <Stack direction={'row'}>
-              <input
-                className="input"
-                type="number"
-                placeholder="Seconds before accs start"
-                value={secondsBetweenAccsStart}
-                onChange={(event) => setSecondsBetweenAccsStart(Number(event.target.value))}
-              />
-              <input
-                className="input"
-                type="number"
-                placeholder="Accounts to start in one step"
-                value={maxAccsToStart}
-                onChange={(event) => setMaxAccsToStart(Number(event.target.value))}
-              />
-            </Stack>
-            <Stack>
-              <input
-                className="input"
-                type="text"
-                placeholder="strategy"
-                value={strategyToSet}
-                onChange={(event) => setStrategyToSet(event.target.value)}
-              />
-              <Button onClick={() => apiService.current.updateAccounts(selectedRows, { strategy_name: strategyToSet })}>
-                Set strategy
-              </Button>
-            </Stack>
+      <AdditionalSettingsModal
+        open={isSettingsModalOpened}
+        handleClose={() => setIsSettingsModalOpened(false)}
+        apiService={apiServiceRef.current}
+        selectedRows={selectedRows}
+      />
 
-            <input
-              className="input"
-              type="number"
-              placeholder="ban config"
-              value={targetConfig}
-              onChange={(event) => setTargetConfig(Number(event.target.value))}
-            />
-            <Stack direction={'row'}>
-              <Button onClick={() => apiService.current.updateAccountBansConfig(selectedRows, targetConfig)}>
-                Set ban config
-              </Button>
-              <Button onClick={() => apiService.current.updateAccountSchedulerInfo(selectedRows, { config_id: targetConfig })}>
-                Set scheduler config
-              </Button>
-            </Stack>
+      <ChangeConfigModal
+        open={isConfigModalOpened}
+        handleClose={() => setIsConfigModalOpened(false)}
+        selectedRows={selectedRows}
+      />
 
-            <Form.Select onChange={(event) => setServiceName(event.target.value)}>
-              {
-                serviceNames.map((name) => <option value={name}>{name}</option>)
-              }
-            </Form.Select>
-            <Button onClick={() => apiService.current.updateAccountSchedulerInfo(selectedRows, { service_name: serviceName })}>
-              Update service name
-            </Button>
-
-            <Button color='warning' variant="contained">
-              Change config
-            </Button>
-          </Stack>
-        </Box>
-      </Modal>
-
-      <div className="ag-theme-alpine" style={{ height: 780, width: '100%' }}>
+      <div className="ag-theme-alpine" style={{ height: '92vh', width: '100%' }}>
         <AgGridReact
           rowData={rowData}
           getRowId={(params) => params.data.id.toString()}
@@ -402,12 +150,13 @@ const Table = () => {
           onCellValueChanged={(event) => onCellDataUpdated(event.data)}
           onSelectionChanged={onSelectionChanged}
           animateRows={true}
-          onFilterChanged={() => updateTotalBalanceInfo()}
+          onFilterChanged={() => { updateTotalBalanceInfo() }}
           enableRangeSelection={true}
           sideBar={{ toolPanels: ['columns'] }}
-        ></AgGridReact>
+        >
+        </AgGridReact>
       </div>
-    </div>
+    </>
   );
 }
 

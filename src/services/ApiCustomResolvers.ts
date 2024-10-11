@@ -1,7 +1,7 @@
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client';
 import makeApolloClient from '../utils/makeApolloClient';
 import gql from 'graphql-tag';
-import { AccountToDisplay } from './ApiService';
+import { Account } from './ApiService';
 import { chunkArray } from '../utils/utils';
 
 const SEND_COMMAND = gql`
@@ -115,7 +115,7 @@ class ApiServiceCustomerResolvers {
     }
   };
 
-  sendCommands = async (accounts: AccountToDisplay[], type: 'STOP' | 'BLOCK' | 'RESET') => {
+  sendCommands = async (accounts: Account[], type: 'STOP' | 'BLOCK' | 'RESET') => {
     const commands = accounts.map((acc) => ({
       id: acc.id,
       email: acc.email,
@@ -130,7 +130,7 @@ class ApiServiceCustomerResolvers {
   }
 
   startAccounts = async (
-    accounts: AccountToDisplay[], 
+    accounts: Account[], 
     type: 'START' | 'KICKSTART', 
     secondsBetweenStart: number,
     maxAccsToStartAtOnce: number

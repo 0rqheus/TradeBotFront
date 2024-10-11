@@ -18,7 +18,6 @@ export interface AccountImportInput {
 }
 
 export type Account = Awaited<ReturnType<ApiService['getFullAccounts']>>[number];
-export type AccountToDisplay = Omit<Account, 'freezed_balance' | 'available_balance'> & { freezed_balance: string, available_balance: string }
 export type ProxyData = Awaited<ReturnType<ApiService['getProxiesByHosts']>>[number];
 export type HistoryItem = Awaited<ReturnType<ApiService['getHistoryItemsByTime']>>[number];
 
@@ -71,10 +70,10 @@ export class ApiService {
           host: true,
           port: true,
         },
-        objectives_progress: {
-          buy_now: true,
-          list: true,
-        },
+        // objectives_progress: {
+        //   buy_now: true,
+        //   list: true,
+        // },
         scheduler_account_info: {
           block_reason: true,
           blocked_at: true,
@@ -162,6 +161,23 @@ export class ApiService {
     return result.insert_accounts;
   }
 
+  
+  @tryCatch(0)
+  async udpateConfig(objects: accounts_insert_input[]) {
+    if (objects.length === 0) {
+      return 0;
+    }
+    const result = await this.client.mutation({
+      insert_accounts: {
+        __args: {
+          objects
+        },
+        affected_rows: true,
+      }
+    });
+    return result.insert_accounts;
+  }
+
   // async updateAccount(account: any) {
   //   delete account.__typename;
   //   delete account.proxy;
@@ -219,7 +235,7 @@ export class ApiService {
   }
 
   @tryCatch(null)
-  async updateAccount(id: number, data: AccountToDisplay) {
+  async updateAccount(id: number, data: Account) {
     const result = await this.client.mutation({
       update_accounts_by_pk: {
         __args: {
