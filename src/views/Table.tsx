@@ -12,13 +12,15 @@ import ConfirmationModal from './modals/ConfirmationModal';
 import AccountsActivityActions from './partials/AccountsActivityActions';
 import { useAuth } from '../AuthProvider';
 import AdditionalSettingsModal from './modals/AdditionalSettingsModal';
-import ChangeConfigModal from './modals/ChangeConfig';
+import ChangeConfigModal from './modals/ChangeConfigModal';
+import UploadAccountsModal from './modals/UploadAccountsModal';
 
 const Table = () => {
   const auth = useAuth();
 
   const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false);
   const [isSettingsModalOpened, setIsSettingsModalOpened] = useState(false);
+  const [isUploadModalOpened, setIsUploadModalOpened] = useState(false);
   const [isConfigModalOpened, setIsConfigModalOpened] = useState(false);
 
   const [rowData, setRowData] = useState<Account[]>([]);
@@ -46,7 +48,7 @@ const Table = () => {
     );
     const accountsWithRequests = getAccountsWithRunStats(accounts, historyItems);
     console.log('accounts', accountsWithRequests.length);
-    
+
     setRowData(accountsWithRequests);
     updateTotalBalanceInfo();
   }
@@ -74,8 +76,10 @@ const Table = () => {
     setSelectedRows(selectedRows);
   }
 
-  const onCellDataUpdated = async (acc: Account) => {
-    await apiServiceRef.current.updateAccount(acc.id, acc)
+  const onCellDataUpdated = async (id: number, column: string, val: any) => {
+    const data: any = {};
+    data[column] = val;
+    await apiServiceRef.current.updateAccount(id, data)
   }
 
   const handleAccountDelete = async () => {
@@ -97,6 +101,7 @@ const Table = () => {
           openConfig={() => setIsConfigModalOpened(true)}
           openSettings={() => setIsSettingsModalOpened(true)}
           openDeleteConfirmation={() => setIsDeleteModalOpened(true)}
+          openUploadModal={() => setIsUploadModalOpened(true)}
         />
 
         <Stack className='accounts-info' direction="row" spacing={6} px={2}>
@@ -130,6 +135,11 @@ const Table = () => {
         selectedRows={selectedRows}
       />
 
+      <UploadAccountsModal
+        open={isUploadModalOpened}
+        handleClose={() => setIsUploadModalOpened(false)}
+      />
+
       <ChangeConfigModal
         open={isConfigModalOpened}
         handleClose={() => setIsConfigModalOpened(false)}
@@ -147,7 +157,7 @@ const Table = () => {
           suppressAggFuncInHeader={true}
           onGridReady={(value) => { gridRef.current = value.api; }}
           rowSelection={'multiple'}
-          onCellValueChanged={(event) => onCellDataUpdated(event.data)}
+          onCellValueChanged={(event) => onCellDataUpdated(event.data.id, event.column.getColId(), event.newValue)}
           onSelectionChanged={onSelectionChanged}
           animateRows={true}
           onFilterChanged={() => { updateTotalBalanceInfo() }}

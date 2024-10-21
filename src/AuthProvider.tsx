@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (creds: Credentials, cb: (error: string | null) => void) => {
     try {
-      const resp = await fetch(process.env.REACT_APP_BACKEND_URL!, {
+      const resp = await fetch(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
         method: 'POST',
         body: JSON.stringify(creds),
         headers: {

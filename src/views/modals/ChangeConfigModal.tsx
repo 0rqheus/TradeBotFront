@@ -1,7 +1,7 @@
-// import { apiServiceCustomResolvers } from '../../services/ApiCustomResolvers';
 import { Account } from '../../services/ApiService';
 import { Box, Button, FormControlLabel, Modal, Switch, TextField, Typography } from '@mui/material';
 import { CustomModalContainer } from '../partials/CustomModalContainer';
+import { useAuth } from '../../AuthProvider';
 
 interface ChangeConfigModalProps {
   open: boolean,
@@ -10,24 +10,29 @@ interface ChangeConfigModalProps {
 }
 
 const ChangeConfigModal = ({ open, handleClose, selectedRows }: ChangeConfigModalProps) => {
+  const auth = useAuth();
+  
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
-    console.log(formData.get('max-time-to-try-sbc'));
-    console.log(formData.get('should-try-sbc'));
-    
 
-    // TODO: SEND CONFIG
-    // const accountIds = selectedRows.map((acc: any) => acc.id);
-    // await apiService.changeConfig({
-    //   account_ids: accountIds,
-    //   config: {
-    //     maxTimeToTrySbc: Number(maxTimeToTrySbc),
-    //     sbcDuration: Number(sbcDuration),
-    //     shouldTrySbc,
-    //   },
-    // });
+    await fetch(`${process.env.REACT_APP_BACKEND_URL}/change_config`, {
+      method: 'POST',
+      body: JSON.stringify({
+        accountIds: selectedRows.map((acc: any) => acc.id),
+        config: {
+          maxTimeToTrySbcInMs: formData.get('max-time-to-try-sbc'),
+          sbcDurationInMs: formData.get('sbc-duration'),
+          shouldTrySbc: formData.get('should-try-sbc'),
+        }
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${auth.user?.token}`
+      }
+    });
+    // @todo show error
 
     handleClose();
   };

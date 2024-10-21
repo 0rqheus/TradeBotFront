@@ -43,10 +43,7 @@ function tryCatch(errorReturnValue: any) {
 }
 
 export class ApiService {
-  constructor(
-    private client: Client
-  ) {
-  }
+  constructor(private client: Client) { }
 
   @tryCatch([])
   async getFullAccounts() {
@@ -161,7 +158,7 @@ export class ApiService {
     return result.insert_accounts;
   }
 
-  
+
   @tryCatch(0)
   async udpateConfig(objects: accounts_insert_input[]) {
     if (objects.length === 0) {
@@ -236,6 +233,7 @@ export class ApiService {
 
   @tryCatch(null)
   async updateAccount(id: number, data: Account) {
+    console.log('updateAccount', id, data);
     const result = await this.client.mutation({
       update_accounts_by_pk: {
         __args: {
@@ -426,14 +424,12 @@ export class ApiService {
   }
 }
 
-// @todo: pass user auth!!
 const createApiService = (token: string) =>
   new ApiService(createClient({
     url: process.env.REACT_APP_API_URL,
     fetch,
     headers: {
       'Authorization': `Bearer ${token}`
-      // 'x-hasura-admin-secret': process.env.REACT_APP_API_ADMIN_SECRET!
     }
   }));
 
