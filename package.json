@@ -7,7 +7,7 @@
   "license": "ISC",
   "type": "module",
   "scripts": {
-    "build": "react-scripts build",
+    "build": "npm run generate-graphql-interfaces && react-scripts build",
     "start": "react-scripts start",
     "generate-graphql-interfaces": "node scripts/generateGQLInterfaces && eslint src/generated --fix"
   },
