@@ -9,10 +9,12 @@ import {
   Delete as DeleteIcon,
   Refresh as RefreshIcon,
   UploadFile as UploadFileIcon,
+  BrowserUpdated as BrowserUpdatedIcon
 } from '@mui/icons-material'
 import { HeaderButton } from './CustomButton';
 import { Divider, Stack } from '@mui/material';
 import { useAuth } from '../../AuthProvider';
+import { requestBackend } from '../../utils/request';
 
 interface AccountsActivityActionsProps {
   accounts: Account[],
@@ -21,6 +23,33 @@ interface AccountsActivityActionsProps {
   openSettings: () => void,
   openDeleteConfirmation: () => void,
   openUploadModal: () => void,
+}
+
+const startAccounts = async (accounts: Account[], token?: string) => {
+  await requestBackend(
+    'start_accounts',
+    {
+      accounts: accounts.map((acc) => ({ id: acc.id, email: acc.email, service: acc.scheduler_account_info?.service_name })),
+      secondsBetweenStart: Number(localStorage.getItem('secondsBetweenAccsStart')) || 6
+    },
+    token
+  );
+  // @todo handle error
+}
+
+const executeAccountCommand = async (accounts: Account[], type: 'STOP' | 'BLOCK' | 'RESET', token?: string) => {
+  await requestBackend(
+    'execute_account_command',
+    {
+      accounts: accounts.map((acc) => ({ id: acc.id, email: acc.email })),
+      type
+    },
+    token
+  );
+}
+
+const updateWorkers = async (token?: string) => {
+  await requestBackend('update_workers', {}, token);
 }
 
 const AccountsActivityActions = ({
@@ -32,35 +61,6 @@ const AccountsActivityActions = ({
   openUploadModal
 }: AccountsActivityActionsProps) => {
   const auth = useAuth();
-
-  const startAccounts = async (accounts: Account[], token?: string) => {
-    await fetch(`${process.env.REACT_APP_BACKEND_URL}/execute_account_command`, {
-      method: 'POST',
-      body: JSON.stringify({
-        accounts: accounts.map((acc) => ({ id: acc.id, email: acc.email, service: acc.scheduler_account_info?.service_name })),
-        secondsBetweenStart: Number(localStorage.getItem('secondsBetweenAccsStart')) || 6
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    // @todo handle error
-  }
-
-  const executeAccountCommand = async (accounts: Account[], type: 'STOP' | 'BLOCK' | 'RESET', token?: string) => {
-    await fetch(`${process.env.REACT_APP_BACKEND_URL}/execute_account_command`, {
-      method: 'POST',
-      body: JSON.stringify({
-        accounts: accounts.map((acc) => ({ id: acc.id, email: acc.email })),
-        type
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    });
-  }
 
   return (
     <Stack className='control-buttons' direction="row" spacing={2} width={100} sx={{ alignItems: 'center' }}>
@@ -118,6 +118,14 @@ const AccountsActivityActions = ({
         onClick={openConfig}
         content={<EditNoteIcon />}
         disabled={accounts.length <= 0}
+      />
+
+      <Divider orientation="vertical" sx={{ height: '5vh' }} />
+
+      <HeaderButton
+        title="Update workers"
+        onClick={() => updateWorkers(auth.user?.token)}
+        content={<BrowserUpdatedIcon />}
       />
 
       <Divider orientation="vertical" sx={{ height: '5vh' }} />

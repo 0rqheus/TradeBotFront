@@ -1,6 +1,7 @@
 import { createContext, useContext } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useLocalStorage } from './utils/useLocalStorage';
+import { requestBackend } from './utils/request';
 
 interface User {
   token: string,
@@ -25,13 +26,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (creds: Credentials, cb: (error: string | null) => void) => {
     try {
-      const resp = await fetch(`${process.env.REACT_APP_BACKEND_URL}/auth/login`, {
-        method: 'POST',
-        body: JSON.stringify(creds),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const resp = await requestBackend('auth/login', creds)
 
       if (resp.status === 200) {
         const user = await resp.json();

@@ -2,6 +2,7 @@ import { Account } from '../../services/ApiService';
 import { Box, Button, FormControlLabel, Modal, Switch, TextField, Typography } from '@mui/material';
 import { CustomModalContainer } from '../partials/CustomModalContainer';
 import { useAuth } from '../../AuthProvider';
+import { requestBackend } from '../../utils/request';
 
 interface ChangeConfigModalProps {
   open: boolean,
@@ -11,27 +12,24 @@ interface ChangeConfigModalProps {
 
 const ChangeConfigModal = ({ open, handleClose, selectedRows }: ChangeConfigModalProps) => {
   const auth = useAuth();
-  
+
   const handleSubmit = async (event: any) => {
     event.preventDefault();
 
     const formData = new FormData(event.currentTarget);
 
-    await fetch(`${process.env.REACT_APP_BACKEND_URL}/change_config`, {
-      method: 'POST',
-      body: JSON.stringify({
+    await requestBackend(
+      'change_config',
+      {
         accountIds: selectedRows.map((acc: any) => acc.id),
         config: {
           maxTimeToTrySbcInMs: formData.get('max-time-to-try-sbc'),
           sbcDurationInMs: formData.get('sbc-duration'),
           shouldTrySbc: formData.get('should-try-sbc'),
         }
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${auth.user?.token}`
-      }
-    });
+      },
+      auth.user?.token)
+
     // @todo show error
 
     handleClose();
@@ -75,11 +73,11 @@ const ChangeConfigModal = ({ open, handleClose, selectedRows }: ChangeConfigModa
             variant="outlined"
           />
 
-          <FormControlLabel 
+          <FormControlLabel
             name="should-try-sbc"
             label="Should try SBC?"
-            control={<Switch defaultChecked/>} 
-            />
+            control={<Switch defaultChecked />}
+          />
 
           <Button
             type="submit"
