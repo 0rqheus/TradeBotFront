@@ -127,6 +127,7 @@ export const columnDefsAccounts = [
     headerName: 'Proxy id',
     filter: 'agNumberColumnFilter',
     hide: true,
+    editable: true,
     enableRowGroup: true,
   },
   {
