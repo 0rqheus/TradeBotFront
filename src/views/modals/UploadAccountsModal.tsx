@@ -68,7 +68,10 @@ const UploadAccountsModal = ({ open, handleClose }: UploadAccountsModalProps) =>
         >
 
           <Typography variant="body1" component="p" color='warning'>
-            Csv file should contain next headers: <br/> email, password, gauth, proxyHost, proxyPort, proxyUsername, proxyPassword, origin
+            Csv file should contain next headers:
+          </Typography>
+          <Typography variant="body1" component="p" overflow={'scroll'}>
+            email,password,gauth,proxyHost,proxyPort,proxyUsername,proxyPassword,origin
           </Typography>
 
           <Button component="label" startIcon={<UploadFileIcon />} >
