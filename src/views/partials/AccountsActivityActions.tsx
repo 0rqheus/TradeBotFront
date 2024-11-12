@@ -29,7 +29,11 @@ const startAccounts = async (accounts: Account[], token?: string) => {
   await requestBackend(
     'start_accounts',
     {
-      accounts: accounts.map((acc) => ({ id: acc.id, email: acc.email, service: acc.scheduler_account_info?.service_name })),
+      accounts: accounts.map((acc) => ({ 
+        id: acc.id, 
+        email: acc.email, 
+        serviceName: acc.scheduler_account_info?.service_name
+      })),
       secondsBetweenStart: Number(localStorage.getItem('secondsBetweenAccsStart')) || 6
     },
     token

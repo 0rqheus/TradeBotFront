@@ -15,7 +15,7 @@ import AdditionalSettingsModal from './modals/AdditionalSettingsModal';
 import ChangeConfigModal from './modals/ChangeConfigModal';
 import UploadAccountsModal from './modals/UploadAccountsModal';
 
-const Table = () => {
+const AccountsTable = () => {
   const auth = useAuth();
 
   const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false);
@@ -171,4 +171,4 @@ const Table = () => {
 }
 
 
-export default Table;
+export default AccountsTable;

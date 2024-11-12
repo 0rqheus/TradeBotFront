@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 // import 'bootstrap/dist/css/bootstrap.min.css';
-import Table from './views/Table';
+import AccountsTable from './views/AccountsTable';
 import Auth from './views/Auth';
 import { AuthProvider, RequireAuth } from './AuthProvider';
 
@@ -13,7 +13,7 @@ const App = () => {
             path="/"
             element={
               <RequireAuth>
-                <Table />
+                <AccountsTable />
               </RequireAuth>
             }
           />
