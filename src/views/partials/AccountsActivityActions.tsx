@@ -9,7 +9,6 @@ import {
   Delete as DeleteIcon,
   Refresh as RefreshIcon,
   UploadFile as UploadFileIcon,
-  BrowserUpdated as BrowserUpdatedIcon
 } from '@mui/icons-material'
 import { HeaderButton } from './CustomButton';
 import { Divider, Stack } from '@mui/material';
@@ -52,10 +51,6 @@ const executeAccountCommand = async (accounts: Account[], type: 'STOP' | 'BLOCK'
   );
 }
 
-const updateWorkers = async (token?: string) => {
-  await requestBackend('update_workers', {}, token);
-}
-
 const AccountsActivityActions = ({
   accounts,
   fetchAccounts,
@@ -67,7 +62,7 @@ const AccountsActivityActions = ({
   const auth = useAuth();
 
   return (
-    <Stack className='control-buttons' direction="row" spacing={2} width={100} sx={{ alignItems: 'center' }}>
+    <Stack direction="row" spacing={2} width={100} sx={{ alignItems: 'center' }}>
 
       <HeaderButton
         title='Refresh'
@@ -122,14 +117,6 @@ const AccountsActivityActions = ({
         onClick={openConfig}
         content={<EditNoteIcon />}
         disabled={accounts.length <= 0}
-      />
-
-      <Divider orientation="vertical" sx={{ height: '5vh' }} />
-
-      <HeaderButton
-        title="Update workers"
-        onClick={() => updateWorkers(auth.user?.token)}
-        content={<BrowserUpdatedIcon />}
       />
 
       <Divider orientation="vertical" sx={{ height: '5vh' }} />

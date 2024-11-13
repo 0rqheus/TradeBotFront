@@ -94,7 +94,7 @@ const AccountsTable = () => {
 
   return (
     <>
-      <Stack className='header' direction="row" spacing={'auto'} height={'8vh'} >
+      <Stack direction="row" spacing={'auto'} height={'8vh'} >
         <AccountsActivityActions
           accounts={selectedRows}
           fetchAccounts={fetchAccounts}

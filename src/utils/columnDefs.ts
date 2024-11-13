@@ -63,6 +63,7 @@ export const columnDefsAccounts = [
     field: 'scheduler_account_info.block_reason',
     headerName: 'Reason',
     enableRowGroup: false,
+    hide: true,
     width: 90,
     maxWidth: 450,
   },
@@ -112,6 +113,7 @@ export const columnDefsAccounts = [
     filter: 'agNumberColumnFilter',
     enableRowGroup: true,
     valueFormatter: (param: any) => formatNumber(param.data.freezed_balance + param.data.available_balance),
+    hide: true,
     width: 100,
     maxWidth: 100,
   },
@@ -234,3 +236,27 @@ export const columnDefsAccounts = [
     suppressToolPanel: true,
   },
 ];
+
+
+export const columnDefsWorkers = [
+  {
+    field: 'serviceName',
+    headerName: 'Service',
+    width: 300,
+    maxWidth: 450,
+  },
+  {
+    field: 'currentWorkersCount',
+    headerName: 'Current workers',
+    filter: 'agNumberColumnFilter',
+    enableRowGroup: true,
+    suppressToolPanel: true,
+  },
+  {
+    field: 'maxWorkersCount',
+    headerName: 'Max workers',
+    filter: 'agNumberColumnFilter',
+    enableRowGroup: true,
+    suppressToolPanel: true,
+  }
+]
