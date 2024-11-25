@@ -50,7 +50,7 @@ const WorkerBlackBoxTable = () => {
         <Stack direction="row" spacing={2} width={100} sx={{ alignItems: 'center' }}>
           <HeaderButton
             title='Refresh'
-            onClick={fetchWbbInfo}
+            onClick={() => fetchWbbInfo(auth.user?.token)}
             content={<RefreshIcon />} />
 
           <Divider orientation="vertical" sx={{ height: '5vh' }} />
