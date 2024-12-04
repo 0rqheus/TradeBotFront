@@ -67,24 +67,26 @@ export class ApiService {
           host: true,
           port: true,
         },
-        // objectives_progress: {
-        //   buy_now: true,
-        //   list: true,
-        // },
         scheduler_account_info: {
           block_reason: true,
           blocked_at: true,
           service_name: true,
-          scheduler_config: {
-            id: true,
-          }
+          config_id: true
         },
         ban_analytics_info: {
-          ban_alalytics_config: {
-            id: true,
-          }
+          ban_analytics_config_id: true,
         },
         general_account_id: true,
+        general_account: {
+          account_challenges_infos: {
+            __args: {
+              where: {
+                is_solved: { _eq: true }
+              }
+            },
+            challenge_id: true
+          }
+        },
         workshift_id: true,
       },
     });

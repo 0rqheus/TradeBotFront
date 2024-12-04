@@ -143,7 +143,7 @@ const AccountsTable = () => {
           getRowId={(params) => params.data.id.toString()}
           columnDefs={columnDefsAccounts}
           defaultColDef={defaultColDef}
-          rowGroupPanelShow={'always'}
+          // rowGroupPanelShow={'always'}
           pivotPanelShow={'always'}
           suppressAggFuncInHeader={true}
           onGridReady={(value) => { gridRef.current = value.api; }}

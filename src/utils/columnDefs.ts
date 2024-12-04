@@ -12,7 +12,6 @@ export const columnDefsAccounts = [
     field: 'id',
     headerName: 'ID',
     filter: 'agNumberColumnFilter',
-    enableRowGroup: true,
     checkboxSelection: true,
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
@@ -23,7 +22,6 @@ export const columnDefsAccounts = [
     field: 'general_account_id',
     headerName: 'G_ID',
     filter: 'agNumberColumnFilter',
-    enableRowGroup: true,
     width: 100,
     maxWidth: 100,
   },
@@ -31,33 +29,13 @@ export const columnDefsAccounts = [
     field: 'email',
     headerName: 'Email',
     filter: 'agTextColumnFilter',
-    enableRowGroup: true,
-    valueGetter: (params: any) => params.data.email,
-    valueSetter: (params: any) => {
-      const newVal = params.newValue;
-      const valueChanged = params.data.email !== newVal;
-      if (valueChanged) {
-        params.data.email = newVal;
-      }
-      return valueChanged;
-    },
   },
   {
     field: 'activity_status',
     headerName: 'Status',
     filter: 'agTextColumnFilter',
-    enableRowGroup: true,
-    valueGetter: (params: any) => params.data.activity_status,
-    valueSetter: (params: any) => {
-      const newVal = params.newValue;
-      const valueChanged = params.data.activity_status !== newVal;
-      if (valueChanged) {
-        params.data.activity_status = newVal;
-      }
-      return valueChanged;
-    },
-    width: 90,
-    maxWidth: 90,
+    width: 100,
+    maxWidth: 100,
   },
   {
     field: 'scheduler_account_info.block_reason',
@@ -72,21 +50,18 @@ export const columnDefsAccounts = [
     headerName: 'Blocked at',
     filter: 'agNumberColumnFilter',
     hide: true,
-    enableRowGroup: true,
   },
   {
     field: 'scheduler_account_info.service_name',
     headerName: 'Service',
     enableRowGroup: false,
-    editable: false,
+    hide: true,
     width: 90,
     maxWidth: 450,
   },
   {
     field: 'should_run',
     headerName: 'Should run',
-    enableRowGroup: true,
-    editable: false,
     cellRenderer: (params: any) => params.value.toString(),
     width: 90,
     maxWidth: 90,
@@ -95,25 +70,22 @@ export const columnDefsAccounts = [
   {
     headerName: 'Freezed',
     filter: 'agNumberColumnFilter',
-    enableRowGroup: true,
     valueGetter: (params: any) => params.data.available_balance,
     valueFormatter: (param: any) => formatNumber(param.data.freezed_balance),
-    width: 110,
-    maxWidth: 110,
+    width: 120,
+    maxWidth: 120,
   },
   {
     headerName: 'Available',
     filter: 'agNumberColumnFilter',
-    enableRowGroup: true,
     valueGetter: (params: any) => params.data.available_balance,
     valueFormatter: (param: any) => formatNumber(param.data.available_balance),
-    width: 110,
-    maxWidth: 110,
+    width: 120,
+    maxWidth: 112,
   },
   {
     headerName: 'Total',
     filter: 'agNumberColumnFilter',
-    enableRowGroup: true,
     valueFormatter: (param: any) => formatNumber(param.data.freezed_balance + param.data.available_balance),
     hide: true,
     width: 100,
@@ -124,15 +96,12 @@ export const columnDefsAccounts = [
     headerName: 'Proxy ip',
     filter: 'agTextColumnFilter',
     hide: true,
-    enableRowGroup: true,
   },
   {
     field: 'proxy_id',
     headerName: 'Proxy id',
     filter: 'agNumberColumnFilter',
     hide: true,
-    editable: false,
-    enableRowGroup: true,
   },
   {
     field: 'proxy.port',
@@ -146,88 +115,61 @@ export const columnDefsAccounts = [
   {
     field: 'strategy_name',
     headerName: 'Strategy',
-    enableRowGroup: true,
-    editable: false,
+    maxWidth: 200, 
   },
   {
     field: 'origin',
     headerName: 'Origin',
     hide: false,
-    enableRowGroup: true,
-    editable: false,
+    maxWidth: 200, 
   },
   {
     field: 'account_owner',
     headerName: 'Account Owner',
     hide: true,
-    enableRowGroup: true,
-    editable: false,
   },
   {
     field: 'group',
     headerName: 'Group',
     hide: true,
-    enableRowGroup: true,
-    editable: false,
   },
   {
-    valueGetter: (params: any) => params.data.objectives_progress
-      ? params.data.objectives_progress.list
-      : 0,
-    headerName: 'List',
-    filter: 'agNumberColumnFilter',
-    hide: true,
-    enableRowGroup: true,
-    width: 80,
-    maxWidth: 80,
-  },
-  {
-    valueGetter: (params: any) => params.data.objectives_progress
-      ? params.data.objectives_progress.buy_now
-      : 0,
-    headerName: 'Buy now',
-    filter: 'agNumberColumnFilter',
-    hide: true,
-    enableRowGroup: true,
-    width: 110,
-    maxWidth: 110,
-  },
-  {
-    field: 'ban_analytics_info.ban_alalytics_config.id',
+    field: 'ban_analytics_info.ban_alalytics_config_id',
     headerName: 'Ban Config',
     hide: true,
-    enableRowGroup: true,
   },
   {
-    field: 'scheduler_account_info.scheduler_config.id',
+    field: 'scheduler_account_info.config_id',
     headerName: 'Scheduler Config',
     hide: true,
-    enableRowGroup: true,
   },
   {
     field: 'workshift_id',
     headerName: 'Workshift',
     hide: true,
-    enableRowGroup: true,
   },
   {
     field: 'requests',
     headerName: 'Requests',
     filter: 'agNumberColumnFilter',
-    enableRowGroup: true,
+  },
+  {
+    field: 'general_account.account_challenges_infos',
+    headerName: 'Active sbc solved',
+    valueGetter: (params: any) => params.data.general_account.account_challenges_infos.map((x: any) => x.challenge_id),
+    valueFormatter: (param: any) => param.data.general_account.account_challenges_infos.length,
   },
   {
     field: 'minutes_active',
     headerName: 'Minutes',
     filter: 'agNumberColumnFilter',
     hide: true,
-    enableRowGroup: true,
   },
   {
     field: 'sbc_submits',
     headerName: 'Sbc submits',
     filter: 'agNumberColumnFilter',
-    enableRowGroup: true,
+    hide: true,
   },
 ];
 
@@ -243,12 +185,10 @@ export const columnDefsWorkers = [
     field: 'currentWorkersCount',
     headerName: 'Current workers',
     filter: 'agNumberColumnFilter',
-    enableRowGroup: true,
   },
   {
     field: 'maxWorkersCount',
     headerName: 'Max workers',
     filter: 'agNumberColumnFilter',
-    enableRowGroup: true,
   }
 ]
