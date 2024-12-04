@@ -1,4 +1,4 @@
-import { balanceStringToNumber, formatNumber } from './utils';
+import { formatNumber } from './utils';
 
 export const defaultColDef = {
   resizable: true,
@@ -78,7 +78,7 @@ export const columnDefsAccounts = [
     field: 'scheduler_account_info.service_name',
     headerName: 'Service',
     enableRowGroup: false,
-    editable: true,
+    editable: false,
     width: 90,
     maxWidth: 450,
   },
@@ -86,7 +86,7 @@ export const columnDefsAccounts = [
     field: 'should_run',
     headerName: 'Should run',
     enableRowGroup: true,
-    editable: true,
+    editable: false,
     cellRenderer: (params: any) => params.value.toString(),
     width: 90,
     maxWidth: 90,
@@ -131,7 +131,7 @@ export const columnDefsAccounts = [
     headerName: 'Proxy id',
     filter: 'agNumberColumnFilter',
     hide: true,
-    editable: true,
+    editable: false,
     enableRowGroup: true,
   },
   {
@@ -147,28 +147,28 @@ export const columnDefsAccounts = [
     field: 'strategy_name',
     headerName: 'Strategy',
     enableRowGroup: true,
-    editable: true,
+    editable: false,
   },
   {
     field: 'origin',
     headerName: 'Origin',
-    hide: true,
+    hide: false,
     enableRowGroup: true,
-    editable: true,
+    editable: false,
   },
   {
     field: 'account_owner',
     headerName: 'Account Owner',
     hide: true,
     enableRowGroup: true,
-    editable: true,
+    editable: false,
   },
   {
     field: 'group',
     headerName: 'Group',
     hide: true,
     enableRowGroup: true,
-    editable: true,
+    editable: false,
   },
   {
     valueGetter: (params: any) => params.data.objectives_progress
@@ -176,7 +176,6 @@ export const columnDefsAccounts = [
       : 0,
     headerName: 'List',
     filter: 'agNumberColumnFilter',
-    suppressToolPanel: true,
     hide: true,
     enableRowGroup: true,
     width: 80,
@@ -188,7 +187,6 @@ export const columnDefsAccounts = [
       : 0,
     headerName: 'Buy now',
     filter: 'agNumberColumnFilter',
-    suppressToolPanel: true,
     hide: true,
     enableRowGroup: true,
     width: 110,
@@ -198,20 +196,17 @@ export const columnDefsAccounts = [
     field: 'ban_analytics_info.ban_alalytics_config.id',
     headerName: 'Ban Config',
     hide: true,
-    suppressToolPanel: true,
     enableRowGroup: true,
   },
   {
     field: 'scheduler_account_info.scheduler_config.id',
     headerName: 'Scheduler Config',
     hide: true,
-    suppressToolPanel: true,
     enableRowGroup: true,
   },
   {
     field: 'workshift_id',
     headerName: 'Workshift',
-    suppressToolPanel: true,
     hide: true,
     enableRowGroup: true,
   },
@@ -219,7 +214,6 @@ export const columnDefsAccounts = [
     field: 'requests',
     headerName: 'Requests',
     filter: 'agNumberColumnFilter',
-    suppressToolPanel: true,
     enableRowGroup: true,
   },
   {
@@ -228,14 +222,12 @@ export const columnDefsAccounts = [
     filter: 'agNumberColumnFilter',
     hide: true,
     enableRowGroup: true,
-    suppressToolPanel: true,
   },
   {
     field: 'sbc_submits',
     headerName: 'Sbc submits',
     filter: 'agNumberColumnFilter',
     enableRowGroup: true,
-    suppressToolPanel: true,
   },
 ];
 
@@ -252,13 +244,11 @@ export const columnDefsWorkers = [
     headerName: 'Current workers',
     filter: 'agNumberColumnFilter',
     enableRowGroup: true,
-    suppressToolPanel: true,
   },
   {
     field: 'maxWorkersCount',
     headerName: 'Max workers',
     filter: 'agNumberColumnFilter',
     enableRowGroup: true,
-    suppressToolPanel: true,
   }
 ]

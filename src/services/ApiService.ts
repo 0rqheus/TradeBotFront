@@ -307,6 +307,24 @@ export class ApiService {
     return result.update_scheduler_account_info?.affected_rows ?? 0
   }
 
+  @tryCatch(0)
+  async updateAccountsBanConfigId(accounts: { id: number }[], configId: number) {
+    const result = await this.client.mutation({
+      update_ban_analytics_info: {
+        __args: {
+          where: {
+            account_id: { _in: accounts.map(acc => acc.id) }
+          },
+          _set: {
+            ban_analytics_config_id: configId
+          }
+        },
+        affected_rows: true
+      }
+    });
+    return result.update_ban_analytics_info?.affected_rows ?? 0
+  }
+
   @tryCatch([])
   async getHistoryItems(accountIds: number[]) {
     const result = await this.client.query({
@@ -342,6 +360,26 @@ export class ApiService {
       }
     });
     return result.worker_services;
+  }
+
+  @tryCatch([])
+  async getSchedulerConfigIds() {
+    const result = await this.client.query({
+      scheduler_config: {
+        id: true
+      }
+    });
+    return result.scheduler_config.map(config => config.id);
+  }
+
+  @tryCatch([])
+  async getBanAnalyticsConfigIds() {
+    const result = await this.client.query({
+      ban_alalytics_config: {
+        id: true
+      }
+    });
+    return result.ban_alalytics_config.map(config => config.id);
   }
 
   @tryCatch([])

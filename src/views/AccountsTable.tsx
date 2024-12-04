@@ -11,17 +11,15 @@ import { Box, Stack, Typography } from '@mui/material';
 import ConfirmationModal from './modals/ConfirmationModal';
 import AccountsActivityActions from './partials/AccountsActivityActions';
 import { useAuth } from '../AuthProvider';
-import AdditionalSettingsModal from './modals/AdditionalSettingsModal';
-import ChangeConfigModal from './modals/ChangeConfigModal';
+import AdvancedEditModal from './modals/AdvancedEditModal';
 import UploadAccountsModal from './modals/UploadAccountsModal';
 
 const AccountsTable = () => {
   const auth = useAuth();
 
   const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false);
-  const [isSettingsModalOpened, setIsSettingsModalOpened] = useState(false);
+  const [isAdvancedEditModalOpened, setIsAdvancedEditModalOpened] = useState(false);
   const [isUploadModalOpened, setIsUploadModalOpened] = useState(false);
-  const [isConfigModalOpened, setIsConfigModalOpened] = useState(false);
 
   const [rowData, setRowData] = useState<Account[]>([]);
   const [selectedRows, setSelectedRows] = useState<Account[]>([]);
@@ -98,8 +96,7 @@ const AccountsTable = () => {
         <AccountsActivityActions
           accounts={selectedRows}
           fetchAccounts={fetchAccounts}
-          openConfig={() => setIsConfigModalOpened(true)}
-          openSettings={() => setIsSettingsModalOpened(true)}
+          openAdvancedEditModal={() => setIsAdvancedEditModalOpened(true)}
           openDeleteConfirmation={() => setIsDeleteModalOpened(true)}
           openUploadModal={() => setIsUploadModalOpened(true)}
         />
@@ -128,9 +125,9 @@ const AccountsTable = () => {
         handleClose={() => setIsDeleteModalOpened(false)}
       />
 
-      <AdditionalSettingsModal
-        open={isSettingsModalOpened}
-        handleClose={() => setIsSettingsModalOpened(false)}
+      <AdvancedEditModal
+        open={isAdvancedEditModalOpened}
+        handleClose={() => setIsAdvancedEditModalOpened(false)}
         apiService={apiServiceRef.current}
         selectedRows={selectedRows}
       />
@@ -138,12 +135,6 @@ const AccountsTable = () => {
       <UploadAccountsModal
         open={isUploadModalOpened}
         handleClose={() => setIsUploadModalOpened(false)}
-      />
-
-      <ChangeConfigModal
-        open={isConfigModalOpened}
-        handleClose={() => setIsConfigModalOpened(false)}
-        selectedRows={selectedRows}
       />
 
       <div className="ag-theme-alpine" style={{ height: '92vh', width: '100%' }}>

@@ -5,7 +5,6 @@ import {
   Restore as RestoreIcon,
   RemoveCircleOutline as RemoveCircleOutlineIcon,
   EditNote as EditNoteIcon,
-  MoreVert as MoreVertIcon,
   Delete as DeleteIcon,
   Refresh as RefreshIcon,
   UploadFile as UploadFileIcon,
@@ -18,8 +17,7 @@ import { requestBackend } from '../../utils/request';
 interface AccountsActivityActionsProps {
   accounts: Account[],
   fetchAccounts: () => void,
-  openConfig: () => void,
-  openSettings: () => void,
+  openAdvancedEditModal: () => void,
   openDeleteConfirmation: () => void,
   openUploadModal: () => void,
 }
@@ -33,7 +31,6 @@ const startAccounts = async (accounts: Account[], token?: string) => {
         email: acc.email, 
         serviceName: acc.scheduler_account_info?.service_name
       })),
-      secondsBetweenStart: Number(localStorage.getItem('secondsBetweenAccsStart')) || 6
     },
     token
   );
@@ -54,8 +51,7 @@ const executeAccountCommand = async (accounts: Account[], type: 'STOP' | 'BLOCK'
 const AccountsActivityActions = ({
   accounts,
   fetchAccounts,
-  openConfig,
-  openSettings,
+  openAdvancedEditModal,
   openDeleteConfirmation,
   openUploadModal
 }: AccountsActivityActionsProps) => {
@@ -112,19 +108,12 @@ const AccountsActivityActions = ({
         disabled={accounts.length <= 0}
       />
 
-      <HeaderButton
-        title="Change config"
-        onClick={openConfig}
-        content={<EditNoteIcon />}
-        disabled={accounts.length <= 0}
-      />
-
       <Divider orientation="vertical" sx={{ height: '5vh' }} />
 
       <HeaderButton
-        title="More options"
-        onClick={openSettings}
-        content={<MoreVertIcon />}
+        title="Advanced edit"
+        onClick={openAdvancedEditModal}
+        content={<EditNoteIcon />}
         disabled={accounts.length <= 0}
       />
     </Stack>
