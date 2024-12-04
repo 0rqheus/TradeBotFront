@@ -202,7 +202,7 @@ export class ApiService {
   //   });
   // }
 
-  @tryCatch(0)
+  // @tryCatch(0)
   async deleteAccounts(accounts: { id: number }[]) {
     const result = await this.client.mutation({
       delete_accounts: {
@@ -217,7 +217,7 @@ export class ApiService {
     return result.delete_accounts?.affected_rows ?? 0
   }
 
-  @tryCatch(0)
+  // @tryCatch(0)
   async updateAccounts(accounts: { id: number }[], data: accounts_set_input) {
     const result = await this.client.mutation({
       update_accounts: {
@@ -293,7 +293,7 @@ export class ApiService {
     return result.update_ban_analytics_info?.affected_rows ?? 0
   }
 
-  @tryCatch(0)
+  // @tryCatch(0)
   async updateAccountSchedulerInfo(accounts: { id: number }[], data: scheduler_account_info_set_input) {
     const result = await this.client.mutation({
       update_scheduler_account_info: {
@@ -309,7 +309,7 @@ export class ApiService {
     return result.update_scheduler_account_info?.affected_rows ?? 0
   }
 
-  @tryCatch(0)
+  // @tryCatch(0)
   async updateAccountsBanConfigId(accounts: { id: number }[], configId: number) {
     const result = await this.client.mutation({
       update_ban_analytics_info: {

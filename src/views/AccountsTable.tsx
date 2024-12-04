@@ -13,6 +13,7 @@ import AccountsActivityActions from './partials/AccountsActivityActions';
 import { useAuth } from '../AuthProvider';
 import AdvancedEditModal from './modals/AdvancedEditModal';
 import UploadAccountsModal from './modals/UploadAccountsModal';
+import { AlertData, CustomAlert } from './partials/CustomAlert';
 
 const AccountsTable = () => {
   const auth = useAuth();
@@ -25,6 +26,8 @@ const AccountsTable = () => {
   const [selectedRows, setSelectedRows] = useState<Account[]>([]);
   const [totalBalance, setTotalBalance] = useState(0);
   const [availableBalance, setAvailableBalance] = useState(0);
+
+  const [alert, setAlert] = useState<AlertData>({ open: false });
 
   const gridRef = useRef({} as GridApi<Account>)
   const apiServiceRef = useRef({} as ApiService)
@@ -74,20 +77,20 @@ const AccountsTable = () => {
     setSelectedRows(selectedRows);
   }
 
-  const onCellDataUpdated = async (id: number, column: string, val: any) => {
-    const data: any = {};
-    data[column] = val;
-    await apiServiceRef.current.updateAccount(id, data)
-  }
-
   const handleAccountDelete = async () => {
-    const deleted = await apiServiceRef.current.deleteAccounts(selectedRows);
-    console.log('deleted count', deleted)
-
-    setIsDeleteModalOpened(false)
-
-    const idsToDelete = selectedRows.map((r) => r.id);
-    setRowData(rowData.filter((row) => !idsToDelete.includes(row.id)))
+    try {
+      const deleted = await apiServiceRef.current.deleteAccounts(selectedRows);
+      console.log('deleted count', deleted)
+  
+      setIsDeleteModalOpened(false)
+  
+      const idsToDelete = selectedRows.map((r) => r.id);
+      setRowData(rowData.filter((row) => !idsToDelete.includes(row.id)))
+      
+      setAlert({ open: true, type: 'success', message: 'Success' })
+    } catch (err: any) {
+      setAlert({ open: true, type: 'error', message: err.toString() })
+    }
   };
 
   return (
@@ -128,6 +131,7 @@ const AccountsTable = () => {
       <AdvancedEditModal
         open={isAdvancedEditModalOpened}
         handleClose={() => setIsAdvancedEditModalOpened(false)}
+        setAlertData={setAlert}
         apiService={apiServiceRef.current}
         selectedRows={selectedRows}
       />
@@ -135,6 +139,7 @@ const AccountsTable = () => {
       <UploadAccountsModal
         open={isUploadModalOpened}
         handleClose={() => setIsUploadModalOpened(false)}
+        setAlertData={setAlert}
       />
 
       <div className="ag-theme-alpine" style={{ height: '92vh', width: '100%' }}>
@@ -148,7 +153,6 @@ const AccountsTable = () => {
           suppressAggFuncInHeader={true}
           onGridReady={(value) => { gridRef.current = value.api; }}
           rowSelection={'multiple'}
-          onCellValueChanged={(event) => onCellDataUpdated(event.data.id, event.column.getColId(), event.newValue)}
           onSelectionChanged={onSelectionChanged}
           animateRows={true}
           onFilterChanged={() => { updateTotalBalanceInfo() }}
@@ -157,6 +161,8 @@ const AccountsTable = () => {
         >
         </AgGridReact>
       </div>
+
+      <CustomAlert data={alert} onClose={() => setAlert({ open: false })} />
     </>
   );
 }

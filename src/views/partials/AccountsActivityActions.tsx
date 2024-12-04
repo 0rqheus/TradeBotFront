@@ -13,6 +13,8 @@ import { HeaderButton } from './CustomButton';
 import { Divider, Stack } from '@mui/material';
 import { useAuth } from '../../AuthProvider';
 import { requestBackend } from '../../utils/request';
+import { useState } from 'react';
+import { AlertData, CustomAlert } from './CustomAlert';
 
 interface AccountsActivityActionsProps {
   accounts: Account[],
@@ -20,32 +22,6 @@ interface AccountsActivityActionsProps {
   openAdvancedEditModal: () => void,
   openDeleteConfirmation: () => void,
   openUploadModal: () => void,
-}
-
-const startAccounts = async (accounts: Account[], token?: string) => {
-  await requestBackend(
-    'start_accounts',
-    {
-      accounts: accounts.map((acc) => ({ 
-        id: acc.id, 
-        email: acc.email, 
-        serviceName: acc.scheduler_account_info?.service_name
-      })),
-    },
-    token
-  );
-  // @todo handle error
-}
-
-const executeAccountCommand = async (accounts: Account[], type: 'STOP' | 'BLOCK' | 'RESET', token?: string) => {
-  await requestBackend(
-    'execute_account_command',
-    {
-      accounts: accounts.map((acc) => ({ id: acc.id, email: acc.email })),
-      type
-    },
-    token
-  );
 }
 
 const AccountsActivityActions = ({
@@ -56,6 +32,44 @@ const AccountsActivityActions = ({
   openUploadModal
 }: AccountsActivityActionsProps) => {
   const auth = useAuth();
+
+  const [alert, setAlert] = useState<AlertData>({ open: false });
+
+  const startAccounts = async (accounts: Account[], token?: string) => {
+    try {
+      await requestBackend(
+        'start_accounts',
+        {
+          accounts: accounts.map((acc) => ({
+            id: acc.id,
+            email: acc.email,
+            serviceName: acc.scheduler_account_info?.service_name
+          })),
+        },
+        token
+      );
+
+      setAlert({ open: true, type: 'success', message: 'Success' })
+    } catch (err: any) {
+      setAlert({ open: true, type: 'error', message: err.toString() })
+    }
+  }
+
+  const executeAccountCommand = async (accounts: Account[], type: 'STOP' | 'BLOCK' | 'RESET', token?: string) => {
+    try {
+      await requestBackend(
+        'execute_account_command',
+        {
+          accounts: accounts.map((acc) => ({ id: acc.id, email: acc.email })),
+          type
+        },
+        token
+      );
+      setAlert({ open: true, type: 'success', message: 'Success' })
+    } catch (err: any) {
+      setAlert({ open: true, type: 'error', message: err.toString() })
+    }
+  }
 
   return (
     <Stack direction="row" spacing={2} width={100} sx={{ alignItems: 'center' }}>
@@ -116,6 +130,9 @@ const AccountsActivityActions = ({
         content={<EditNoteIcon />}
         disabled={accounts.length <= 0}
       />
+
+      <CustomAlert data={alert} onClose={() => setAlert({ open: false })} />
+
     </Stack>
   )
 }

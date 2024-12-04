@@ -4,13 +4,15 @@ import { ChangeEvent, useState } from 'react';
 import { useAuth } from '../../AuthProvider';
 import { VisuallyHiddenInput } from '../partials/HiddenInput';
 import { UploadFile as UploadFileIcon } from '@mui/icons-material'
+import { AlertData } from '../partials/CustomAlert';
 
 interface UploadAccountsModalProps {
-  open: boolean;
-  handleClose: () => void;
+  open: boolean,
+  handleClose: () => void,
+  setAlertData: (data: AlertData) => void,
 }
 
-const UploadAccountsModal = ({ open, handleClose }: UploadAccountsModalProps) => {
+const UploadAccountsModal = ({ open, handleClose, setAlertData }: UploadAccountsModalProps) => {
   const auth = useAuth();
 
   const [file, setFile] = useState<File | null>(null);
@@ -20,26 +22,32 @@ const UploadAccountsModal = ({ open, handleClose }: UploadAccountsModalProps) =>
   };
 
   const handleSubmit = async (event: any) => {
-    event.preventDefault();
+    try {
+      event.preventDefault();
 
-    if (!file) {
-      console.error('Please select a file first');
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    await fetch(`${process.env.REACT_APP_BACKEND_URL}/insert_accounts`, {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'Authorization': `Bearer ${auth.user?.token}`
+      if (!file) {
+        console.error('Please select a file first');
+        return;
       }
-    });
-    // @todo show error
 
-    handleClose()
+      const formData = new FormData();
+      formData.append('file', file);
+
+      await fetch(`${process.env.REACT_APP_BACKEND_URL}/insert_accounts`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'Authorization': `Bearer ${auth.user?.token}`
+        }
+      });
+      // @todo show error
+
+      handleClose()
+
+      setAlertData({ open: true, type: 'success', message: 'Success' });
+    } catch (err: any) {
+      setAlertData({ open: true, type: 'error', message: err.message });
+    }
   }
 
   return (

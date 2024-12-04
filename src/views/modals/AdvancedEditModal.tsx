@@ -2,10 +2,12 @@ import { Button, FormControl, InputLabel, MenuItem, Modal, Select, Stack, TextFi
 import { useEffect, useState } from 'react';
 import { Account, ApiService } from '../../services/ApiService';
 import { CustomModalContainer } from '../partials/CustomModalContainer';
+import { AlertData } from '../partials/CustomAlert';
 
 interface AdvancedEditModalProps {
   open: boolean,
   handleClose: () => void,
+  setAlertData: (data: AlertData) => void,
   selectedRows: Account[]
   apiService: ApiService
 }
@@ -34,6 +36,7 @@ const CustomSelect = ({
 const AdvancedEditModal = ({
   open,
   handleClose,
+  setAlertData,
   apiService,
   selectedRows
 }: AdvancedEditModalProps) => {
@@ -71,24 +74,30 @@ const AdvancedEditModal = ({
   }, [open]);
 
   const updateData = async () => {
-    const promises = [];
+    try { 
+      const promises = [];
+  
+      if (strategyName) {
+        promises.push(apiService.updateAccounts(selectedRows, { strategy_name: strategyName }))
+      }
+  
+      if(serviceName || schedulerConfigId) {
+        promises.push(apiService.updateAccountSchedulerInfo(selectedRows, { 
+          service_name: serviceName || undefined,
+          config_id: schedulerConfigId || undefined
+        }))
+      }
+  
+      if(banConfigId) {
+        promises.push(apiService.updateAccountsBanConfigId(selectedRows, banConfigId))
+      }
+  
+      await Promise.all(promises);
 
-    if (strategyName) {
-      promises.push(apiService.updateAccounts(selectedRows, { strategy_name: strategyName }))
+      setAlertData({ open: true, type: 'success', message: 'Success' });
+    } catch(err: any) {
+      setAlertData({ open: true, type: 'error', message: err.message });
     }
-
-    if(serviceName || schedulerConfigId) {
-      promises.push(apiService.updateAccountSchedulerInfo(selectedRows, { 
-        service_name: serviceName || undefined,
-        config_id: schedulerConfigId || undefined
-      }))
-    }
-
-    if(banConfigId) {
-      promises.push(apiService.updateAccountsBanConfigId(selectedRows, banConfigId))
-    }
-
-    await Promise.all(promises);
   }
 
   return (
