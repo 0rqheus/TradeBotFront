@@ -148,15 +148,10 @@ const AccountsTable = () => {
           getRowId={(params) => params.data.id.toString()}
           columnDefs={columnDefsAccounts}
           defaultColDef={defaultColDef}
-          // rowGroupPanelShow={'always'}
-          pivotPanelShow={'always'}
-          suppressAggFuncInHeader={true}
           onGridReady={(value) => { gridRef.current = value.api; }}
           rowSelection={'multiple'}
           onSelectionChanged={onSelectionChanged}
-          animateRows={true}
           onFilterChanged={() => { updateTotalBalanceInfo() }}
-          enableRangeSelection={true}
           sideBar={{ toolPanels: ['columns'] }}
         >
         </AgGridReact>

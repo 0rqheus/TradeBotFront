@@ -45,6 +45,13 @@ function tryCatch(errorReturnValue: any) {
 export class ApiService {
   constructor(private client: Client) { }
 
+  private readonly challengeIdsToIgnore = [
+    // foundations
+    38, 39, 40, 41,
+    // kickstart
+    8, 9, 12, 23, 22, 21, 20, 13, 14, 15, 19
+  ];
+
   @tryCatch([])
   async getFullAccounts() {
     const result = await this.client.query({
@@ -81,6 +88,9 @@ export class ApiService {
           account_challenges_infos: {
             __args: {
               where: {
+                challenge_id: {
+                  _nin: this.challengeIdsToIgnore
+                },
                 is_solved: { _eq: true }
               }
             },
