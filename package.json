@@ -15,9 +15,9 @@
     "@genql/cli": "^6.3.3",
     "@mui/icons-material": "^6.1.2",
     "@mui/material": "^6.1.2",
-    "ag-grid-community": "^28.0.2",
-    "ag-grid-enterprise": "^28.0.2",
-    "ag-grid-react": "^28.0.0",
+    "ag-grid-community": "^32.3.3",
+    "ag-grid-enterprise": "^32.3.3",
+    "ag-grid-react": "^32.3.3",
     "dotenv": "^16.4.5",
     "moment": "^2.29.4",
     "react": "^18.3.1",
@@ -30,13 +30,18 @@
     "@types/node": "^22.5.5",
     "@types/react": "^18.3.7",
     "@types/react-dom": "^18.3.0",
-    "typescript": "^4.9.5"
+    "typescript": "^5.7.2"
   },
   "eslintConfig": {
     "extends": [
       "react-app",
       "react-app/jest"
     ]
+  },
+  "overrides": {
+    "react-scripts": {
+      "typescript": "^5"
+    }
   },
   "browserslist": {
     "production": [

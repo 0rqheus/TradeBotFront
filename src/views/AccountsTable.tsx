@@ -1,8 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-enterprise';
-import 'ag-grid-community/dist/styles/ag-grid.css';
-import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import 'ag-grid-community/styles/ag-grid.css';
+import 'ag-grid-community/styles/ag-theme-alpine.css';
 import createApiService, { Account, ApiService, } from '../services/ApiService';
 import { columnDefsAccounts, defaultColDef } from '../utils/columnDefs';
 import { formatNumber, getLastTimeForRequests, getAccountsWithRunStats } from '../utils/utils';
@@ -146,10 +146,11 @@ const AccountsTable = () => {
         <AgGridReact
           rowData={rowData}
           getRowId={(params) => params.data.id.toString()}
-          columnDefs={columnDefsAccounts}
+          columnDefs={columnDefsAccounts as any[]}
           defaultColDef={defaultColDef}
           onGridReady={(value) => { gridRef.current = value.api; }}
           rowSelection={'multiple'}
+          cellSelection={true}
           onSelectionChanged={onSelectionChanged}
           onFilterChanged={() => { updateTotalBalanceInfo() }}
           sideBar={{ toolPanels: ['columns'] }}
