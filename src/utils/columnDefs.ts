@@ -1,4 +1,4 @@
-// import CustomFilter from '../views/partials/CustomFilter';
+import CustomArrayIntersectionFilter from '../views/partials/CustomFilter';
 import { formatNumber } from './utils';
 
 export const defaultColDef = {
@@ -159,7 +159,7 @@ export const columnDefsAccounts = [
     headerName: 'Solved active sbcs',
     valueGetter: (params: any) => params.data.general_account.account_challenges_infos.map((x: any) => x.challenge_id),
     valueFormatter: (param: any) => param.data.general_account.account_challenges_infos.length,
-    // filter: CustomFilter,
+    filter: CustomArrayIntersectionFilter,
   },
   {
     field: 'minutes_active',

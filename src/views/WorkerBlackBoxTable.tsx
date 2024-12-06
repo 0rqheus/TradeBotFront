@@ -76,9 +76,8 @@ const WorkerBlackBoxTable = () => {
       <div className="ag-theme-alpine" style={{ height: '92vh', width: '100%' }}>
         <AgGridReact
           rowData={rowData}
-          columnDefs={columnDefsWorkers}
+          columnDefs={columnDefsWorkers as any[]}
           defaultColDef={defaultColDef}
-          suppressAggFuncInHeader={true}
         >
         </AgGridReact>
       </div>
