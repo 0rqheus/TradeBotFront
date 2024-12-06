@@ -95,7 +95,8 @@ export class ApiService {
               }
             },
             challenge_id: true
-          }
+          },
+          is_web_tm_opened: true
         },
         workshift_id: true,
       },

@@ -130,6 +130,11 @@ export const columnDefsAccounts = [
     hide: true,
   },
   {
+    field: 'general_account.is_web_tm_opened',
+    headerName: 'Has TM assess',
+    hide: true,
+  },
+  {
     field: 'group',
     headerName: 'Group',
     hide: true,
