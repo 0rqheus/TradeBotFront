@@ -5,6 +5,7 @@ import { useAuth } from '../../AuthProvider';
 import { VisuallyHiddenInput } from '../partials/HiddenInput';
 import { UploadFile as UploadFileIcon } from '@mui/icons-material'
 import { AlertData } from '../partials/CustomAlert';
+import { sendFormDataRequest } from '../../utils/request';
 
 interface UploadAccountsModalProps {
   open: boolean,
@@ -33,14 +34,7 @@ const UploadAccountsModal = ({ open, handleClose, setAlertData }: UploadAccounts
       const formData = new FormData();
       formData.append('file', file);
 
-      await fetch(`${process.env.REACT_APP_BACKEND_URL}/insert_accounts`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-          'Authorization': `Bearer ${auth.user?.token}`
-        }
-      });
-      // @todo show error
+      await sendFormDataRequest('insert_accounts', formData, auth.user?.token);
 
       handleClose()
 

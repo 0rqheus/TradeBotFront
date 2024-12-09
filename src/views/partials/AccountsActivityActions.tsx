@@ -12,7 +12,7 @@ import {
 import { HeaderButton } from './CustomButton';
 import { Divider, Stack } from '@mui/material';
 import { useAuth } from '../../AuthProvider';
-import { requestBackend } from '../../utils/request';
+import { sendRequest } from '../../utils/request';
 import { useState } from 'react';
 import { AlertData, CustomAlert } from './CustomAlert';
 
@@ -37,7 +37,7 @@ const AccountsActivityActions = ({
 
   const startAccounts = async (accounts: Account[], token?: string) => {
     try {
-      await requestBackend(
+      await sendRequest(
         'start_accounts',
         {
           accounts: accounts.map((acc) => ({
@@ -57,7 +57,7 @@ const AccountsActivityActions = ({
 
   const executeAccountCommand = async (accounts: Account[], type: 'STOP' | 'BLOCK' | 'RESET', token?: string) => {
     try {
-      await requestBackend(
+      await sendRequest(
         'execute_account_command',
         {
           accounts: accounts.map((acc) => ({ id: acc.id, email: acc.email })),

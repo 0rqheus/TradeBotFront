@@ -9,7 +9,8 @@ import {
   Refresh as RefreshIcon,
   BrowserUpdated as BrowserUpdatedIcon
 } from '@mui/icons-material'
-import { requestBackend } from '../utils/request';
+import { sendRequest } from '../utils/request';
+import { AlertData, CustomAlert } from './partials/CustomAlert';
 
 interface WbbServiceInfo {
   serviceName: string,
@@ -20,21 +21,23 @@ interface WbbServiceInfo {
 const WorkerBlackBoxTable = () => {
   const auth = useAuth();
   const [rowData, setRowData] = useState<WbbServiceInfo[]>([]);
+  const [alert, setAlert] = useState<AlertData>({ open: false });
 
   const fetchWbbInfo = async (token?: string) => {
-    const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/get_worker_black_box_info`, {
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    const data = await res.json();
+    try {
+      const res = await sendRequest('get_worker_black_box_info', {}, token);
+      const data = await res.json();
 
-    setRowData(data);
+      setRowData(data);
+      
+      setAlert({ open: true, type: 'success', message: 'Success' });
+    } catch (err: any) {
+      setAlert({ open: true, type: 'error', message: err.message });
+    }
   }
 
   const updateWorkers = async (token?: string) => {
-    await requestBackend('update_workers', {}, token);
+    await sendRequest('update_workers', {}, token);
   }
 
   useEffect(() => {
@@ -81,6 +84,8 @@ const WorkerBlackBoxTable = () => {
         >
         </AgGridReact>
       </div>
+
+      <CustomAlert data={alert} onClose={() => setAlert({ open: false })} />
     </>
   )
 };

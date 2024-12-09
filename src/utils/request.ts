@@ -1,4 +1,4 @@
-export const requestBackend = (route: string, data?: any, token?: string) =>
+export const sendRequest = (route: string, data?: any, token?: string) =>
   fetch(`${process.env.REACT_APP_BACKEND_URL}/${route}`, {
     method: 'POST',
     body: JSON.stringify(data),
@@ -7,3 +7,13 @@ export const requestBackend = (route: string, data?: any, token?: string) =>
       'Authorization': `Bearer ${token}`
     }
   });
+
+export const sendFormDataRequest = (route: string, data?: any, token?: string) =>
+  fetch(`${process.env.REACT_APP_BACKEND_URL}/${route}`, {
+    method: 'POST',
+    body: data,
+    headers: {
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  
