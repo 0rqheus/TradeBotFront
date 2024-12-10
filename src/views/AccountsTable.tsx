@@ -3,9 +3,9 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-enterprise';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import createApiService, { Account, ApiService, } from '../services/ApiService';
+import createApiService, { Account, AggregatedHistory, ApiService, } from '../services/ApiService';
 import { columnDefsAccounts, defaultColDef } from '../utils/columnDefs';
-import { formatNumber, getLastTimeForRequests, getAccountsWithRunStats } from '../utils/utils';
+import { formatNumber } from '../utils/utils';
 import { GridApi } from 'ag-grid-community';
 import { Box, Stack, Typography } from '@mui/material';
 import ConfirmationModal from './modals/ConfirmationModal';
@@ -14,6 +14,11 @@ import { useAuth } from '../AuthProvider';
 import AdvancedEditModal from './modals/AdvancedEditModal';
 import UploadAccountsModal from './modals/UploadAccountsModal';
 import { AlertData, CustomAlert } from './partials/CustomAlert';
+import moment from 'moment';
+
+type AccountExtended = Account & { history?: AggregatedHistory };
+
+const HISTORY_OFFSET = moment.duration(9, 'hours').asMilliseconds();
 
 const AccountsTable = () => {
   const auth = useAuth();
@@ -22,14 +27,14 @@ const AccountsTable = () => {
   const [isAdvancedEditModalOpened, setIsAdvancedEditModalOpened] = useState(false);
   const [isUploadModalOpened, setIsUploadModalOpened] = useState(false);
 
-  const [rowData, setRowData] = useState<Account[]>([]);
-  const [selectedRows, setSelectedRows] = useState<Account[]>([]);
+  const [rowData, setRowData] = useState<AccountExtended[]>([]);
+  const [selectedRows, setSelectedRows] = useState<AccountExtended[]>([]);
   const [totalBalance, setTotalBalance] = useState(0);
   const [availableBalance, setAvailableBalance] = useState(0);
 
   const [alert, setAlert] = useState<AlertData>({ open: false });
 
-  const gridRef = useRef({} as GridApi<Account>)
+  const gridRef = useRef({} as GridApi<AccountExtended>)
   const apiServiceRef = useRef({} as ApiService)
 
   useEffect(() => {
@@ -44,14 +49,14 @@ const AccountsTable = () => {
     const accounts = await apiServiceRef.current.getFullAccounts();
     // console.log(accounts[0]);
 
-    const historyItems = await apiServiceRef.current.getHistoryItemsByTime(
-      new Date(getLastTimeForRequests()),
-      new Date(Date.now())
-    );
-    const accountsWithRequests = getAccountsWithRunStats(accounts, historyItems);
-    console.log('accounts', accountsWithRequests.length);
+    const historyItems = await apiServiceRef.current.getAllAggregatedHistory(HISTORY_OFFSET);
+    const historyDict = new Map(historyItems.map((item) => [item.account_id, item]));
+    
+    const accountsWithHistory = accounts.map((acc) => ({ ...acc, history: historyDict.get(acc.id) }));
+    
+    console.log('accounts', accountsWithHistory.length);
 
-    setRowData(accountsWithRequests);
+    setRowData(accountsWithHistory);
     updateTotalBalanceInfo();
   }
 
@@ -82,12 +87,12 @@ const AccountsTable = () => {
     try {
       const deleted = await apiServiceRef.current.deleteAccounts(selectedRows);
       console.log('deleted count', deleted)
-  
+
       setIsDeleteModalOpened(false)
-  
+
       const idsToDelete = selectedRows.map((r) => r.id);
       setRowData(rowData.filter((row) => !idsToDelete.includes(row.id)))
-      
+
       setAlert({ open: true, type: 'success', message: 'Success' })
     } catch (err: any) {
       setAlert({ open: true, type: 'error', message: err.toString() })

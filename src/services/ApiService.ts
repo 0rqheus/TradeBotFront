@@ -1,8 +1,7 @@
+import moment from 'moment'
 import {
-  createClient, Client, accounts_set_input, proxies_insert_input,
-  accounts_insert_input,
+  createClient, Client, accounts_set_input,
   scheduler_account_info_set_input,
-  accounts_updates
 } from '../generated/trade'
 
 export interface AccountImportInput {
@@ -18,8 +17,7 @@ export interface AccountImportInput {
 }
 
 export type Account = Awaited<ReturnType<ApiService['getFullAccounts']>>[number];
-export type ProxyData = Awaited<ReturnType<ApiService['getProxiesByHosts']>>[number];
-export type HistoryItem = Awaited<ReturnType<ApiService['getHistoryItemsByTime']>>[number];
+export type AggregatedHistory = Awaited<ReturnType<ApiService['getAllAggregatedHistory']>>[number];
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -61,10 +59,8 @@ export class ApiService {
         activity_status: true,
         freezed_balance: true,
         available_balance: true,
-        // gauth: true,
         should_run: true,
         platform: true,
-        // password: true,
         strategy_name: true,
         group: true,
         origin: true,
@@ -104,116 +100,34 @@ export class ApiService {
     return result.accounts;
   };
 
-  @tryCatch([])
-  async getAccountsByEmails(emails: string[]) {
-    const result = await this.client.query({
-      accounts: {
+  @tryCatch(null)
+  async getAllAggregatedHistory(intervalInMs: number) {
+    const startTime = moment().utc().subtract(intervalInMs, 'ms').format();
+
+    const res = await this.client.query({
+      all_history_items_aggregated: {
         __args: {
-          where: {
-            email: { _in: emails }
+          args: {
+            start_time: startTime
           }
         },
-        id: true,
-        email: true,
-        proxy_id: true,
-        general_account_id: true,
+        account_id: true,
+        captcha_failed_count: true,
+        captcha_solved_count: true,
+        logins_count: true,
+        minutes_active: true,
+        minutes_paused: true,
+        requests_made: true,
+        sbc_submits: true
       },
     });
-    return result.accounts;
-  };
 
-  @tryCatch([])
-  async getProxiesByHosts(hosts: string[]) {
-    const result = await this.client.query({
-      proxies: {
-        __args: {
-          where: {
-            host: { _in: hosts }
-          }
-        },
-        id: true,
-        host: true,
-        port: true
-      },
-    });
-    return result.proxies;
-  };
-
-  @tryCatch([])
-  async getProxyIdsByHostPort(host: string, port: string) {
-    const result = await this.client.query({
-      proxies: {
-        __args: {
-          where: {
-            host: { _eq: host },
-            port: { _eq: port }
-          }
-        },
-        id: true,
-      }
-    });
-    return result.proxies;
-  };
-
-  @tryCatch(0)
-  async createAccounts(objects: accounts_insert_input[]) {
-    if (objects.length === 0) {
-      return 0;
-    }
-    const result = await this.client.mutation({
-      insert_accounts: {
-        __args: {
-          objects
-        },
-        affected_rows: true,
-      }
-    });
-    return result.insert_accounts;
+    return res.all_history_items_aggregated;
   }
 
 
-  @tryCatch(0)
-  async udpateConfig(objects: accounts_insert_input[]) {
-    if (objects.length === 0) {
-      return 0;
-    }
-    const result = await this.client.mutation({
-      insert_accounts: {
-        __args: {
-          objects
-        },
-        affected_rows: true,
-      }
-    });
-    return result.insert_accounts;
-  }
-
-  // async updateAccount(account: any) {
-  //   delete account.__typename;
-  //   delete account.proxy;
-  //   delete account.requests;
-  //   delete account.minutes_active;
-  //   delete account.available_balance;
-  //   delete account.freezed_balance;
-  //   delete account.scheduler_account_info;
-  //   delete account.ban_analytics_info;
-  //   delete account.general_account;
-  //   delete account.service_name;
-  //   delete account.objectives_progress;
-  //   delete account.proxy;
-  //   delete account.accounts_workshift;
-  //   delete account.accounts_challenges;
-
-  //   const result = await this.client.mutation({
-  //     mutation: UPDATE_ACCOUNT,
-  //     variables: {
-  //       id: account.id,
-  //       _set: account,
-  //     },
-  //   });
-  // }
-
-  // @tryCatch(0)
+  // admin actions
+  
   async deleteAccounts(accounts: { id: number }[]) {
     const result = await this.client.mutation({
       delete_accounts: {
@@ -228,7 +142,7 @@ export class ApiService {
     return result.delete_accounts?.affected_rows ?? 0
   }
 
-  // @tryCatch(0)
+  // accs + config editing
   async updateAccounts(accounts: { id: number }[], data: accounts_set_input) {
     const result = await this.client.mutation({
       update_accounts: {
@@ -244,67 +158,6 @@ export class ApiService {
     return result.update_accounts?.affected_rows ?? 0
   }
 
-  @tryCatch(null)
-  async updateAccount(id: number, data: Account) {
-    console.log('updateAccount', id, data);
-    const result = await this.client.mutation({
-      update_accounts_by_pk: {
-        __args: {
-          pk_columns: {
-            id
-          },
-          _set: {
-            activity_status: data.activity_status,
-            should_run: data.should_run,
-            strategy_name: data.strategy_name,
-            group: data.group,
-            origin: data.origin,
-            proxy_id: data.proxy_id,
-            account_owner: data.account_owner,
-            workshift_id: data.workshift_id,
-          }
-        },
-        id: true
-      }
-    });
-    return result.update_accounts_by_pk?.id
-  }
-
-  @tryCatch([])
-  async updateAccountsBatch(updates: accounts_updates[]) {
-    if (updates.length === 0) {
-      return 0;
-    }
-    const result = await this.client.mutation({
-      update_accounts_many: {
-        __args: {
-          updates
-        },
-        affected_rows: true
-      }
-    });
-    return result.update_accounts_many
-  }
-
-  @tryCatch(0)
-  async updateAccountBansConfig(accounts: { id: number }[], newConfigId: number) {
-    const result = await this.client.mutation({
-      update_ban_analytics_info: {
-        __args: {
-          where: {
-            account_id: { _in: accounts.map(acc => acc.id) }
-          },
-          _set: {
-            ban_analytics_config_id: newConfigId
-          }
-        },
-        affected_rows: true
-      }
-    });
-    return result.update_ban_analytics_info?.affected_rows ?? 0
-  }
-
-  // @tryCatch(0)
   async updateAccountSchedulerInfo(accounts: { id: number }[], data: scheduler_account_info_set_input) {
     const result = await this.client.mutation({
       update_scheduler_account_info: {
@@ -320,7 +173,6 @@ export class ApiService {
     return result.update_scheduler_account_info?.affected_rows ?? 0
   }
 
-  // @tryCatch(0)
   async updateAccountsBanConfigId(accounts: { id: number }[], configId: number) {
     const result = await this.client.mutation({
       update_ban_analytics_info: {
@@ -338,33 +190,7 @@ export class ApiService {
     return result.update_ban_analytics_info?.affected_rows ?? 0
   }
 
-  @tryCatch([])
-  async getHistoryItems(accountIds: number[]) {
-    const result = await this.client.query({
-      history_items: {
-        __args: {
-          where: {
-            account_id: { _in: accountIds },
-          },
-        },
-        id: true,
-        account_id: true,
-        actual_end: true,
-        actual_start: true,
-        captcha_failed_count: true,
-        captcha_solved_count: true,
-        minutes_active: true,
-        minutes_paused: true,
-        requests_made: true,
-        scheduled_end: true,
-        scheduled_start: true,
-        strategy_name: true,
-        sbc_submits: true,
-      }
-    });
-    return result.history_items;
-  }
-
+  // data for config editing
   @tryCatch([])
   async getActiveServices() {
     const result = await this.client.query({
@@ -393,84 +219,6 @@ export class ApiService {
       }
     });
     return result.ban_alalytics_config.map(config => config.id);
-  }
-
-  @tryCatch([])
-  async getSchedulerInfo(accountIds: number[]) {
-    const result = await this.client.query({
-      scheduler_account_info: {
-        __args: {
-          where: {
-            account_id: { _in: accountIds },
-          },
-        },
-      },
-      id: true,
-      account_id: true,
-      config_id: true,
-    });
-    return result.scheduler_account_info;
-  }
-
-  @tryCatch([])
-  async getHistoryItemsByTime(from: Date, to: Date) {
-    const result = await this.client.query({
-      history_items: {
-        __args: {
-          where: {
-            _or: [
-              {
-                scheduled_end: { _is_null: false, _gt: from.toISOString() },
-                scheduled_start: { _is_null: false, _lt: to.toISOString() }
-              },
-              {
-                account: { activity_status: { _in: ['ON', 'PAUSED'] } },
-                scheduled_start: { _gt: from.toISOString() }
-              }
-            ]
-          }
-        },
-        account_id: true,
-        actual_end: true,
-        actual_start: true,
-        scheduled_end: true,
-        scheduled_start: true,
-        requests_made: true,
-        minutes_active: true,
-        strategy_name: true,
-        sbc_submits: true,
-      },
-    });
-
-    return result.history_items;
-  }
-
-  @tryCatch(null)
-  async createNewProxy(object: proxies_insert_input) {
-    const result = await this.client.mutation({
-      insert_proxies_one: {
-        __args: {
-          object
-        },
-        id: true
-      }
-    });
-    return result.insert_proxies_one?.id;
-  }
-
-  @tryCatch(null)
-  async createGeneralAccount(email: string) {
-    const result = await this.client.mutation({
-      insert_general_accounts_one: {
-        __args: {
-          object: {
-            email: email
-          }
-        },
-        id: true
-      },
-    });
-    return result.insert_general_accounts_one;
   }
 }
 

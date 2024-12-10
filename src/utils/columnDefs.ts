@@ -155,7 +155,7 @@ export const columnDefsAccounts = [
     hide: true,
   },
   {
-    field: 'requests',
+    field: 'history.requests_made',
     headerName: 'Requests',
     filter: 'agNumberColumnFilter',
   },
@@ -167,13 +167,13 @@ export const columnDefsAccounts = [
     filter: CustomArrayIntersectionFilter,
   },
   {
-    field: 'minutes_active',
+    field: 'history.minutes_active',
     headerName: 'Minutes',
     filter: 'agNumberColumnFilter',
     hide: true,
   },
   {
-    field: 'sbc_submits',
+    field: 'history.sbc_submits',
     headerName: 'Sbc submits',
     filter: 'agNumberColumnFilter',
     hide: true,
