@@ -1,6 +1,6 @@
-export const sendRequest = (route: string, data?: any, token?: string) =>
+export const sendRequest = (route: string, data?: any, token?: string, method: 'POST' | 'GET' = 'POST') =>
   fetch(`${process.env.REACT_APP_BACKEND_URL}/${route}`, {
-    method: 'POST',
+    method,
     body: JSON.stringify(data),
     headers: {
       'Content-Type': 'application/json',
