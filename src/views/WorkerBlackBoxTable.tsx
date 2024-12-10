@@ -25,7 +25,7 @@ const WorkerBlackBoxTable = () => {
 
   const fetchWbbInfo = async (token?: string) => {
     try {
-      const res = await sendRequest('get_worker_black_box_info', {}, token, 'GET');
+      const res = await sendRequest('get_worker_black_box_info', undefined, token, 'GET');
       const data = await res.json();
 
       setRowData(data);
