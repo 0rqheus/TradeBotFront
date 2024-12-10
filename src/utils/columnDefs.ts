@@ -140,7 +140,7 @@ export const columnDefsAccounts = [
     hide: true,
   },
   {
-    field: 'ban_analytics_info.ban_alalytics_config_id',
+    field: 'ban_analytics_info.ban_analytics_config_id',
     headerName: 'Ban Config',
     hide: true,
   },

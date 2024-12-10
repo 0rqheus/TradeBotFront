@@ -42,10 +42,11 @@ const AccountsTable = () => {
 
   const fetchAccounts = async () => {
     const accounts = await apiServiceRef.current.getFullAccounts();
+    // console.log(accounts[0]);
+
     const historyItems = await apiServiceRef.current.getHistoryItemsByTime(
       new Date(getLastTimeForRequests()),
-      new Date(Date.now()),
-      accounts.map((acc) => acc.id)
+      new Date(Date.now())
     );
     const accountsWithRequests = getAccountsWithRunStats(accounts, historyItems);
     console.log('accounts', accountsWithRequests.length);

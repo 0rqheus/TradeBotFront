@@ -413,12 +413,11 @@ export class ApiService {
   }
 
   @tryCatch([])
-  async getHistoryItemsByTime(from: Date, to: Date, accountIds: number[]) {
+  async getHistoryItemsByTime(from: Date, to: Date) {
     const result = await this.client.query({
       history_items: {
         __args: {
           where: {
-            account_id: { _in: accountIds },
             _or: [
               {
                 scheduled_end: { _is_null: false, _gt: from.toISOString() },
