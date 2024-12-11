@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Account, ApiService } from '../../services/ApiService';
 import { CustomModalContainer } from '../partials/CustomModalContainer';
 import { AlertData } from '../partials/CustomAlert';
+import { useAuth } from '../../AuthProvider';
 
 interface AdvancedEditModalProps {
   open: boolean,
@@ -26,7 +27,7 @@ const CustomSelect = ({
         onChange={(event) => onSelect(event.target.value)}
       >
         {
-          values.map((val) => <MenuItem value={val}>{val}</MenuItem>)
+          values.map((val, i) => <MenuItem key={i} value={val}>{val}</MenuItem>)
         }
       </Select>
     </FormControl>
@@ -40,6 +41,8 @@ const AdvancedEditModal = ({
   apiService,
   selectedRows
 }: AdvancedEditModalProps) => {
+  const auth = useAuth();
+
   const [strategyName, setStrategyName] = useState('');
 
   const [serviceName, setServiceName] = useState('');
@@ -74,28 +77,28 @@ const AdvancedEditModal = ({
   }, [open]);
 
   const updateData = async () => {
-    try { 
+    try {
       const promises = [];
-  
+
       if (strategyName) {
         promises.push(apiService.updateAccounts(selectedRows, { strategy_name: strategyName }))
       }
-  
-      if(serviceName || schedulerConfigId) {
-        promises.push(apiService.updateAccountSchedulerInfo(selectedRows, { 
+
+      if (serviceName || schedulerConfigId) {
+        promises.push(apiService.updateAccountSchedulerInfo(selectedRows, {
           service_name: serviceName || undefined,
           config_id: schedulerConfigId || undefined
         }))
       }
-  
-      if(banConfigId) {
+
+      if (banConfigId) {
         promises.push(apiService.updateAccountsBanConfigId(selectedRows, banConfigId))
       }
-  
+
       await Promise.all(promises);
 
       setAlertData({ open: true, type: 'success', message: 'Success' });
-    } catch(err: any) {
+    } catch (err: any) {
       setAlertData({ open: true, type: 'error', message: err.message });
     }
   }
@@ -127,19 +130,23 @@ const AdvancedEditModal = ({
             onChange={(event) => setStrategyName(event.target.value)}
           />
 
-          <CustomSelect 
-            name='Service name' 
-            values={serviceNames} 
-            onSelect={setServiceName} />
+          {
+            auth.user?.role === 'sbc-admin'
+            &&
+            <CustomSelect
+              name='Service name'
+              values={serviceNames}
+              onSelect={setServiceName} />
+          }
 
-          <CustomSelect 
-            name='Scheduler config' 
-            values={schedulerConfigIds} 
+          <CustomSelect
+            name='Scheduler config'
+            values={schedulerConfigIds}
             onSelect={setSchedulerConfigId} />
 
-          <CustomSelect 
-            name='Ban config' 
-            values={banConfigIds} 
+          <CustomSelect
+            name='Ban config'
+            values={banConfigIds}
             onSelect={setBanConfigId} />
 
           <Button

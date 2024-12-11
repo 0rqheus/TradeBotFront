@@ -92,35 +92,42 @@ const AccountsActivityActions = ({
         content={<UploadFileIcon />}
       />
 
-      <Divider orientation="vertical" sx={{ height: '5vh' }} />
+      {
+        auth.user?.role === 'sbc-admin'
+        &&
+        (<>
+          <Divider orientation="vertical" sx={{ height: '5vh' }} />
 
-      <HeaderButton
-        title="Start accounts"
-        onClick={() => startAccounts(accounts, auth.user?.token)}
-        content={<PlayArrowIcon />}
-        disabled={accounts.length <= 0}
-      />
+          <HeaderButton
+            title="Start accounts"
+            onClick={() => startAccounts(accounts, auth.user?.token)}
+            content={<PlayArrowIcon />}
+            disabled={accounts.length <= 0}
+          />
 
-      <HeaderButton
-        title="Stop accounts"
-        onClick={() => executeAccountCommand(accounts, 'STOP', auth.user?.token)}
-        content={<StopIcon />}
-        disabled={accounts.length <= 0}
-      />
+          <HeaderButton
+            title="Stop accounts"
+            onClick={() => executeAccountCommand(accounts, 'STOP', auth.user?.token)}
+            content={<StopIcon />}
+            disabled={accounts.length <= 0}
+          />
 
-      <HeaderButton
-        title="Reset accounts"
-        onClick={() => executeAccountCommand(accounts, 'RESET', auth.user?.token)}
-        content={<RestoreIcon />}
-        disabled={accounts.length <= 0}
-      />
+          <HeaderButton
+            title="Reset accounts"
+            onClick={() => executeAccountCommand(accounts, 'RESET', auth.user?.token)}
+            content={<RestoreIcon />}
+            disabled={accounts.length <= 0}
+          />
 
-      <HeaderButton
-        title="Block accounts"
-        onClick={() => executeAccountCommand(accounts, 'BLOCK', auth.user?.token)}
-        content={<RemoveCircleOutlineIcon />}
-        disabled={accounts.length <= 0}
-      />
+          <HeaderButton
+            title="Block accounts"
+            onClick={() => executeAccountCommand(accounts, 'BLOCK', auth.user?.token)}
+            content={<RemoveCircleOutlineIcon />}
+            disabled={accounts.length <= 0}
+          />
+        </>
+        )
+      }
 
       <Divider orientation="vertical" sx={{ height: '5vh' }} />
 

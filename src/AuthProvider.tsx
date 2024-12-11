@@ -5,7 +5,7 @@ import { sendRequest } from './utils/request';
 
 interface User {
   token: string,
-  role: string
+  role: 'sbc-admin' | 'sbc-user'
 }
 
 interface Credentials {
@@ -64,6 +64,17 @@ export const RequireAuth = ({ children }: { children: JSX.Element }) => {
 
   if (!auth.user) {
     return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return children;
+}
+
+export const RequireAdmin = ({ children }: { children: JSX.Element }) => {
+  let auth = useAuth();
+  let location = useLocation();
+
+  if (auth.user?.role !== 'sbc-admin') {
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   return children;

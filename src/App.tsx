@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import AccountsTable from './views/AccountsTable';
 import Auth from './views/Auth';
-import { AuthProvider, RequireAuth } from './AuthProvider';
+import { AuthProvider, RequireAdmin, RequireAuth } from './AuthProvider';
 import WorkerBlackBoxTable from './views/WorkerBlackBoxTable';
 
 const App = () => {
@@ -20,9 +20,9 @@ const App = () => {
           <Route
             path="/wbb"
             element={
-              <RequireAuth>
+              <RequireAdmin>
                 <WorkerBlackBoxTable />
-              </RequireAuth>
+              </RequireAdmin>
             }
           />
           <Route path="/login" element={<Auth />} />
