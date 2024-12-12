@@ -18,7 +18,7 @@ import moment from 'moment';
 
 type AccountExtended = Account & { history?: AggregatedHistory };
 
-const HISTORY_OFFSET = moment.duration(9, 'hours').asMilliseconds();
+const HISTORY_OFFSET = moment.duration(24, 'hours').asMilliseconds();
 
 const AccountsTable = () => {
   const auth = useAuth();
