@@ -29,7 +29,7 @@ const WorkerBlackBoxTable = () => {
       const data = await res.json();
 
       setRowData(data);
-      
+
       setAlert({ open: true, type: 'success', message: 'Success' });
     } catch (err: any) {
       setAlert({ open: true, type: 'error', message: err.message });
@@ -37,7 +37,13 @@ const WorkerBlackBoxTable = () => {
   }
 
   const updateWorkers = async (token?: string) => {
-    await sendRequest('update_workers', {}, token);
+    try {
+      await sendRequest('update_workers', {}, token);
+
+      setAlert({ open: true, type: 'success', message: 'Success' });
+    } catch (err: any) {
+      setAlert({ open: true, type: 'error', message: err.message });
+    }
   }
 
   useEffect(() => {
