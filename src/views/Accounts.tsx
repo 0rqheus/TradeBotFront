@@ -20,7 +20,7 @@ type AccountExtended = Account & { history?: AggregatedHistory };
 
 const HISTORY_OFFSET = moment.duration(24, 'hours').asMilliseconds();
 
-const AccountsTable = () => {
+const Accounts = () => {
   const auth = useAuth();
 
   const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false);
@@ -170,4 +170,4 @@ const AccountsTable = () => {
 }
 
 
-export default AccountsTable;
+export default Accounts;

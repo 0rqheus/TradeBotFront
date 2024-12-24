@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { VisibilityOff, Visibility } from '@mui/icons-material'
 
-const Auth = () => {
+const Login = () => {
   const auth = useAuth();
   const navigate = useNavigate();
 
@@ -94,4 +94,4 @@ const Auth = () => {
   )
 };
 
-export default Auth;
+export default Login;

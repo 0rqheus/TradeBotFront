@@ -18,7 +18,7 @@ interface WbbServiceInfo {
   currentWorkersCount: number
 }
 
-const WorkerBlackBoxTable = () => {
+const WorkerBlackBox = () => {
   const auth = useAuth();
   const [rowData, setRowData] = useState<WbbServiceInfo[]>([]);
   const [alert, setAlert] = useState<AlertData>({ open: false });
@@ -96,4 +96,4 @@ const WorkerBlackBoxTable = () => {
   )
 };
 
-export default WorkerBlackBoxTable;
+export default WorkerBlackBox;

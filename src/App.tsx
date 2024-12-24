@@ -1,8 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
-import AccountsTable from './views/AccountsTable';
-import Auth from './views/Auth';
+import Accounts from './views/Accounts';
+import Login from './views/Login';
 import { AuthProvider, RequireAdmin, RequireAuth } from './AuthProvider';
-import WorkerBlackBoxTable from './views/WorkerBlackBoxTable';
+import WorkerBlackBox from './views/WorkerBlackBox';
+import SbcStatistics from './views/SbcStatistics';
 
 const App = () => {
   return (
@@ -13,7 +14,7 @@ const App = () => {
             path="/"
             element={
               <RequireAuth>
-                <AccountsTable />
+                <Accounts />
               </RequireAuth>
             }
           />
@@ -21,11 +22,11 @@ const App = () => {
             path="/wbb"
             element={
               <RequireAdmin>
-                <WorkerBlackBoxTable />
+                <WorkerBlackBox />
               </RequireAdmin>
             }
           />
-          <Route path="/login" element={<Auth />} />
+          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </AuthProvider>
