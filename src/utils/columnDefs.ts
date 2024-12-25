@@ -116,13 +116,13 @@ export const columnDefsAccounts = [
   {
     field: 'strategy_name',
     headerName: 'Strategy',
-    maxWidth: 200, 
+    maxWidth: 200,
   },
   {
     field: 'origin',
     headerName: 'Origin',
     hide: false,
-    maxWidth: 200, 
+    maxWidth: 200,
   },
   {
     field: 'account_owner',
@@ -198,4 +198,42 @@ export const columnDefsWorkers = [
     headerName: 'Max workers',
     filter: 'agNumberColumnFilter',
   }
+];
+
+export const columnDefsSbc = [
+  {
+    field: "sbcName",
+    headerName: 'Sbc',
+    rowGroup: true,
+    hide: true
+  },
+  {
+    field: 'challengeIndex',
+    headerName: 'Index',
+  },
+  {
+    field: 'solvedCount',
+    headerName: 'Solved',
+  },
+  {
+    field: 'avgSpent',
+    headerName: 'Avg spent',
+  },
+  {
+    field: 'packName',
+    headerName: 'Reward',
+  },
+  {
+    field: 'isTradeable',
+    headerName: 'Tradeable',
+  },
+  {
+    field: 'repeatCount',
+    headerName: 'Repeats',
+  },
+  {
+    field: 'refreshInterval',
+    headerName: 'Refresh interval (hr)',
+    valueFormatter: (param: any) => param.refreshInterval > 0 ? param.refreshInterval / 14400000 : undefined
+  },
 ]

@@ -19,6 +19,14 @@ const App = () => {
             }
           />
           <Route
+            path="/sbc_stats"
+            element={
+              <RequireAuth>
+                <SbcStatistics />
+              </RequireAuth>
+            }
+          />
+          <Route
             path="/wbb"
             element={
               <RequireAdmin>

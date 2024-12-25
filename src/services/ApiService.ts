@@ -18,6 +18,7 @@ export interface AccountImportInput {
 
 export type Account = Awaited<ReturnType<ApiService['getFullAccounts']>>[number];
 export type AggregatedHistory = Awaited<ReturnType<ApiService['getAllAggregatedHistory']>>[number];
+export type SbcInfo = Awaited<ReturnType<ApiService['getCurrentSbcs']>>[number];
 
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -123,6 +124,41 @@ export class ApiService {
     });
 
     return res.all_history_items_aggregated;
+  }
+
+  @tryCatch([])
+  async getCurrentSbcs() {
+    const result = await this.client.query({
+      current_sbc: {
+        __args: {
+          where: {
+            id: {
+              _eq: 318
+            }
+          }
+        },
+        id: true,
+        name: true,
+        pack_name: true,
+        tradeable: true,
+        repeat_count: true,
+        refresh_interval: true,
+        current_challenges: {
+          challenge_index: true,
+          tradeable: true,
+          pack_name: true,
+          account_challenges_infos_aggregate: {
+            aggregate: {
+              count: true,
+              avg: {
+                total_buy_sum: true
+              }, 
+            }
+          }
+        }
+      }
+    });
+    return result.current_sbc;
   }
 
 
