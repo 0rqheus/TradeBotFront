@@ -4,7 +4,7 @@ import 'ag-grid-enterprise';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
 import createApiService, { Account, AggregatedHistory, ApiService, } from '../services/ApiService';
-import { columnDefsAccounts, defaultColDef } from '../utils/columnDefs';
+import { columnDefsAccountsAdmin, columnDefsAccountsDefault, defaultColDef } from '../utils/columnDefs';
 import { formatNumber } from '../utils/utils';
 import { GridApi } from 'ag-grid-community';
 import { Box, Stack, Typography } from '@mui/material';
@@ -34,29 +34,40 @@ const Accounts = () => {
 
   const [alert, setAlert] = useState<AlertData>({ open: false });
 
+  const [columnDefs, setColumnDefs] = useState<any[]>([]);
+
   const gridRef = useRef({} as GridApi<AccountExtended>)
   const apiServiceRef = useRef({} as ApiService)
 
   useEffect(() => {
     (async function () {
       apiServiceRef.current = createApiService(auth.user?.token!)
+
+      if(auth.user?.role === 'sbc-admin') {
+        setColumnDefs(columnDefsAccountsAdmin);
+      } else {
+        setColumnDefs(columnDefsAccountsDefault)
+      }
+
       await fetchAccounts()
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const fetchAccounts = async () => {
-    const accounts = await apiServiceRef.current.getFullAccounts();
+    if(auth.user?.role === 'sbc-admin') {
+      const accounts = await apiServiceRef.current.getFullAccountsData();
+      const historyItems = await apiServiceRef.current.getAllAggregatedHistory(HISTORY_OFFSET);
+      const historyDict = new Map(historyItems.map((item) => [item.account_id, item]));
+      
+      const accountsWithHistory = accounts.map((acc) => ({ ...acc, history: historyDict.get(acc.id) }));
+      setRowData(accountsWithHistory);
+    } else {
+      const accounts = await apiServiceRef.current.getDefaultAccountsData() as Account[];
+      setRowData(accounts);
+    }
     // console.log(accounts[0]);
 
-    const historyItems = await apiServiceRef.current.getAllAggregatedHistory(HISTORY_OFFSET);
-    const historyDict = new Map(historyItems.map((item) => [item.account_id, item]));
-    
-    const accountsWithHistory = accounts.map((acc) => ({ ...acc, history: historyDict.get(acc.id) }));
-    
-    console.log('accounts', accountsWithHistory.length);
-
-    setRowData(accountsWithHistory);
     updateTotalBalanceInfo();
   }
 
@@ -152,7 +163,7 @@ const Accounts = () => {
         <AgGridReact
           rowData={rowData}
           getRowId={(params) => params.data.id.toString()}
-          columnDefs={columnDefsAccounts as any[]}
+          columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           onGridReady={(value) => { gridRef.current = value.api; }}
           rowSelection={'multiple'}

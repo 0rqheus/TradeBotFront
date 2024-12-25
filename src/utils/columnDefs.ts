@@ -8,7 +8,7 @@ export const defaultColDef = {
   filter: true,
 }
 
-export const columnDefsAccounts = [
+export const columnDefsAccountsAdmin = [
   {
     field: 'id',
     headerName: 'ID',
@@ -178,6 +178,88 @@ export const columnDefsAccounts = [
     filter: 'agNumberColumnFilter',
     hide: true,
   },
+];
+
+export const columnDefsAccountsDefault = [
+  {
+    field: 'id',
+    headerName: 'ID',
+    filter: 'agNumberColumnFilter',
+    checkboxSelection: true,
+    headerCheckboxSelection: true,
+    headerCheckboxSelectionFilteredOnly: true,
+    width: 100,
+    maxWidth: 100,
+  },
+  {
+    field: 'email',
+    headerName: 'Email',
+    filter: 'agTextColumnFilter',
+  },
+  {
+    field: 'activity_status',
+    headerName: 'Status',
+    filter: 'agTextColumnFilter',
+    width: 100,
+    maxWidth: 100,
+  },
+  {
+    headerName: 'Freezed',
+    filter: 'agNumberColumnFilter',
+    valueGetter: (params: any) => params.data.available_balance,
+    valueFormatter: (param: any) => formatNumber(param.data.freezed_balance),
+    width: 120,
+    maxWidth: 120,
+  },
+  {
+    headerName: 'Available',
+    filter: 'agNumberColumnFilter',
+    valueGetter: (params: any) => params.data.available_balance,
+    valueFormatter: (param: any) => formatNumber(param.data.available_balance),
+    width: 120,
+    maxWidth: 112,
+  },
+  {
+    headerName: 'Total',
+    filter: 'agNumberColumnFilter',
+    valueFormatter: (param: any) => formatNumber(param.data.freezed_balance + param.data.available_balance),
+    hide: true,
+    width: 100,
+    maxWidth: 100,
+  },
+  {
+    field: 'proxy.host',
+    headerName: 'Proxy ip',
+    filter: 'agTextColumnFilter',
+    hide: true,
+  },
+  {
+    field: 'proxy.port',
+    headerName: 'Port',
+    filter: 'agNumberColumnFilter',
+    hide: true,
+    enableRowGroup: false,
+    width: 90,
+    maxWidth: 90,
+  },
+  {
+    field: 'origin',
+    headerName: 'Origin',
+    hide: false,
+    maxWidth: 200,
+  },
+  {
+    field: 'general_account.is_web_tm_opened',
+    headerName: 'Has TM assess',
+    hide: true,
+  },
+  {
+    field: 'general_account.account_challenges_infos',
+    headerName: 'Solved active sbcs',
+    valueGetter: (params: any) => params.data.general_account.account_challenges_infos.map((x: any) => x.challenge_id),
+    valueFormatter: (param: any) => param.data.general_account.account_challenges_infos.length,
+    filter: CustomArrayIntersectionFilter,
+  }
 ];
 
 

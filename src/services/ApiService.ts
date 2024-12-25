@@ -16,7 +16,7 @@ export interface AccountImportInput {
   proxyPass: string
 }
 
-export type Account = Awaited<ReturnType<ApiService['getFullAccounts']>>[number];
+export type Account = Awaited<ReturnType<ApiService['getFullAccountsData']>>[number];
 export type AggregatedHistory = Awaited<ReturnType<ApiService['getAllAggregatedHistory']>>[number];
 export type SbcInfo = Awaited<ReturnType<ApiService['getCurrentSbcs']>>[number];
 
@@ -52,7 +52,7 @@ export class ApiService {
   ];
 
   @tryCatch([])
-  async getFullAccounts() {
+  async getFullAccountsData() {
     const result = await this.client.query({
       accounts: {
         id: true,
@@ -96,6 +96,39 @@ export class ApiService {
           is_web_tm_opened: true
         },
         workshift_id: true,
+      },
+    });
+    return result.accounts;
+  };
+
+  @tryCatch([])
+  async getDefaultAccountsData() {
+    const result = await this.client.query({
+      accounts: {
+        id: true,
+        email: true,
+        activity_status: true,
+        freezed_balance: true,
+        available_balance: true,
+        proxy: {
+          host: true,
+          port: true,
+        },
+        origin: true,
+        general_account: {
+          account_challenges_infos: {
+            __args: {
+              where: {
+                challenge_id: {
+                  _nin: this.challengeIdsToIgnore
+                },
+                is_solved: { _eq: true }
+              }
+            },
+            challenge_id: true
+          },
+          is_web_tm_opened: true
+        },
       },
     });
     return result.accounts;
