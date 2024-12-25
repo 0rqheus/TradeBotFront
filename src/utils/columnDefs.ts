@@ -292,30 +292,51 @@ export const columnDefsSbc = [
   {
     field: 'challengeIndex',
     headerName: 'Index',
+    maxWidth: 120,
+    suppressHeaderFilterButton: true,
+    suppressHeaderMenuButton: true
   },
   {
     field: 'solvedCount',
     headerName: 'Solved',
+    maxWidth: 120,
+    filter: 'agNumberColumnFilter',
   },
   {
     field: 'avgSpent',
     headerName: 'Avg spent',
-  },
-  {
-    field: 'packName',
-    headerName: 'Reward',
-  },
-  {
-    field: 'isTradeable',
-    headerName: 'Tradeable',
+    filter: 'agNumberColumnFilter',
   },
   {
     field: 'repeatCount',
     headerName: 'Repeats',
+    hide: true,
   },
   {
     field: 'refreshInterval',
     headerName: 'Refresh interval (hr)',
-    valueFormatter: (param: any) => param.refreshInterval > 0 ? param.refreshInterval / 14400000 : undefined
+    valueFormatter: (param: any) => param.refreshInterval > 0 ? param.refreshInterval / 14400000 : undefined,
+    hide: true,
+  },
+  {
+    field: 'packName',
+    headerName: 'Reward',
+    suppressHeaderFilterButton: true,
+    suppressHeaderMenuButton: true
+  },
+  {
+    field: 'isTradeable',
+    headerName: 'Tradeable',
+    maxWidth: 140,
+  },
+  {
+    field: 'packsOpened',
+    headerName: 'Opened packs',
+    filter: 'agNumberColumnFilter',
+  },
+  {
+    field: 'avgRewardSum',
+    headerName: 'Avg coins per pack',
+    filter: 'agNumberColumnFilter',
   },
 ]
