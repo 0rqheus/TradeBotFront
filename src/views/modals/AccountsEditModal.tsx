@@ -78,6 +78,8 @@ const AccountsEditModal = ({
       await Promise.all(promises);
 
       setAlertData({ open: true, type: 'success', message: 'Success' });
+
+      handleClose();
     } catch (err: any) {
       setAlertData({ open: true, type: 'error', message: err.message });
     }

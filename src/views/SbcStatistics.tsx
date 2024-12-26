@@ -1,17 +1,19 @@
 import { AgGridReact } from 'ag-grid-react';
 import { columnDefsSbc, defaultColDef } from '../utils/columnDefs';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../AuthProvider';
 import { AlertData, CustomAlert } from './partials/CustomAlert';
 import { sendRequest } from '../utils/request';
-import { Divider, Stack } from '@mui/material';
+import { Backdrop, CircularProgress, Divider, Stack } from '@mui/material';
 import { HeaderButton } from './partials/CustomButton';
 import {
   Refresh as RefreshIcon,
   EditNote as EditNoteIcon,
 } from '@mui/icons-material'
+import SbcEditModal from './modals/SbcEditModal';
+import { GridApi } from 'ag-grid-community';
 
-interface SbcStatisticsData {
+export interface SbcStatisticsData {
   sbcName: string,
   challengeIndex?: number,
   solvedCount?: number,
@@ -25,11 +27,15 @@ interface SbcStatisticsData {
 const SbcStatistics = () => {
   const auth = useAuth();
   const [rowData, setRowData] = useState<SbcStatisticsData[]>([]);
+  const [selectedRows, setSelectedRows] = useState<SbcStatisticsData[]>([]);
   const [alert, setAlert] = useState<AlertData>({ open: false });
+  const [isSbcEditModalOpened, setIsSbcEditModalOpened] = useState(false);
+
+  const gridRef = useRef({} as GridApi<SbcStatisticsData>)
 
   const fetchSbcStatistics = async (token?: string) => {
     try {
-      const res = await sendRequest('get_sbc_statistics', undefined, token, 'GET');
+      const res = await sendRequest('sbc/get_statistics', undefined, token, 'GET');
       const data = await res.json();
 
       setAlert({ open: true, type: 'success', message: 'Success' });
@@ -40,7 +46,10 @@ const SbcStatistics = () => {
     }
   }
 
-  const editSolutionLimits = (token?: string) => {}
+  const onSelectionChanged = async () => {
+    const selectedRows = gridRef.current.getSelectedRows();
+    setSelectedRows(selectedRows);
+  }
 
   useEffect(() => {
     (async function () {
@@ -63,21 +72,41 @@ const SbcStatistics = () => {
 
           <HeaderButton
             title="Edit solution limits"
-            onClick={() => editSolutionLimits(auth.user?.token)}
+            onClick={() => setIsSbcEditModalOpened(true)}
             content={<EditNoteIcon />}
           />
         </Stack>
       </Stack>
+
+
       <div className="ag-theme-alpine" style={{ height: '92vh', width: '100%' }}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefsSbc as any[]}
           defaultColDef={defaultColDef}
+          onGridReady={(value) => { gridRef.current = value.api; }}
           cellSelection={true}
+          rowSelection={'multiple'}
+          onSelectionChanged={onSelectionChanged}
           sideBar={{ toolPanels: ['columns'] }}
         >
         </AgGridReact>
       </div>
+
+      <Backdrop
+        sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+        open={rowData.length === 0}
+      >
+        <CircularProgress />
+      </Backdrop>
+
+      <SbcEditModal
+        open={isSbcEditModalOpened}
+        handleClose={() => setIsSbcEditModalOpened(false)}
+        setAlert={setAlert}
+        challenges={selectedRows}
+      />
+
       <CustomAlert data={alert} onClose={() => setAlert({ open: false })} />
     </>
   )

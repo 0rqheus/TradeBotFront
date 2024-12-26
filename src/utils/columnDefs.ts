@@ -331,12 +331,12 @@ export const columnDefsSbc = [
   },
   {
     field: 'packsOpened',
-    headerName: 'Opened packs',
+    headerName: 'Opened packs (14d)',
     filter: 'agNumberColumnFilter',
   },
   {
     field: 'avgRewardSum',
-    headerName: 'Avg coins per pack',
+    headerName: 'Avg gained (14d)',
     filter: 'agNumberColumnFilter',
   },
 ]
