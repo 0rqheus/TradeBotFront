@@ -11,7 +11,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import ConfirmationModal from './modals/ConfirmationModal';
 import AccountsActivityActions from './partials/AccountsActivityActions';
 import { useAuth } from '../AuthProvider';
-import AccountsEditModal from './modals/AccountsEditModalProps';
+import AccountsEditModal from './modals/AccountsEditModal';
 import UploadAccountsModal from './modals/UploadAccountsModal';
 import { AlertData, CustomAlert } from './partials/CustomAlert';
 import moment from 'moment';
