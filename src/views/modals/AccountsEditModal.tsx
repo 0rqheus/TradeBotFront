@@ -1,9 +1,10 @@
-import { Button, FormControl, InputLabel, MenuItem, Modal, Select, Stack, TextField, Typography } from '@mui/material';
+import { Button, Modal, Stack, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Account, ApiService } from '../../services/ApiService';
 import { CustomModalContainer } from '../partials/CustomModalContainer';
 import { AlertData } from '../partials/CustomAlert';
 import { useAuth } from '../../AuthProvider';
+import CustomSelect from '../partials/CustomSelect';
 
 interface AccountsEditModalProps {
   open: boolean,
@@ -11,27 +12,6 @@ interface AccountsEditModalProps {
   setAlertData: (data: AlertData) => void,
   selectedRows: Account[]
   apiService: ApiService
-}
-
-const CustomSelect = ({
-  name, values, onSelect
-}: { name: string, values: string[] | number[], onSelect: (value: any) => void }) => {
-  const labelId = name + 'select-label';
-  return (
-    <FormControl fullWidth>
-      <InputLabel id={labelId} size='small'>{name}</InputLabel>
-      <Select
-        labelId={labelId}
-        size='small'
-        defaultValue={''}
-        onChange={(event) => onSelect(event.target.value)}
-      >
-        {
-          values.map((val, i) => <MenuItem key={i} value={val}>{val}</MenuItem>)
-        }
-      </Select>
-    </FormControl>
-  );
 }
 
 const AccountsEditModal = ({
@@ -107,24 +87,24 @@ const AccountsEditModal = ({
     <Modal
       open={open}
       onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
+      aria-labelledby='modal-modal-title'
+      aria-describedby='modal-modal-description'
     >
       <CustomModalContainer>
-        <Typography id="modal-modal-title" variant="h5" component="h2" align='center'>
-          Advanced edit
+        <Typography id='modal-modal-title' variant='h5' component='h2' align='center'>
+          Accounts edit
         </Typography>
 
         <Stack
-          id="modal-modal-description"
+          id='modal-modal-description'
           spacing={2}
           mt={4}
         >
           <TextField
-            id="strategy"
-            label="Strategy name"
+            id='strategy'
+            label='Strategy name'
             type='text'
-            variant="outlined"
+            variant='outlined'
             size='small'
             value={strategyName}
             onChange={(event) => setStrategyName(event.target.value)}
@@ -150,7 +130,7 @@ const AccountsEditModal = ({
             onSelect={setBanConfigId} />
 
           <Button
-            variant="contained"
+            variant='contained'
             size='small'
             color='info'
             onClick={updateData}
