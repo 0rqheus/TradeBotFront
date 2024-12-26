@@ -125,18 +125,18 @@ const AccountsActivityActions = ({
             content={<RemoveCircleOutlineIcon />}
             disabled={accounts.length <= 0}
           />
+
+          <Divider orientation="vertical" sx={{ height: '5vh' }} />
+
+          <HeaderButton
+            title="Advanced edit"
+            onClick={openAdvancedEditModal}
+            content={<EditNoteIcon />}
+            disabled={accounts.length <= 0}
+          />
         </>
         )
       }
-
-      <Divider orientation="vertical" sx={{ height: '5vh' }} />
-
-      <HeaderButton
-        title="Advanced edit"
-        onClick={openAdvancedEditModal}
-        content={<EditNoteIcon />}
-        disabled={accounts.length <= 0}
-      />
 
       <CustomAlert data={alert} onClose={() => setAlert({ open: false })} />
 
