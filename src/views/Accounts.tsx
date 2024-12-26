@@ -11,7 +11,7 @@ import { Box, Stack, Typography } from '@mui/material';
 import ConfirmationModal from './modals/ConfirmationModal';
 import AccountsActivityActions from './partials/AccountsActivityActions';
 import { useAuth } from '../AuthProvider';
-import AdvancedEditModal from './modals/AdvancedEditModal';
+import AccountsEditModal from './modals/AccountsEditModalProps';
 import UploadAccountsModal from './modals/UploadAccountsModal';
 import { AlertData, CustomAlert } from './partials/CustomAlert';
 import moment from 'moment';
@@ -24,7 +24,7 @@ const Accounts = () => {
   const auth = useAuth();
 
   const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false);
-  const [isAdvancedEditModalOpened, setIsAdvancedEditModalOpened] = useState(false);
+  const [isAccsEditModalOpened, setIsAccsEditModalOpened] = useState(false);
   const [isUploadModalOpened, setIsUploadModalOpened] = useState(false);
 
   const [rowData, setRowData] = useState<AccountExtended[]>([]);
@@ -116,7 +116,7 @@ const Accounts = () => {
         <AccountsActivityActions
           accounts={selectedRows}
           fetchAccounts={fetchAccounts}
-          openAdvancedEditModal={() => setIsAdvancedEditModalOpened(true)}
+          openAdvancedEditModal={() => setIsAccsEditModalOpened(true)}
           openDeleteConfirmation={() => setIsDeleteModalOpened(true)}
           openUploadModal={() => setIsUploadModalOpened(true)}
         />
@@ -145,9 +145,9 @@ const Accounts = () => {
         handleClose={() => setIsDeleteModalOpened(false)}
       />
 
-      <AdvancedEditModal
-        open={isAdvancedEditModalOpened}
-        handleClose={() => setIsAdvancedEditModalOpened(false)}
+      <AccountsEditModal
+        open={isAccsEditModalOpened}
+        handleClose={() => setIsAccsEditModalOpened(false)}
         setAlertData={setAlert}
         apiService={apiServiceRef.current}
         selectedRows={selectedRows}

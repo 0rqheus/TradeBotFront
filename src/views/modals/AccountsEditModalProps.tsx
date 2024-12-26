@@ -5,7 +5,7 @@ import { CustomModalContainer } from '../partials/CustomModalContainer';
 import { AlertData } from '../partials/CustomAlert';
 import { useAuth } from '../../AuthProvider';
 
-interface AdvancedEditModalProps {
+interface AccountsEditModalProps {
   open: boolean,
   handleClose: () => void,
   setAlertData: (data: AlertData) => void,
@@ -34,13 +34,13 @@ const CustomSelect = ({
   );
 }
 
-const AdvancedEditModal = ({
+const AccountsEditModal = ({
   open,
   handleClose,
   setAlertData,
   apiService,
   selectedRows
-}: AdvancedEditModalProps) => {
+}: AccountsEditModalProps) => {
   const auth = useAuth();
 
   const [strategyName, setStrategyName] = useState('');
@@ -164,4 +164,4 @@ const AdvancedEditModal = ({
   )
 }
 
-export default AdvancedEditModal;
+export default AccountsEditModal;
