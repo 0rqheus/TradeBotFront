@@ -160,6 +160,11 @@ export const columnDefsAccountsAdmin = [
     filter: 'agNumberColumnFilter',
   },
   {
+    field: 'general_account.accounts_inventories_aggregate.aggregate.count',
+    headerName: 'Inventory size',
+    filter: 'agNumberColumnFilter',
+  },
+  {
     field: 'general_account.account_challenges_infos',
     headerName: 'Solved active sbcs',
     valueGetter: (params: any) => params.data.general_account.account_challenges_infos.map((x: any) => x.challenge_id),
@@ -245,13 +250,17 @@ export const columnDefsAccountsDefault = [
   {
     field: 'origin',
     headerName: 'Origin',
-    hide: false,
     maxWidth: 200,
   },
   {
     field: 'general_account.is_web_tm_opened',
     headerName: 'Has TM assess',
     hide: true,
+  },
+  {
+    field: 'general_account.accounts_inventories_aggregate.aggregate.count',
+    headerName: 'Inventory size',
+    filter: 'agNumberColumnFilter',
   },
   {
     field: 'general_account.account_challenges_infos',

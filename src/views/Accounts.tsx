@@ -3,7 +3,6 @@ import { AgGridReact } from 'ag-grid-react';
 import 'ag-grid-enterprise';
 import 'ag-grid-community/styles/ag-grid.css';
 import 'ag-grid-community/styles/ag-theme-alpine.css';
-import createApiService, { Account, AggregatedHistory, ApiService, } from '../services/ApiService';
 import { columnDefsAccountsAdmin, columnDefsAccountsDefault, defaultColDef } from '../utils/columnDefs';
 import { formatNumber } from '../utils/utils';
 import { GridApi } from 'ag-grid-community';
@@ -14,11 +13,8 @@ import { useAuth } from '../AuthProvider';
 import AccountsEditModal from './modals/AccountsEditModal';
 import UploadAccountsModal from './modals/UploadAccountsModal';
 import { AlertData, CustomAlert } from './partials/CustomAlert';
-import moment from 'moment';
-
-type AccountExtended = Account & { history?: AggregatedHistory };
-
-const HISTORY_OFFSET = moment.duration(24, 'hours').asMilliseconds();
+import { Account } from '../interfaces';
+import { sendRequest } from '../utils/request';
 
 const Accounts = () => {
   const auth = useAuth();
@@ -27,8 +23,8 @@ const Accounts = () => {
   const [isAccsEditModalOpened, setIsAccsEditModalOpened] = useState(false);
   const [isUploadModalOpened, setIsUploadModalOpened] = useState(false);
 
-  const [rowData, setRowData] = useState<AccountExtended[]>([]);
-  const [selectedRows, setSelectedRows] = useState<AccountExtended[]>([]);
+  const [rowData, setRowData] = useState<Account[]>([]);
+  const [selectedRows, setSelectedRows] = useState<Account[]>([]);
   const [totalBalance, setTotalBalance] = useState(0);
   const [availableBalance, setAvailableBalance] = useState(0);
 
@@ -36,14 +32,11 @@ const Accounts = () => {
 
   const [columnDefs, setColumnDefs] = useState<any[]>([]);
 
-  const gridRef = useRef({} as GridApi<AccountExtended>)
-  const apiServiceRef = useRef({} as ApiService)
+  const gridRef = useRef({} as GridApi<Account>);
 
   useEffect(() => {
     (async function () {
-      apiServiceRef.current = createApiService(auth.user?.token!)
-
-      if(auth.user?.role === 'sbc-admin') {
+      if (auth.user?.role === 'sbc-admin') {
         setColumnDefs(columnDefsAccountsAdmin);
       } else {
         setColumnDefs(columnDefsAccountsDefault)
@@ -55,18 +48,9 @@ const Accounts = () => {
   }, [])
 
   const fetchAccounts = async () => {
-    if(auth.user?.role === 'sbc-admin') {
-      const accounts = await apiServiceRef.current.getFullAccountsData();
-      const historyItems = await apiServiceRef.current.getAllAggregatedHistory(HISTORY_OFFSET);
-      const historyDict = new Map(historyItems.map((item) => [item.account_id, item]));
-      
-      const accountsWithHistory = accounts.map((acc) => ({ ...acc, history: historyDict.get(acc.id) }));
-      setRowData(accountsWithHistory);
-    } else {
-      const accounts = await apiServiceRef.current.getDefaultAccountsData() as Account[];
-      setRowData(accounts);
-    }
-    // console.log(accounts[0]);
+    const response = await sendRequest('accounts/get_accounts', undefined, auth.user?.token, 'GET');
+    const { accounts } = await response.json();
+    setRowData(accounts);
 
     updateTotalBalanceInfo();
   }
@@ -96,8 +80,12 @@ const Accounts = () => {
 
   const handleAccountDelete = async () => {
     try {
-      const deleted = await apiServiceRef.current.deleteAccounts(selectedRows);
-      console.log('deleted count', deleted)
+      await sendRequest(
+        'accounts/delete_accounts',
+        { accountIds: selectedRows.map((r) => r.id) },
+        auth.user?.token,
+        'DELETE'
+      );
 
       setIsDeleteModalOpened(false)
 
@@ -149,7 +137,6 @@ const Accounts = () => {
         open={isAccsEditModalOpened}
         handleClose={() => setIsAccsEditModalOpened(false)}
         setAlertData={setAlert}
-        apiService={apiServiceRef.current}
         selectedRows={selectedRows}
       />
 

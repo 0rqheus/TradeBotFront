@@ -25,7 +25,7 @@ const WorkerBlackBox = () => {
 
   const fetchWbbInfo = async (token?: string) => {
     try {
-      const res = await sendRequest('get_worker_black_box_info', undefined, token, 'GET');
+      const res = await sendRequest('wbb/get_state', undefined, token, 'GET');
       const data = await res.json();
 
       setRowData(data);
@@ -38,7 +38,7 @@ const WorkerBlackBox = () => {
 
   const updateWorkers = async (token?: string) => {
     try {
-      await sendRequest('update_workers', {}, token);
+      await sendRequest('wbb/update_workers', {}, token);
 
       setAlert({ open: true, type: 'success', message: 'Success' });
     } catch (err: any) {

@@ -7,12 +7,10 @@
   "license": "ISC",
   "type": "module",
   "scripts": {
-    "build": "npm run generate-graphql-interfaces && react-scripts build",
-    "start": "react-scripts start",
-    "generate-graphql-interfaces": "node scripts/generateGQLInterfaces && eslint src/generated --fix"
+    "build": "react-scripts build",
+    "start": "react-scripts start"
   },
   "dependencies": {
-    "@genql/cli": "^6.3.3",
     "@mui/icons-material": "^6.1.2",
     "@mui/material": "^6.1.2",
     "ag-grid-community": "^32.3.3",

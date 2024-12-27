@@ -1,24 +1,23 @@
 import { Button, Modal, Stack, TextField, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { Account, ApiService } from '../../services/ApiService';
 import { CustomModalContainer } from '../partials/CustomModalContainer';
 import { AlertData } from '../partials/CustomAlert';
 import { useAuth } from '../../AuthProvider';
 import CustomSelect from '../partials/CustomSelect';
+import { sendRequest } from '../../utils/request';
+import { Account } from '../../interfaces';
 
 interface AccountsEditModalProps {
   open: boolean,
   handleClose: () => void,
   setAlertData: (data: AlertData) => void,
   selectedRows: Account[]
-  apiService: ApiService
 }
 
 const AccountsEditModal = ({
   open,
   handleClose,
   setAlertData,
-  apiService,
   selectedRows
 }: AccountsEditModalProps) => {
   const auth = useAuth();
@@ -37,45 +36,33 @@ const AccountsEditModal = ({
 
   useEffect(() => {
     (async function () {
-      if (apiService.getActiveServices) {
-        const dbServices = await apiService.getActiveServices();
-        setServiceNames(dbServices.map((s) => s.service_name));
+      const response = await sendRequest('accounts/get_accounts_edit_options', undefined, auth.user?.token, 'GET');
+      const data = await response.json();
 
-        const dbSchdulerConfigIds = await apiService.getSchedulerConfigIds();
-        setSchedulerConfigIds(dbSchdulerConfigIds);
+      const { activeServicesNames, schedulerConfigIds, banAnalyticsConfigIds } = data;
 
-        const dbBanConfigIds = await apiService.getBanAnalyticsConfigIds();
-        setBanConfigIds(dbBanConfigIds);
-      }
+      setServiceNames(activeServicesNames);
+      setSchedulerConfigIds(schedulerConfigIds);
+      setBanConfigIds(banAnalyticsConfigIds);
     })()
 
-    setServiceName('');
-    setSchedulerConfigId(0);
-    setBanConfigId(0);
+    // setServiceName('');
+    // setSchedulerConfigId(0);
+    // setBanConfigId(0);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   const updateData = async () => {
     try {
-      const promises = [];
-
-      if (strategyName) {
-        promises.push(apiService.updateAccounts(selectedRows, { strategy_name: strategyName }))
+      const data = {
+        accountIds: selectedRows.map((r) => r.id),
+        strategyName,
+        serviceName,
+        schedulerConfigId,
+        banConfigId
       }
-
-      if (serviceName || schedulerConfigId) {
-        promises.push(apiService.updateAccountSchedulerInfo(selectedRows, {
-          service_name: serviceName || undefined,
-          config_id: schedulerConfigId || undefined
-        }))
-      }
-
-      if (banConfigId) {
-        promises.push(apiService.updateAccountsBanConfigId(selectedRows, banConfigId))
-      }
-
-      await Promise.all(promises);
+      await sendRequest('accounts/edit_accounts', data, auth.user?.token, 'PUT');
 
       setAlertData({ open: true, type: 'success', message: 'Success' });
 

@@ -38,7 +38,8 @@ const SbcEditModal = ({
           priceLimit,
           solutionsLimit,
         },
-        token
+        token,
+        'PUT'
       );
 
       setAlert({ open: true, type: 'success', message: 'Success' })

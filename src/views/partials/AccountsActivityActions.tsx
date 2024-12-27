@@ -1,4 +1,3 @@
-import { Account } from '../../services/ApiService';
 import {
   PlayArrow as PlayArrowIcon,
   Stop as StopIcon,
@@ -15,6 +14,7 @@ import { useAuth } from '../../AuthProvider';
 import { sendRequest } from '../../utils/request';
 import { useState } from 'react';
 import { AlertData, CustomAlert } from './CustomAlert';
+import { Account } from '../../interfaces';
 
 interface AccountsActivityActionsProps {
   accounts: Account[],
@@ -38,7 +38,7 @@ const AccountsActivityActions = ({
   const startAccounts = async (accounts: Account[], token?: string) => {
     try {
       await sendRequest(
-        'start_accounts',
+        'wbb/start_accounts',
         {
           accounts: accounts.map((acc) => ({
             id: acc.id,
@@ -58,7 +58,7 @@ const AccountsActivityActions = ({
   const executeAccountCommand = async (accounts: Account[], type: 'STOP' | 'BLOCK' | 'RESET', token?: string) => {
     try {
       await sendRequest(
-        'execute_account_command',
+        'wbb/execute_account_command',
         {
           accounts: accounts.map((acc) => ({ id: acc.id, email: acc.email })),
           type

@@ -1,4 +1,4 @@
-export const sendRequest = (route: string, data?: any, token?: string, method: 'POST' | 'GET' = 'POST') =>
+export const sendRequest = (route: string, data?: any, token?: string, method: 'POST' | 'GET' | 'DELETE' | 'PUT' = 'POST') =>
   fetch(`${process.env.REACT_APP_BACKEND_URL}/${route}`, {
     method,
     body: JSON.stringify(data),
