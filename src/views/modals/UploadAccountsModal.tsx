@@ -34,7 +34,7 @@ const UploadAccountsModal = ({ open, handleClose, setAlertData }: UploadAccounts
       const formData = new FormData();
       formData.append('file', file);
 
-      await sendFormDataRequest('insert_accounts', formData, auth.user?.token);
+      await sendFormDataRequest('accounts/', formData, auth.user?.token);
 
       handleClose()
 

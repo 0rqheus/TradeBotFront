@@ -48,7 +48,7 @@ const Accounts = () => {
   }, [])
 
   const fetchAccounts = async () => {
-    const response = await sendRequest('accounts/get_accounts', undefined, auth.user?.token, 'GET');
+    const response = await sendRequest('accounts/', undefined, auth.user?.token, 'GET');
     const { accounts } = await response.json();
     setRowData(accounts);
 
@@ -81,7 +81,7 @@ const Accounts = () => {
   const handleAccountDelete = async () => {
     try {
       await sendRequest(
-        'accounts/delete_accounts',
+        'accounts/',
         { accountIds: selectedRows.map((r) => r.id) },
         auth.user?.token,
         'DELETE'

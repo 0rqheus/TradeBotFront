@@ -62,7 +62,7 @@ const AccountsEditModal = ({
         schedulerConfigId,
         banConfigId
       }
-      await sendRequest('accounts/edit_accounts', data, auth.user?.token, 'PUT');
+      await sendRequest('accounts/', data, auth.user?.token, 'PUT');
 
       setAlertData({ open: true, type: 'success', message: 'Success' });
 
