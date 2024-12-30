@@ -73,7 +73,7 @@ export const RequireSbcOperator = ({ children }: { children: JSX.Element }) => {
   let auth = useAuth();
   let location = useLocation();
 
-  if (['sbc-admin', 'sbc-operator'].includes(auth.user?.role!)) {
+  if (!['sbc-admin', 'sbc-operator'].includes(auth.user?.role!)) {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
