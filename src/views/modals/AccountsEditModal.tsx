@@ -35,20 +35,18 @@ const AccountsEditModal = ({
 
 
   useEffect(() => {
-    (async function () {
-      const response = await sendRequest('accounts/get_accounts_edit_options', undefined, auth.user?.token, 'GET');
-      const data = await response.json();
-
-      const { activeServicesNames, schedulerConfigIds, banAnalyticsConfigIds } = data;
-
-      setServiceNames(activeServicesNames);
-      setSchedulerConfigIds(schedulerConfigIds);
-      setBanConfigIds(banAnalyticsConfigIds);
-    })()
-
-    // setServiceName('');
-    // setSchedulerConfigId(0);
-    // setBanConfigId(0);
+    if(auth.user?.role === 'sbc-admin') {
+      (async function () {
+        const response = await sendRequest('accounts/get_accounts_edit_options', undefined, auth.user?.token, 'GET');
+        const data = await response.json();
+  
+        const { activeServicesNames, schedulerConfigIds, banAnalyticsConfigIds } = data;
+  
+        setServiceNames(activeServicesNames);
+        setSchedulerConfigIds(schedulerConfigIds);
+        setBanConfigIds(banAnalyticsConfigIds);
+      })()
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
