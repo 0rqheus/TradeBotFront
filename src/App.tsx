@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Accounts from './views/Accounts';
 import Login from './views/Login';
-import { AuthProvider, RequireAdmin, RequireAuth } from './AuthProvider';
+import { AuthProvider, RequireAdmin, RequireAuth, RequireSbcOperator } from './AuthProvider';
 import WorkerBlackBox from './views/WorkerBlackBox';
 import SbcStatistics from './views/SbcStatistics';
 
@@ -10,6 +10,7 @@ const App = () => {
     <AuthProvider>
       <div className="App" >
         <Routes>
+          <Route path="/login" element={<Login />} />
           <Route
             path="/"
             element={
@@ -21,9 +22,9 @@ const App = () => {
           <Route
             path="/sbc_stats"
             element={
-              <RequireAuth>
+              <RequireSbcOperator>
                 <SbcStatistics />
-              </RequireAuth>
+              </RequireSbcOperator>
             }
           />
           <Route
@@ -34,7 +35,6 @@ const App = () => {
               </RequireAdmin>
             }
           />
-          <Route path="/login" element={<Login />} />
         </Routes>
       </div>
     </AuthProvider>

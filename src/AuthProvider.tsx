@@ -69,6 +69,17 @@ export const RequireAuth = ({ children }: { children: JSX.Element }) => {
   return children;
 }
 
+export const RequireSbcOperator = ({ children }: { children: JSX.Element }) => {
+  let auth = useAuth();
+  let location = useLocation();
+
+  if (['sbc-admin', 'sbc-operator'].includes(auth.user?.role!)) {
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
+
+  return children;
+}
+
 export const RequireAdmin = ({ children }: { children: JSX.Element }) => {
   let auth = useAuth();
   let location = useLocation();
