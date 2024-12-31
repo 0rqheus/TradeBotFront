@@ -296,7 +296,7 @@ export const columnDefsSbc = [
     field: "sbcName",
     headerName: 'Sbc',
     rowGroup: true,
-    hide: true
+    hide: true,
   },
   {
     field: 'challengeIndex',
@@ -347,5 +347,35 @@ export const columnDefsSbc = [
     field: 'avgRewardSum',
     headerName: 'Avg gained (14d)',
     filter: 'agNumberColumnFilter',
+  },
+  {
+    field: 'expiresAt',
+    headerName: 'Expires at',
+    filter: 'agDateColumnFilter',
+  },
+  {
+    field: 'futbinPrice',
+    headerName: 'Futbin price',
+    suppressHeaderFilterButton: true,
+    suppressHeaderMenuButton: true,
+    hide: true
+  },
+  {
+    field: 'prio',
+    headerName: 'Prio',
+    filter: 'agNumberColumnFilter',
+    width: 50,
+  },
+  {
+    field: 'priceLimit',
+    headerName: 'Price limit',
+    filter: 'agNumberColumnFilter',
+    width: 50,
+  },
+  {
+    field: 'solutionsLimit',
+    headerName: 'To solve limit',
+    filter: 'agNumberColumnFilter',
+    width: 50,
   },
 ]

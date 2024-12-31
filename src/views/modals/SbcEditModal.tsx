@@ -1,28 +1,39 @@
-import { Button, Modal, Stack, TextField, Typography } from '@mui/material';
+import { Button, Checkbox, FormControlLabel, Modal, Stack, TextField, Typography } from '@mui/material';
 import { useState } from 'react';
 import { CustomModalContainer } from '../partials/CustomModalContainer';
 import { AlertData } from '../partials/CustomAlert';
 import { useAuth } from '../../AuthProvider';
 import { sendRequest } from '../../utils/request';
-import { SbcStatisticsData } from '../SbcStatistics';
+
+interface SbcEditInitialData {
+  sbcName: string,
+  challengeIndex?: number,
+  challengeId?: number,
+  prio?: number,
+  priceLimit?: number,
+  solutionsLimit?: number,
+  generateVirtuals: boolean
+}
 
 export interface SbcEditModalProps {
   open: boolean,
   handleClose: () => void,
   setAlert: (data: AlertData) => void,
-  challenges: SbcStatisticsData[]
+  data: SbcEditInitialData
 }
 
 const SbcEditModal = ({
   open,
   handleClose,
   setAlert,
-  challenges
+  data
 }: SbcEditModalProps) => {
   const auth = useAuth();
 
+  const [prio, setPrio] = useState(0);
   const [priceLimit, setPriceLimit] = useState(0);
   const [solutionsLimit, setSolutionsLimit] = useState(0);
+  const [generateVirtuals, setGenerateVirtuals] = useState(false);
 
   const update = async () => {
     try {
@@ -31,12 +42,13 @@ const SbcEditModal = ({
       await sendRequest(
         'sbc/update_limits',
         {
-          challenges: challenges.map((ch) => ({
-            sbcName: ch.sbcName,
-            challengeIndex: ch.challengeIndex,
-          })),
+          challengeId: data.challengeId,
+          sbcName: data.sbcName,
+          challengeIndex: data.challengeIndex,
+          prio,
           priceLimit,
           solutionsLimit,
+          generateVirtuals,
         },
         token,
         'PUT'
@@ -68,6 +80,16 @@ const SbcEditModal = ({
           mt={4}
         >
           <TextField
+            id='prio'
+            label='prio'
+            type='number'
+            variant='outlined'
+            size='small'
+            value={priceLimit || 0}
+            onChange={(event) => setPrio(Number(event.target.value))}
+          />
+
+          <TextField
             id='priceLimit'
             label='price limit'
             type='number'
@@ -87,6 +109,13 @@ const SbcEditModal = ({
             onChange={(event) => setSolutionsLimit(Number(event.target.value))}
           />
 
+          <FormControlLabel 
+            control={<Checkbox />} 
+            label="Generate virtual solutions"
+            checked={generateVirtuals}
+            onChange={() => setGenerateVirtuals(!generateVirtuals)}
+          />
+
           <Button
             variant='contained'
             size='small'
@@ -95,6 +124,10 @@ const SbcEditModal = ({
           >
             Update
           </Button>
+
+          <Typography variant='body1' component='p' align='left' color='warning'>
+            * All fields gonna be updated
+          </Typography>
 
         </Stack>
       </CustomModalContainer>

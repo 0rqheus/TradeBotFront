@@ -15,13 +15,20 @@ import { GridApi } from 'ag-grid-community';
 
 export interface SbcStatisticsData {
   sbcName: string,
+  challengeId?: number,
   challengeIndex?: number,
   solvedCount?: number,
   avgSpent?: number,
   packName: string,
   isTradeable: boolean,
   repeatCount: number,
-  refreshInterval: number
+  refreshInterval: number,
+  expiresAt: number,
+  futbinPrice?: number,
+  prio?: number,
+  priceLimit?: number,
+  solutionsLimit?: number,
+  generateVirtuals: boolean
 }
 
 const SbcStatistics = () => {
@@ -66,7 +73,8 @@ const SbcStatistics = () => {
           <HeaderButton
             title='Refresh'
             onClick={() => fetchSbcStatistics(auth.user?.token)}
-            content={<RefreshIcon />} />
+            content={<RefreshIcon />} 
+          />
 
           <Divider orientation="vertical" sx={{ height: '5vh' }} />
 
@@ -74,12 +82,12 @@ const SbcStatistics = () => {
             title="Edit solution limits"
             onClick={() => setIsSbcEditModalOpened(true)}
             content={<EditNoteIcon />}
+            disabled={selectedRows.length !== 1}
           />
         </Stack>
       </Stack>
 
-
-      <div className="ag-theme-alpine" style={{ height: '92vh', width: '100%' }}>
+      <div className="ag-theme-alpine" style={{ height: '92vh'}}>
         <AgGridReact
           rowData={rowData}
           columnDefs={columnDefsSbc as any[]}
@@ -104,7 +112,7 @@ const SbcStatistics = () => {
         open={isSbcEditModalOpened}
         handleClose={() => setIsSbcEditModalOpened(false)}
         setAlert={setAlert}
-        challenges={selectedRows}
+        data={selectedRows[0]}
       />
 
       <CustomAlert data={alert} onClose={() => setAlert({ open: false })} />
