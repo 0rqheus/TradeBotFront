@@ -295,8 +295,8 @@ export const columnDefsSbc = [
   {
     field: "sbcName",
     headerName: 'Sbc',
-    rowGroup: true,
-    hide: true,
+    enableRowGroup: true,
+    // hide: true,
   },
   {
     field: 'challengeIndex',
@@ -312,9 +312,13 @@ export const columnDefsSbc = [
     filter: 'agNumberColumnFilter',
   },
   {
-    field: 'avgSpent',
+    // field: 'totalSpent',
     headerName: 'Avg spent',
     filter: 'agNumberColumnFilter',
+    valueGetter: function (param: any) {
+      console.log(param)
+      return Math.round((param.data.totalSpent || 0) / (param.data.solvedCount || 1));
+    }
   },
   {
     field: 'repeatCount',
@@ -337,6 +341,7 @@ export const columnDefsSbc = [
     field: 'isTradeable',
     headerName: 'Tradeable',
     maxWidth: 140,
+    enableRowGroup: true,
   },
   {
     field: 'packsOpened',

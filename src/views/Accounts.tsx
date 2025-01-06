@@ -15,9 +15,11 @@ import UploadAccountsModal from './modals/UploadAccountsModal';
 import { AlertData, CustomAlert } from './partials/CustomAlert';
 import { Account } from '../interfaces';
 import { sendRequest } from '../utils/request';
+import { useNavigate } from 'react-router-dom';
 
 const Accounts = () => {
   const auth = useAuth();
+  const navigate = useNavigate();
 
   const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false);
   const [isAccsEditModalOpened, setIsAccsEditModalOpened] = useState(false);
@@ -48,11 +50,19 @@ const Accounts = () => {
   }, [])
 
   const fetchAccounts = async () => {
-    const response = await sendRequest('accounts/', undefined, auth.user?.token, 'GET');
-    const { accounts } = await response.json();
-    setRowData(accounts);
+    try {
+      const response = await sendRequest('accounts/', undefined, auth.user?.token, 'GET');
+      if(response.status === 401) {
+        navigate('/login');
+      }
 
-    updateTotalBalanceInfo();
+      const { accounts } = await response.json();
+      setRowData(accounts);
+
+      updateTotalBalanceInfo();
+    } catch (err: any) {
+      setAlert({ open: true, type: 'error', message: err.toString() })
+    }
   }
 
   const updateTotalBalanceInfo = () => {

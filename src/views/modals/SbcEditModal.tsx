@@ -12,7 +12,7 @@ interface SbcEditInitialData {
   prio?: number,
   priceLimit?: number,
   solutionsLimit?: number,
-  generateVirtuals: boolean
+  generateVirtuals?: boolean
 }
 
 export interface SbcEditModalProps {

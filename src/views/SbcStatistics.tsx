@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../AuthProvider';
 import { AlertData, CustomAlert } from './partials/CustomAlert';
 import { sendRequest } from '../utils/request';
-import { Backdrop, CircularProgress, Divider, Stack } from '@mui/material';
+import { Backdrop, Box, CircularProgress, Divider, Stack, Typography } from '@mui/material';
 import { HeaderButton } from './partials/CustomButton';
 import {
   Refresh as RefreshIcon,
@@ -12,13 +12,15 @@ import {
 } from '@mui/icons-material'
 import SbcEditModal from './modals/SbcEditModal';
 import { GridApi } from 'ag-grid-community';
+import { formatNumber } from '../utils/utils';
+import { useNavigate } from 'react-router-dom';
 
 export interface SbcStatisticsData {
   sbcName: string,
   challengeId?: number,
   challengeIndex?: number,
   solvedCount?: number,
-  avgSpent?: number,
+  totalSpent?: number,
   packName: string,
   isTradeable: boolean,
   repeatCount: number,
@@ -28,21 +30,35 @@ export interface SbcStatisticsData {
   prio?: number,
   priceLimit?: number,
   solutionsLimit?: number,
-  generateVirtuals: boolean
+  generateVirtuals?: boolean
+  packsOpened?: number,
+  avgRewardSum?: number,
+  totalRewardsSum?: number
 }
 
 const SbcStatistics = () => {
   const auth = useAuth();
+  const navigate = useNavigate();
+
   const [rowData, setRowData] = useState<SbcStatisticsData[]>([]);
   const [selectedRows, setSelectedRows] = useState<SbcStatisticsData[]>([]);
+
   const [alert, setAlert] = useState<AlertData>({ open: false });
+
   const [isSbcEditModalOpened, setIsSbcEditModalOpened] = useState(false);
+
+  const [totalSpent, setTotalSpent] = useState(0);
+  const [totalGained, setTotalGained] = useState(0);
 
   const gridRef = useRef({} as GridApi<SbcStatisticsData>)
 
   const fetchSbcStatistics = async (token?: string) => {
     try {
       const res = await sendRequest('sbc/get_statistics', undefined, token, 'GET');
+      if (res.status === 401) {
+        navigate('/login');
+      }
+
       const data = await res.json();
 
       setAlert({ open: true, type: 'success', message: 'Success' });
@@ -56,6 +72,12 @@ const SbcStatistics = () => {
   const onSelectionChanged = async () => {
     const selectedRows = gridRef.current.getSelectedRows();
     setSelectedRows(selectedRows);
+
+    // update aggregated stats
+    const totalSpent = selectedRows.reduce((total, curr) => total + Math.round(curr.totalSpent! / curr.solvedCount! || 0), 0);
+    const totalGained = selectedRows.reduce((total, curr) => total + (curr.avgRewardSum || 0), 0);
+    setTotalSpent(totalSpent);
+    setTotalGained(totalGained);
   }
 
   useEffect(() => {
@@ -73,7 +95,7 @@ const SbcStatistics = () => {
           <HeaderButton
             title='Refresh'
             onClick={() => fetchSbcStatistics(auth.user?.token)}
-            content={<RefreshIcon />} 
+            content={<RefreshIcon />}
           />
 
           <Divider orientation="vertical" sx={{ height: '5vh' }} />
@@ -85,10 +107,28 @@ const SbcStatistics = () => {
             disabled={selectedRows.length !== 1}
           />
         </Stack>
+
+        <Stack className='sbc-info' direction="row" spacing={6} px={2}>
+          <Box >
+            <Typography variant="body1">
+              <b>Selected:</b> {selectedRows.length}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="body1">
+              <b>Total avg spent:</b> {formatNumber(totalSpent)}
+            </Typography>
+            <Typography variant="body1">
+              <b>Total avg gained:</b> {formatNumber(totalGained)}
+            </Typography>
+          </Box>
+        </Stack>
       </Stack>
 
-      <div className="ag-theme-alpine" style={{ height: '92vh'}}>
+      <div className="ag-theme-alpine" style={{ height: '92vh' }}>
         <AgGridReact
+          rowGroupPanelShow={'always'}
+          // autoGroupColumnDef={}
           rowData={rowData}
           columnDefs={columnDefsSbc as any[]}
           defaultColDef={defaultColDef}
