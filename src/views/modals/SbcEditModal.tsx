@@ -1,5 +1,5 @@
 import { Button, Checkbox, FormControlLabel, Modal, Stack, TextField, Typography } from '@mui/material';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CustomModalContainer } from '../partials/CustomModalContainer';
 import { AlertData } from '../partials/CustomAlert';
 import { useAuth } from '../../AuthProvider';
@@ -34,6 +34,15 @@ const SbcEditModal = ({
   const [priceLimit, setPriceLimit] = useState(0);
   const [solutionsLimit, setSolutionsLimit] = useState(0);
   const [generateVirtuals, setGenerateVirtuals] = useState(false);
+
+  useEffect(() => {
+    if (data) {
+      setPrio(data.prio || 0);
+      setPriceLimit(data.priceLimit || 0);
+      setSolutionsLimit(data.solutionsLimit || 0);
+      setGenerateVirtuals(data.generateVirtuals || false)
+    }
+  }, [data])
 
   const update = async () => {
     try {
@@ -85,7 +94,7 @@ const SbcEditModal = ({
             type='number'
             variant='outlined'
             size='small'
-            value={priceLimit || 0}
+            value={prio}
             onChange={(event) => setPrio(Number(event.target.value))}
           />
 
@@ -95,7 +104,7 @@ const SbcEditModal = ({
             type='number'
             variant='outlined'
             size='small'
-            value={priceLimit || 0}
+            value={priceLimit}
             onChange={(event) => setPriceLimit(Number(event.target.value))}
           />
 
@@ -105,12 +114,12 @@ const SbcEditModal = ({
             type='number'
             variant='outlined'
             size='small'
-            value={solutionsLimit || 0}
+            value={solutionsLimit}
             onChange={(event) => setSolutionsLimit(Number(event.target.value))}
           />
 
-          <FormControlLabel 
-            control={<Checkbox />} 
+          <FormControlLabel
+            control={<Checkbox />}
             label="Generate virtual solutions"
             checked={generateVirtuals}
             onChange={() => setGenerateVirtuals(!generateVirtuals)}
