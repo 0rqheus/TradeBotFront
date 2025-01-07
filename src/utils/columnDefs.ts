@@ -351,10 +351,15 @@ export const columnDefsSbc = [
     filter: 'agNumberColumnFilter',
   },
   {
-    field: 'expiresAt',
+    // field: 'expiresAt',
     headerName: 'Expires at',
     filter: 'agDateColumnFilter',
-    valueFormatter: (param: any) => moment.duration(moment(param.value).diff(moment())).humanize(),
+    valueGetter: (params: any) => {
+      console.log(params)
+      const expires = moment.duration(moment(params.data.expiresAt).diff(moment())).humanize();
+      const total = moment.duration(moment(params.data.expiresAt).diff(moment(params.data.startedAt))).humanize();
+      return `${expires} (out of ${total})`;
+    },
   },
   {
     field: 'futbinPrice',

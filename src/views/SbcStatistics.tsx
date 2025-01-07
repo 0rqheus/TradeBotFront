@@ -26,6 +26,7 @@ export interface SbcStatisticsData {
   repeatCount: number,
   refreshInterval: number,
   expiresAt: number,
+  startedAt: number,
   futbinPrice?: number,
   prio?: number,
   priceLimit?: number,
