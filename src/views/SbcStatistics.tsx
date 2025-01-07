@@ -74,7 +74,7 @@ const SbcStatistics = () => {
     setSelectedRows(selectedRows);
 
     // update aggregated stats
-    const totalSpent = selectedRows.reduce((total, curr) => total + Math.round(curr.totalSpent! / curr.solvedCount! || 0), 0);
+    const totalSpent = selectedRows.reduce((total, curr) => total + Math.round((curr.totalSpent || 0) / (curr.solvedCount || 1)), 0);
     const totalGained = selectedRows.reduce((total, curr) => total + (curr.avgRewardSum || 0), 0);
     setTotalSpent(totalSpent);
     setTotalGained(totalGained);
