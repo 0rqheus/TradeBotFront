@@ -1,3 +1,4 @@
+import moment from 'moment';
 import CustomArrayIntersectionFilter from '../views/partials/CustomFilter';
 import { formatNumber } from './utils';
 
@@ -324,7 +325,7 @@ export const columnDefsSbc = [
   {
     field: 'refreshInterval',
     headerName: 'Refresh interval (hr)',
-    valueFormatter: (param: any) => param.refreshInterval > 0 ? param.refreshInterval / 14400000 : undefined,
+    valueFormatter: (param: any) => param.value > 0 ? param.value / 14400000 : undefined,
     hide: true,
   },
   {
@@ -353,6 +354,7 @@ export const columnDefsSbc = [
     field: 'expiresAt',
     headerName: 'Expires at',
     filter: 'agDateColumnFilter',
+    valueFormatter: (param: any) => moment.duration(moment(param.value).diff(moment())).humanize(),
   },
   {
     field: 'futbinPrice',
