@@ -20,7 +20,7 @@ export interface SbcStatisticsData {
   challengeId?: number,
   challengeIndex?: number,
   solvedCount?: number,
-  totalSpent?: number,
+  avgSpent?: number,
   packName: string,
   isTradeable: boolean,
   repeatCount: number,
@@ -33,7 +33,6 @@ export interface SbcStatisticsData {
   generateVirtuals?: boolean
   packsOpened?: number,
   avgRewardSum?: number,
-  totalRewardsSum?: number
 }
 
 const SbcStatistics = () => {
@@ -74,7 +73,7 @@ const SbcStatistics = () => {
     setSelectedRows(selectedRows);
 
     // update aggregated stats
-    const totalSpent = selectedRows.reduce((total, curr) => total + Math.round((curr.totalSpent || 0) / (curr.solvedCount || 1)), 0);
+    const totalSpent = selectedRows.reduce((total, curr) => total + (curr.avgSpent || 0), 0);
     const totalGained = selectedRows.reduce((total, curr) => total + (curr.avgRewardSum || 0), 0);
     setTotalSpent(totalSpent);
     setTotalGained(totalGained);

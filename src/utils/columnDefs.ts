@@ -312,13 +312,9 @@ export const columnDefsSbc = [
     filter: 'agNumberColumnFilter',
   },
   {
-    // field: 'totalSpent',
+    field: 'avgSpent',
     headerName: 'Avg spent',
     filter: 'agNumberColumnFilter',
-    valueGetter: function (param: any) {
-      console.log(param)
-      return Math.round((param.data.totalSpent || 0) / (param.data.solvedCount || 1));
-    }
   },
   {
     field: 'repeatCount',
