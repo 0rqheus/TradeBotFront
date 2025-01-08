@@ -320,10 +320,24 @@ export const columnDefsSbc = [
     width: 190,
   },
   {
+    field: 'avgTradeCount',
+    headerName: 'Avg players used (trade)',
+    filter: 'agNumberColumnFilter',
+    width: 190,
+    hide: true
+  },
+  {
     field: 'avgUntradeSum',
     headerName: 'Avg spent (untrade)',
     filter: 'agNumberColumnFilter',
     width: 190,
+  },
+  {
+    field: 'avgUntradeCount',
+    headerName: 'Avg players used (untrade)',
+    filter: 'agNumberColumnFilter',
+    width: 190,
+    hide: true
   },
   {
     field: 'repeatCount',
