@@ -158,7 +158,6 @@ const SbcStatistics = () => {
       <div className="ag-theme-alpine" style={{ height: '92vh' }}>
         <AgGridReact
           rowGroupPanelShow={'always'}
-          // autoGroupColumnDef={}
           rowData={rowData}
           columnDefs={columnDefsSbc as any[]}
           defaultColDef={defaultColDef}
@@ -167,6 +166,7 @@ const SbcStatistics = () => {
           rowSelection={'multiple'}
           onSelectionChanged={onSelectionChanged}
           sideBar={{ toolPanels: ['columns'] }}
+          alwaysShowVerticalScroll={true}
         >
         </AgGridReact>
       </div>

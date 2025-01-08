@@ -5,7 +5,8 @@ import { formatNumber } from './utils';
 export const defaultColDef = {
   resizable: true,
   sortable: true,
-  flex: 1,
+  // flex: 1,
+  minWidth: 100,
   filter: true,
 }
 
@@ -302,25 +303,27 @@ export const columnDefsSbc = [
   {
     field: 'challengeIndex',
     headerName: 'Index',
-    maxWidth: 120,
+    maxWidth: 50,
     suppressHeaderFilterButton: true,
     suppressHeaderMenuButton: true
   },
   {
     field: 'solvedCount',
     headerName: 'Solved',
-    maxWidth: 120,
+    width: 120,
     filter: 'agNumberColumnFilter',
   },
   {
     field: 'avgTradeSum',
     headerName: 'Avg spent (trade)',
     filter: 'agNumberColumnFilter',
+    width: 190,
   },
   {
     field: 'avgUntradeSum',
     headerName: 'Avg spent (untrade)',
     filter: 'agNumberColumnFilter',
+    width: 190,
   },
   {
     field: 'repeatCount',
@@ -342,7 +345,7 @@ export const columnDefsSbc = [
   {
     field: 'isTradeable',
     headerName: 'Tradeable',
-    maxWidth: 140,
+    width: 140,
     enableRowGroup: true,
   },
   {
@@ -376,18 +379,18 @@ export const columnDefsSbc = [
     field: 'prio',
     headerName: 'Prio',
     filter: 'agNumberColumnFilter',
-    width: 50,
+    width: 150,
   },
   {
     field: 'priceLimit',
     headerName: 'Price limit',
     filter: 'agNumberColumnFilter',
-    width: 50,
+    width: 150,
   },
   {
     field: 'solutionsLimit',
     headerName: 'To solve limit',
     filter: 'agNumberColumnFilter',
-    width: 50,
+    width: 170,
   },
 ]
