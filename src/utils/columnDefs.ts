@@ -360,7 +360,6 @@ export const columnDefsSbc = [
     headerName: 'Expires at',
     filter: 'agDateColumnFilter',
     valueGetter: (params: any) => {
-      console.log(params)
       const expires = moment.duration(moment(params.data.expiresAt).diff(moment())).humanize();
       const total = moment.duration(moment(params.data.expiresAt).diff(moment(params.data.startedAt))).humanize();
       return `${expires} (out of ${total})`;
