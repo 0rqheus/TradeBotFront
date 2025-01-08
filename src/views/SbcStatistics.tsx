@@ -17,21 +17,27 @@ import { useNavigate } from 'react-router-dom';
 
 export interface SbcStatisticsData {
   sbcName: string,
-  challengeId?: number,
   challengeIndex?: number,
+  challengeId?: number,
   solvedCount?: number,
-  avgSpent?: number,
-  packName: string,
   isTradeable: boolean,
   repeatCount: number,
   refreshInterval: number,
   expiresAt: number,
   startedAt: number,
+
   futbinPrice?: number,
+  avgTradeCount?: number,
+  avgTradeSum?: number,
+  avgUntradeCount?: number,
+  avgUntradeSum?: number,
+
   prio?: number,
   priceLimit?: number,
   solutionsLimit?: number,
   generateVirtuals?: boolean
+
+  packName: string,
   packsOpened?: number,
   avgRewardSum?: number,
 }
@@ -47,8 +53,12 @@ const SbcStatistics = () => {
 
   const [isSbcEditModalOpened, setIsSbcEditModalOpened] = useState(false);
 
-  const [totalSpent, setTotalSpent] = useState(0);
   const [totalGained, setTotalGained] = useState(0);
+
+  const [totalSpentTradeSum, setTotalSpentTradeSum] = useState(0);
+  const [totalSpentTradeCount, setTotalSpentTradeCount] = useState(0);
+  const [totalSpentUntradeSum, setTotalSpentUntradeSum] = useState(0);
+  const [totalSpentUntradeCount, setTotalSpentUntradeCount] = useState(0);
 
   const gridRef = useRef({} as GridApi<SbcStatisticsData>)
 
@@ -74,10 +84,17 @@ const SbcStatistics = () => {
     setSelectedRows(selectedRows);
 
     // update aggregated stats
-    const totalSpent = selectedRows.reduce((total, curr) => total + (curr.avgSpent || 0), 0);
     const totalGained = selectedRows.reduce((total, curr) => total + (curr.avgRewardSum || 0), 0);
-    setTotalSpent(totalSpent);
     setTotalGained(totalGained);
+
+    const totalSpentTradeSum = selectedRows.reduce((total, curr) => total + (curr.avgTradeSum || 0), 0);
+    const totalSpentTradeCount = selectedRows.reduce((total, curr) => total + (curr.avgTradeCount || 0), 0);
+    const totalSpentUntradeSum = selectedRows.reduce((total, curr) => total + (curr.avgUntradeSum || 0), 0);
+    const totalSpentUntradeCount = selectedRows.reduce((total, curr) => total + (curr.avgUntradeCount || 0), 0);
+    setTotalSpentTradeSum(totalSpentTradeSum);
+    setTotalSpentTradeCount(totalSpentTradeCount);
+    setTotalSpentUntradeSum(totalSpentUntradeSum);
+    setTotalSpentUntradeCount(totalSpentUntradeCount);
   }
 
   useEffect(() => {
@@ -114,12 +131,25 @@ const SbcStatistics = () => {
               <b>Selected:</b> {selectedRows.length}
             </Typography>
           </Box>
+          <Box >
+            <Typography variant="body1">
+              <b>Coins gained:</b> {formatNumber(totalGained)}
+            </Typography>
+          </Box>
           <Box>
             <Typography variant="body1">
-              <b>Total avg spent:</b> {formatNumber(totalSpent)}
+              <b>Trade spent (coins):</b> {formatNumber(totalSpentTradeSum)}
             </Typography>
             <Typography variant="body1">
-              <b>Total avg gained:</b> {formatNumber(totalGained)}
+              <b>Trade spent (players):</b> {formatNumber(totalSpentTradeCount)}
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="body1">
+              <b>Untrade spent (coins):</b> {formatNumber(totalSpentUntradeSum)}
+            </Typography>
+            <Typography variant="body1">
+              <b>Untrade spent (players):</b> {formatNumber(totalSpentUntradeCount)}
             </Typography>
           </Box>
         </Stack>

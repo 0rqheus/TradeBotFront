@@ -313,8 +313,13 @@ export const columnDefsSbc = [
     filter: 'agNumberColumnFilter',
   },
   {
-    field: 'avgSpent',
-    headerName: 'Avg spent',
+    field: 'avgTradeSum',
+    headerName: 'Avg spent (trade)',
+    filter: 'agNumberColumnFilter',
+  },
+  {
+    field: 'avgUntradeSum',
+    headerName: 'Avg spent (untrade)',
     filter: 'agNumberColumnFilter',
   },
   {
