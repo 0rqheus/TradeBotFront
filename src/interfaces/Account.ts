@@ -36,4 +36,8 @@ export interface Account {
     sbc_submits: number
   }
   workshift_id: number,
+  
+  sbcRewardsSum: number,
+  sbcTradeExpensesSum: number,
+  sbcUntradeExpensesSum: number,
 }

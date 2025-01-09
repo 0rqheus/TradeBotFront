@@ -185,6 +185,23 @@ export const columnDefsAccountsAdmin = [
     filter: 'agNumberColumnFilter',
     hide: true,
   },
+  {
+    field: 'sbcRewardsSum',
+    headerName: 'Sbc rewards',
+    filter: 'agNumberColumnFilter',
+  },
+  {
+    field: 'sbcTradeExpensesSum',
+    headerName: 'Sbc expenses (trade)',
+    filter: 'agNumberColumnFilter',
+    hide: true,
+  },
+  {
+    field: 'sbcUntradeExpensesSum',
+    headerName: 'Sbc expenses (untrade)',
+    filter: 'agNumberColumnFilter',
+    hide: true,
+  },
 ];
 
 export const columnDefsAccountsDefault = [
@@ -270,7 +287,32 @@ export const columnDefsAccountsDefault = [
     valueGetter: (params: any) => params.data.general_account.account_challenges_infos.map((x: any) => x.challenge_id),
     valueFormatter: (param: any) => param.data.general_account.account_challenges_infos.length,
     filter: CustomArrayIntersectionFilter,
-  }
+  },
+  {
+    field: 'sbcRewardsSum',
+    headerName: 'Sbc rewards',
+    filter: 'agNumberColumnFilter',
+  },
+  {
+    field: 'scheduler_account_info.block_reason',
+    headerName: 'Reason',
+    enableRowGroup: false,
+    hide: true,
+    width: 90,
+    maxWidth: 450,
+  },
+  {
+    field: 'sbcTradeExpensesSum',
+    headerName: 'Sbc expenses (trade)',
+    filter: 'agNumberColumnFilter',
+    hide: true,
+  },
+  {
+    field: 'sbcUntradeExpensesSum',
+    headerName: 'Sbc expenses (untrade)',
+    filter: 'agNumberColumnFilter',
+    hide: true,
+  },
 ];
 
 

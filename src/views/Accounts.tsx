@@ -6,7 +6,7 @@ import 'ag-grid-community/styles/ag-theme-alpine.css';
 import { columnDefsAccountsAdmin, columnDefsAccountsDefault, defaultColDef } from '../utils/columnDefs';
 import { formatNumber } from '../utils/utils';
 import { GridApi } from 'ag-grid-community';
-import { Box, Stack, Typography } from '@mui/material';
+import { Backdrop, Box, CircularProgress, Stack, Typography } from '@mui/material';
 import ConfirmationModal from './modals/ConfirmationModal';
 import AccountsActivityActions from './partials/AccountsActivityActions';
 import { useAuth } from '../AuthProvider';
@@ -20,6 +20,8 @@ import { useNavigate } from 'react-router-dom';
 const Accounts = () => {
   const auth = useAuth();
   const navigate = useNavigate();
+
+  const [loaded, setLoaded] = useState(false);
 
   const [isDeleteModalOpened, setIsDeleteModalOpened] = useState(false);
   const [isAccsEditModalOpened, setIsAccsEditModalOpened] = useState(false);
@@ -50,6 +52,7 @@ const Accounts = () => {
   }, [])
 
   const fetchAccounts = async () => {
+    setLoaded(false);
     try {
       const response = await sendRequest('accounts/', undefined, auth.user?.token, 'GET');
       if(response.status === 401) {
@@ -61,8 +64,10 @@ const Accounts = () => {
 
       updateTotalBalanceInfo();
     } catch (err: any) {
-      setAlert({ open: true, type: 'error', message: err.toString() })
+      setAlert({ open: true, type: 'error', message: err.toString() });
     }
+
+    setLoaded(true);
   }
 
   const updateTotalBalanceInfo = () => {
@@ -171,6 +176,13 @@ const Accounts = () => {
         >
         </AgGridReact>
       </div>
+
+      <Backdrop
+        sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+        open={!loaded}
+      >
+        <CircularProgress />
+      </Backdrop>
 
       <CustomAlert data={alert} onClose={() => setAlert({ open: false })} />
     </>
