@@ -34,7 +34,10 @@ const UploadAccountsModal = ({ open, handleClose, setAlertData }: UploadAccounts
       const formData = new FormData();
       formData.append('file', file);
 
-      await sendFormDataRequest('accounts/', formData, auth.user?.token);
+      const res = await sendFormDataRequest('accounts/', formData, auth.user?.token);
+      if (!res.ok) {
+        throw new Error(res.statusText);
+      }
 
       handleClose()
 
@@ -76,8 +79,8 @@ const UploadAccountsModal = ({ open, handleClose, setAlertData }: UploadAccounts
             email,password,gauth,proxyHost,proxyPort,proxyUsername,proxyPassword,origin
           </Typography>
 
-          <Button component="label" startIcon={<UploadFileIcon />} >
-            Select file
+          <Button component="label" startIcon={<UploadFileIcon />} variant={file ? "outlined" : 'text'}>
+            {file?.name ?? 'Select file'}
             <VisuallyHiddenInput type="file" accept='text/csv' onChange={handleFileChange} />
           </Button>
 
