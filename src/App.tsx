@@ -4,15 +4,15 @@ import Login from './views/Login';
 import { AuthProvider, RequireAdmin, RequireAuth, RequireSbcOperator } from './AuthProvider';
 import WorkerBlackBox from './views/WorkerBlackBox';
 import SbcStatistics from './views/SbcStatistics';
+import CreateUser from './views/CreateUser';
 
 const App = () => {
   return (
     <AuthProvider>
-      <div className="App" >
+      <div className='App' >
         <Routes>
-          <Route path="/login" element={<Login />} />
           <Route
-            path="/"
+            path='/'
             element={
               <RequireAuth>
                 <Accounts />
@@ -20,7 +20,7 @@ const App = () => {
             }
           />
           <Route
-            path="/sbc_stats"
+            path='/sbc_stats'
             element={
               <RequireSbcOperator>
                 <SbcStatistics />
@@ -28,10 +28,19 @@ const App = () => {
             }
           />
           <Route
-            path="/wbb"
+            path='/wbb'
             element={
               <RequireAdmin>
                 <WorkerBlackBox />
+              </RequireAdmin>
+            }
+          />
+          <Route path='/login' element={<Login />} />
+          <Route
+            path='/create_user'
+            element={
+              <RequireAdmin>
+                <CreateUser />
               </RequireAdmin>
             }
           />
